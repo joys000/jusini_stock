@@ -1,8 +1,9 @@
 name: UPDATE
 on:
   release:
-    # 오직 '새로운 릴리즈가 발행되었을 때' 한 번만 알림을 보냅니다.
     types: [published]
+  # 이 코드가 있어야 Actions 탭에 'Run workflow' 버튼이 생깁니다.
+  workflow_dispatch: 
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -14,9 +15,10 @@ jobs:
       - name: Discord 알림 전송
         uses: sarisia/actions-status-discord@v1
         with:
+          # 시크릿 이름 UPDATE와 일치 확인 완료
           webhook: ${{ secrets.UPDATE }}
           status: success
-          title: "🎉 주리니 계산기 신규 업데이트 공지! "
+          title: "🚀 주리니 계산기 신규 업데이트 공지!"
           description: |
             📦 **버전:** ${{ github.event.release.tag_name }}
             📝 **업데이트 내용:** ${{ github.event.release.body }}
