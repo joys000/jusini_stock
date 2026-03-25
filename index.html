@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="주식 초보자를 위한 무료 계산기 모음 - 배당금, 평단가, 용어 사전까지! 서버 저장 없는 100% 안전한 도구">
+    <meta name="keywords" content="주식 계산기, 배당금 계산, 평단가 계산, 주식 용어, 주린이, 투자 도구">
+    <title>주린이 계산기 - 초보 투자자를 위한 무료 도구</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #FFD600;
+            --primary-dark: #FFC400;
+            --success: #00D9A3;
+            --danger: #FF6B6B;
+            --neutral: #2D3436;
+            --neutral-light: #F8F9FA;
+            --border-color: #E8E8E8;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
+            
+            /* Light mode */
+            --bg-gradient-start: #FFF9E6;
+            --bg-gradient-end: #FFFFFF;
+            --card-bg: #FFFFFF;
+            --text-primary: #2D3436;
+            --text-secondary: #636E72;
+        }
+        
+        /* Dark Mode */
+        body[data-theme="dark"] {
+            --bg-gradient-start: #1A1A1A;
+            --bg-gradient-end: #2D3436;
+            --card-bg: #333333;
+            --text-primary: #E8E8E8;
+            --text-secondary: #B0B0B0;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.5);
+            --border-color: #4A4A4A;
+            --neutral-light: #2D3436;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(255, 214, 0, 0.03) 49px, rgba(255, 214, 0, 0.03) 50px),
+                repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(255, 214, 0, 0.03) 49px, rgba(255, 214, 0, 0.03) 50px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* Header */
+        header {
+            position: relative;
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            padding: 1.5rem 0;
+            z-index: 100;
+            transition: background 0.3s ease;
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .theme-toggle {
+            background: var(--neutral-light);
+            border: 2px solid var(--border-color);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--primary);
+            transform: rotate(20deg) scale(1.1);
+        }
+        
+        .logo {
+            font-family: 'Fredoka', cursive;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo-icon {
+            background: var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transform: rotate(-5deg);
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover .logo-icon {
+            transform: rotate(5deg) scale(1.1);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-dark);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            position: relative;
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+            text-align: center;
+            z-index: 1;
+        }
+        
+        .hero h1 {
+            font-family: 'Fredoka', cursive;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .hero .highlight {
+            color: var(--primary-dark);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .hero .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            height: 15px;
+            background: var(--primary);
+            opacity: 0.3;
+            z-index: -1;
+            border-radius: 3px;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+        
+        .hero-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease 0.4s backwards;
+        }
+        
+        .badge {
+            background: var(--card-bg);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            box-shadow: var(--shadow);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        
+        .badge:hover {
+            transform: translateY(-3px);
+        }
+        
+        .badge-icon {
+            font-size: 1.25rem;
+        }
+        
+        /* Tools Grid */
+        .tools-section {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto 6rem;
+            padding: 0 2rem;
+            z-index: 1;
+        }
+        
+        .section-title {
+            font-family: 'Fredoka', cursive;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-primary);
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+        
+        .tool-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-10px) rotate(1deg);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .tool-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .tool-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.4s ease;
+        }
+        
+        .tool-card:hover .tool-icon {
+            transform: rotate(10deg) scale(1.1);
+        }
+        
+        .tool-card.success .tool-icon {
+            background: linear-gradient(135deg, var(--success), #00C292);
+        }
+        
+        .tool-card.danger .tool-icon {
+            background: linear-gradient(135deg, var(--danger), #FF5252);
+        }
+        
+        .tool-card h3 {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+        
+        .tool-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .tool-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        
+        .tool-features li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tool-features li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+        
+        .tool-btn {
+            background: var(--primary);
+            color: #2D3436;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .tool-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+        
+        /* Features Section */
+        .features-section {
+            position: relative;
+            max-width: 1200px;
+            margin: 6rem auto;
+            padding: 0 2rem;
+            z-index: 1;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .feature-item {
+            text-align: center;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-item-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-item h4 {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+        
+        .feature-item p {
+            color: var(--text-secondary);
+        }
+        
+        /* Stock Search Section */
+        .stock-search-section {
+            position: relative;
+            max-width: 900px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+            z-index: 100;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .search-container {
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            transition: background 0.3s ease;
+        }
+        
+        .search-box {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        
+        #stock-search-input {
+            width: 100%;
+            padding: 1.25rem 1.5rem;
+            border: 2px solid var(--border-color);
+            background: var(--neutral-light);
+            color: var(--text-primary);
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        #stock-search-input:focus {
+            outline: none;
+            border-color: var(--success);
+            background: var(--card-bg);
+            box-shadow: 0 0 0 4px rgba(0, 217, 163, 0.1);
+        }
+        
+        .search-results {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-height: 350px;
+            overflow-y: auto;
+            z-index: 9999;
+            border: 2px solid var(--success);
+        }
+        
+        .search-result-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+        
+        .search-result-item:hover {
+            background: rgba(0, 217, 163, 0.1);
+        }
+        
+        .search-result-symbol {
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 0.25rem;
+        }
+        
+        .search-result-name {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        
+        .stock-info-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 2px solid var(--border-color);
+            transition: background 0.3s ease;
+        }
+        
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .stock-header h3 {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.75rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stock-symbol {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        
+        .stock-price-box {
+            /* flex 배치를 사용하므로 text-align: right는 제거합니다. */
+        }
+        
+        .stock-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'Fredoka', cursive;
+        }
+        
+        .stock-change {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            text-align: right;
+        }
+        
+        .stock-change.positive { color: var(--success); }
+        .stock-change.negative { color: var(--danger); }
+        
+        /* 🚨 실시간 새로고침 버튼 디자인 추가 */
+        .refresh-btn {
+            background: var(--neutral-light);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            outline: none;
+        }
+        
+        .refresh-btn:hover {
+            background: var(--primary);
+            color: #2D3436;
+        }
+        
+        .refresh-btn.spinning {
+            animation: spin-fast 1s linear infinite;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        @keyframes spin-fast {
+            100% { transform: rotate(360deg); }
+        }
+        
+        .stock-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* 라이트 모드 글씨 붕 뜸 방지 */
+            padding: 1rem;
+            background: var(--neutral-light);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .detail-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .detail-value {
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: right; /* Y축 데이터 밀림 방지 */
+        }
+        
+        /* 🚨 그래프를 없애기로 했으므로 차트 영역을 숨깁니다. */
+        .chart-container-small {
+            display: none;
+        }
+        
+        /* Footer */
+        footer {
+            position: relative;
+            background: #1A1A1A; /* 푸터는 고정 어두운 색상 */
+            color: white;
+            padding: 3rem 2rem 2rem;
+            margin-top: 6rem;
+            z-index: 1;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h4 {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links a {
+            color: #B2BEC3;
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem 0;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: #B2BEC3;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .nav-links { display: none; }
+            .tools-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo">
+                <div class="logo-icon">📊</div>
+                <span>주린이 계산기</span>
+            </a>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" title="다크모드 전환">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <ul class="nav-links">
+                    <li><a href="#tools">도구</a></li>
+                    <li><a href="#features">특징</a></li>
+                    <li><a href="#about">소개</a></li>
+                    <li><a href="#contact">문의</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>
+            주식 투자, 이제 <span class="highlight">쉽게</span> 시작하세요
+        </h1>
+        <p>
+            복잡한 계산은 맡기고, 투자에만 집중하세요.<br>
+            100% 무료, 서버 저장 없는 안전한 도구
+        </p>
+        <div class="hero-badges">
+            <div class="badge">
+                <span class="badge-icon">🔒</span>
+                <span>서버 저장 0%</span>
+            </div>
+            <div class="badge">
+                <span class="badge-icon">💯</span>
+                <span>완전 무료</span>
+            </div>
+            <div class="badge">
+                <span class="badge-icon">⚡</span>
+                <span>즉시 계산</span>
+            </div>
+            <div class="badge">
+                <span class="badge-icon">📱</span>
+                <span>모바일 지원</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="stock-search-section">
+        <div class="search-container">
+            <h2 class="section-title">📈 실시간 주식 검색</h2>
+            <p class="section-subtitle">현재가와 전일종가, 시가, 고가, 저가를 확인하세요</p>
+            
+            <div class="search-box">
+                <input type="text" id="stock-search-input" placeholder="종목명 또는 티커 입력 (예: AAPL, 삼성전자)" autocomplete="off">
+                <div id="stock-search-results" class="search-results" style="display: none;"></div>
+            </div>
+            
+            <div id="stock-info-card" class="stock-info-card" style="display: none;">
+                <div class="stock-header">
+                    <div>
+                        <h3 id="stock-name">-</h3>
+                        <p id="stock-symbol" class="stock-symbol">-</p>
+                    </div>
+                    <div class="stock-price-box">
+                        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+                            <button id="refresh-price-btn" class="refresh-btn" style="display: none;" onclick="refreshCurrentPrice()" title="현재가 새로고침">🔄</button>
+                            <div id="stock-price" class="stock-price">$0.00</div>
+                        </div>
+                        <div id="stock-change" class="stock-change">-</div>
+                    </div>
+                </div>
+                
+                <div class="stock-details">
+                    <div class="detail-item">
+                        <span class="detail-label">시가</span>
+                        <span id="stock-open" class="detail-value">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">고가</span>
+                        <span id="stock-high" class="detail-value">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">저가</span>
+                        <span id="stock-low" class="detail-value">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">전일종가</span>
+                        <span id="stock-prev-close" class="detail-value">-</span>
+                    </div>
+                </div>
+                
+                <div class="chart-container-small"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="tools-section" id="tools">
+        <h2 class="section-title">주린이를 위한 필수 도구</h2>
+        <div class="tools-grid">
+            <div class="tool-card success" onclick="location.href='dividend-calculator.html'">
+                <div class="tool-icon">💰</div>
+                <h3>배당금 자동 계산기</h3>
+                <p>장기 투자자를 위한 배당금 계산과 재투자 시뮬레이션</p>
+                <ul class="tool-features">
+                    <li>월별/연간 배당금 자동 계산</li>
+                    <li>배당 재투자 복리 효과 시뮬레이션</li>
+                    <li>세금 자동 계산 (15.4% 포함)</li>
+                    <li>엑셀 다운로드 지원</li>
+                </ul>
+                <button class="tool-btn">배당금 계산하기 →</button>
+            </div>
+
+            <div class="tool-card" onclick="location.href='stock-dictionary.html'">
+                <div class="tool-icon">📚</div>
+                <h3>주식 용어 사전 + 퀴즈</h3>
+                <p>초보자도 쉽게 이해하는 주식 용어와 재미있는 학습 퀴즈</p>
+                <ul class="tool-features">
+                    <li>200+ 필수 주식 용어 설명</li>
+                    <li>초보자 맞춤 쉬운 설명</li>
+                    <li>실전 예시 포함</li>
+                    <li>레벨별 퀴즈 게임</li>
+                </ul>
+                <button class="tool-btn">용어 공부하기 →</button>
+            </div>
+
+            <div class="tool-card danger" onclick="location.href='average-calculator.html'">
+                <div class="tool-icon">📊</div>
+                <h3>매수 평단가 계산기</h3>
+                <p>물타기/불타기 시뮬레이션으로 전략적 매수 계획 수립</p>
+                <ul class="tool-features">
+                    <li>평균 단가 자동 계산</li>
+                    <li>물타기/불타기 시뮬레이션</li>
+                    <li>손익 분기점 계산</li>
+                    <li>시각적 차트 제공</li>
+                </ul>
+                <button class="tool-btn">평단가 계산하기 →</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section" id="features">
+        <h2 class="section-title">왜 주린이 계산기인가요?</h2>
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-item-icon">🔒</div>
+                <h4>100% 안전</h4>
+                <p>서버에 데이터를 저장하지 않습니다. 모든 계산은 브라우저에서만 처리됩니다.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-item-icon">🎓</div>
+                <h4>초보자 친화적</h4>
+                <p>복잡한 금융 용어 없이, 누구나 쉽게 이해할 수 있는 설명을 제공합니다.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-item-icon">⚡</div>
+                <h4>빠른 계산</h4>
+                <p>복잡한 계산을 1초 안에 완료하고, 즉시 결과를 확인할 수 있습니다.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-item-icon">📱</div>
+                <h4>모바일 최적화</h4>
+                <p>PC, 태블릿, 스마트폰 어디서나 편리하게 사용할 수 있습니다.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-item-icon">💯</div>
+                <h4>완전 무료</h4>
+                <p>회원가입 없이, 비용 부담 없이 모든 기능을 무제한으로 사용하세요.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-item-icon">📊</div>
+                <h4>실전 중심</h4>
+                <p>이론이 아닌 실제 투자에 바로 활용할 수 있는 실용적인 도구를 제공합니다.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>주린이 계산기</h4>
+                <p>초보 투자자를 위한<br>무료 주식 계산 도구</p>
+            </div>
+            <div class="footer-section">
+                <h4>도구</h4>
+                <ul class="footer-links">
+                    <li><a href="dividend-calculator.html">배당금 계산기</a></li>
+                    <li><a href="stock-dictionary.html">주식 용어 사전</a></li>
+                    <li><a href="average-calculator.html">평단가 계산기</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>정보</h4>
+                <ul class="footer-links">
+                    <li><a href="about.html">서비스 소개</a></li>
+                    <li><a href="privacy.html">개인정보처리방침</a></li>
+                    <li><a href="terms.html">이용약관</a></li>
+                    <li><a href="contact.html">문의하기</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>안내</h4>
+                <p style="color: #B2BEC3; font-size: 0.9rem;">
+                    본 서비스는 교육 목적의 계산 도구입니다.<br>
+                    투자 조언이나 종목 추천을 제공하지 않습니다.<br>
+                    투자의 최종 결정은 본인의 책임입니다.
+                </p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 주린이 계산기. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 전역 변수
+        const RENDER_SERVER_URL = "https://dividend-server.onrender.com";
+        const FINNHUB_API_KEY = 'd70u9vhr01ql6rg0mgr0d70u9vhr01ql6rg0mgrg';
+        
+        let searchTimer = null;
+        let currentSelectedSymbol = null;
+        let isCurrentKR = false;
+
+        // 1. 이벤트 리스너 통합 관리
+        document.addEventListener('DOMContentLoaded', () => {
+            // 🔥 [추가] 서버 예열 신호 (Pre-warming)
+            // 사용자가 페이지에 들어온 순간, 잠든 서버를 깨우기 시작하네.
+            console.log("🚀 서버 예열 엔진 가동...");
+            fetch(`${RENDER_SERVER_URL}/`).catch(() => {}); 
+
+            initTheme();
+            
+            
+            const stockSearchInput = document.getElementById('stock-search-input');
+            const stockSearchResults = document.getElementById('stock-search-results');
+
+            if (stockSearchInput) {
+                stockSearchInput.addEventListener('input', function() {
+                    const query = this.value.trim();
+                    searchStocks(query);
+                });
+
+                stockSearchInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const firstItem = document.querySelector('.search-result-item');
+                        if (firstItem) firstItem.click();
+                    }
+                });
+            }
+
+            // 외부 클릭 시 결과창 닫기
+            document.addEventListener('click', (e) => {
+                if (stockSearchInput && stockSearchResults && 
+                    !stockSearchInput.contains(e.target) && !stockSearchResults.contains(e.target)) {
+                    stockSearchResults.style.display = 'none';
+                }
+            });
+
+            // Smooth scroll 적용
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+
+            // 스크롤 애니메이션
+            const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -100px 0px' };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeInUp 0.8s ease forwards';
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.tool-card, .feature-item').forEach(el => {
+                el.style.opacity = '0';
+                observer.observe(el);
+            });
+        });
+
+        // 2. 통합 검색 엔진 (한국 서버 + 미국 API)
+        async function searchStocks(query) {
+            const stockSearchResults = document.getElementById('stock-search-results');
+            
+            if (!query || query.length < 1) {
+                stockSearchResults.style.display = 'none';
+                return;
+            }
+
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(async () => {
+                try {
+                    const [krRes, usRes] = await Promise.all([
+                        fetch(`${RENDER_SERVER_URL}/search/kr?q=${encodeURIComponent(query)}`).catch(() => null),
+                        fetch(`https://finnhub.io/api/v1/search?q=${encodeURIComponent(query)}&token=${FINNHUB_API_KEY}`).catch(() => null)
+                    ]);
+
+                    let combinedResults = [];
+
+                    if (krRes && krRes.ok) {
+                        const krData = await krRes.json();
+                        if (krData.status === "success") combinedResults = [...combinedResults, ...krData.result];
+                    }
+
+                    if (usRes && usRes.ok) {
+                        const usData = await usRes.json();
+                        if (usData.result) {
+                            const filteredUs = usData.result.filter(item => 
+                                !['BOND', 'CURRENCY', 'FUTURE', 'INDEX', 'WARRANT'].includes(item.type)
+                            );
+                            combinedResults = [...combinedResults, ...filteredUs];
+                        }
+                    }
+
+                    if (combinedResults.length > 0) {
+                        displaySearchResults(combinedResults);
+                    } else {
+                        stockSearchResults.innerHTML = '<div class="search-result-item">결과가 없습니다.</div>';
+                        stockSearchResults.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('검색 중 오류 발생:', error);
+                }
+            }, 300);
+        }
+
+        // 3. 검색 결과 목록 표시
+        function displaySearchResults(results) {
+            const stockSearchResults = document.getElementById('stock-search-results');
+            const uniqueResults = Array.from(new Map(results.map(item => [item.symbol, item])).values());
+
+            stockSearchResults.innerHTML = uniqueResults.slice(0, 10).map(item => {
+                const isKR = item.type === "KOREA" || item.symbol.endsWith('.KS') || item.symbol.endsWith('.KQ');
+                const badge = isKR ? '<span style="color:var(--success); font-weight:bold;">[KR]</span>' : '<span style="color:#3498db; font-weight:bold;">[US]</span>';
+                
+                return `
+                    <div class="search-result-item" onclick="selectStock('${item.symbol}', '${item.description || item.displaySymbol}')">
+                        <div class="search-result-symbol" style="color:var(--success);">${item.symbol} ${badge}</div>
+                        <div class="search-result-name" style="color:var(--text-primary);">${item.description || item.displaySymbol}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            stockSearchResults.style.display = 'block';
+        }
+
+        // 4. 종목 선택 및 수동 새로고침 로직
+        async function selectStock(symbol, name) {
+            document.getElementById('stock-search-results').style.display = 'none';
+            document.getElementById('stock-search-input').value = symbol;
+            
+            const stockInfoCard = document.getElementById('stock-info-card');
+            stockInfoCard.style.display = 'block';
+            document.getElementById('stock-name').textContent = name || symbol;
+            document.getElementById('stock-symbol').textContent = symbol;
+            
+            // 데이터 표는 항상 보이게 설정
+            document.querySelector('.stock-details').style.display = 'grid';
+
+            // 현재 종목 정보 저장
+            currentSelectedSymbol = symbol;
+            isCurrentKR = symbol.endsWith('.KS') || symbol.endsWith('.KQ');
+            
+            // 새로고침 버튼 나타나게 하기
+            document.getElementById('refresh-price-btn').style.display = 'flex';
+
+            // 최초 1회 데이터 즉시 로드
+            await fetchAndDisplayData();
+        }
+
+        async function refreshCurrentPrice() {
+            if (!currentSelectedSymbol) return;
+            
+            const btn = document.getElementById('refresh-price-btn');
+            btn.classList.add('spinning'); // 애니메이션 시작
+            
+            await fetchAndDisplayData();
+            
+            setTimeout(() => btn.classList.remove('spinning'), 1000); // 1초 후 애니메이션 종료
+        }
+
+        async function fetchAndDisplayData() {
+            const symbol = currentSelectedSymbol;
+            const isKR = isCurrentKR;
+
+            if (isKR) {
+                document.getElementById('stock-price').textContent = "불러오는 중...";
+                try {
+                    const res = await fetch(`${RENDER_SERVER_URL}/quote/kr/${symbol}`);
+                    const data = await res.json();
+                    
+                    if (data.status === "success") {
+                        document.getElementById('stock-price').textContent = data.price + '원';
+                        const changeEl = document.getElementById('stock-change');
+                        changeEl.innerHTML = `${data.change}원 (${data.change_percent})<br><span style="font-size:0.85rem; color:var(--text-secondary); font-weight:normal;">${data.time} 기준</span>`;
+                        changeEl.className = 'stock-change ' + (data.is_positive ? 'positive' : (data.is_negative ? 'negative' : ''));
+                        
+                        document.getElementById('stock-open').textContent = data.open + '원';
+                        document.getElementById('stock-high').textContent = data.high + '원';
+                        document.getElementById('stock-low').textContent = data.low + '원';
+                        document.getElementById('stock-prev-close').textContent = data.prev_close + '원';
+                    } else {
+                        document.getElementById('stock-price').textContent = "데이터 없음";
+                    }
+                } catch (error) {
+                    console.error('크롤링 API 실패:', error);
+                    document.getElementById('stock-price').textContent = "서버 에러";
+                }
+            } else {
+                // 미국 주식
+                document.getElementById('stock-price').textContent = "Loading...";
+                try {
+                    const quoteRes = await fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${FINNHUB_API_KEY}`);
+                    const data = await quoteRes.json();
+                    
+                    if (data.c && data.c > 0) {
+                        document.getElementById('stock-price').textContent = '$' + data.c.toFixed(2);
+                        const changeEl = document.getElementById('stock-change');
+                        const now = new Date();
+                        const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} 갱신`;
+                        
+                        changeEl.innerHTML = `${data.d >= 0 ? '+' : ''}${data.d.toFixed(2)} (${data.dp >= 0 ? '+' : ''}${data.dp.toFixed(2)}%)<br><span style="font-size:0.85rem; color:var(--text-secondary); font-weight:normal;">${timeString}</span>`;
+                        changeEl.className = 'stock-change ' + (data.d >= 0 ? 'positive' : 'negative');
+                        
+                        document.getElementById('stock-open').textContent = '$' + (data.o || 0).toFixed(2);
+                        document.getElementById('stock-high').textContent = '$' + (data.h || 0).toFixed(2);
+                        document.getElementById('stock-low').textContent = '$' + (data.l || 0).toFixed(2);
+                        document.getElementById('stock-prev-close').textContent = '$' + (data.pc || 0).toFixed(2);
+                    } else {
+                        document.getElementById('stock-price').textContent = "No Data";
+                    }
+                } catch (error) {
+                    console.error('시세 호출 실패:', error);
+                    document.getElementById('stock-price').textContent = "API Error";
+                }
+            }
+        }
+
+        // 5. 다크모드 관리
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이용약관 - 주린이 계산기</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #FFD600;
+            --neutral: #2D3436;
+            --neutral-light: #F8F9FA;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--neutral);
+            background: var(--neutral-light);
+            line-height: 1.8;
+        }
+        
+        header {
+            background: white;
+            box-shadow: var(--shadow);
+            padding: 1.5rem 0;
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--neutral);
+            text-decoration: none;
+        }
+        
+        .back-btn {
+            background: var(--neutral-light);
+            color: var(--neutral);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: var(--primary);
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+        
+        .content {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: var(--shadow);
+        }
+        
+        h1 {
+            font-family: 'Fredoka', cursive;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--neutral);
+        }
+        
+        .update-date {
+            color: #636E72;
+            margin-bottom: 3rem;
+        }
+        
+        h2 {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.75rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--neutral);
+        }
+        
+        p {
+            margin-bottom: 1.5rem;
+            color: #636E72;
+        }
+        
+        ul {
+            margin-bottom: 1.5rem;
+            margin-left: 2rem;
+        }
+        
+        li {
+            margin-bottom: 0.75rem;
+            color: #636E72;
+        }
+        
+        .highlight {
+            background: #FFF9E6;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            margin: 2rem 0;
+        }
+        
+        .warning {
+            background: #FFF7ED;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #FB923C;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">📊 주린이 계산기</a>
+            <a href="index.html" class="back-btn">← 홈으로</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <h1>이용약관</h1>
+            <p class="update-date">최종 업데이트: 2024년 1월 1일</p>
+
+            <h2>제1조 (목적)</h2>
+            <p>
+                본 약관은 주린이 계산기(이하 "서비스")가 제공하는 주식 계산 도구의 이용과 관련하여 
+                서비스와 이용자 간의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다.
+            </p>
+
+            <h2>제2조 (정의)</h2>
+            <ul>
+                <li><strong>"서비스"</strong>란 주린이 계산기가 제공하는 배당금 계산기, 주식 용어 사전, 평단가 계산기 등 모든 주식 관련 계산 도구를 말합니다.</li>
+                <li><strong>"이용자"</strong>란 본 약관에 따라 서비스를 이용하는 모든 사람을 말합니다.</li>
+                <li><strong>"계산 결과"</strong>란 서비스를 통해 제공되는 모든 수치적 결과물을 말합니다.</li>
+            </ul>
+
+            <h2>제3조 (약관의 효력 및 변경)</h2>
+            <p>
+                본 약관은 서비스를 이용하고자 하는 모든 이용자에 대하여 그 효력이 발생합니다. 
+                서비스는 필요한 경우 관련 법령을 위배하지 않는 범위 내에서 본 약관을 변경할 수 있으며, 
+                약관이 변경되는 경우 변경사항을 공지사항을 통해 공지합니다.
+            </p>
+
+            <h2>제4조 (서비스의 제공)</h2>
+            <p>서비스는 다음과 같은 기능을 제공합니다:</p>
+            <ul>
+                <li>배당금 자동 계산 및 재투자 시뮬레이션</li>
+                <li>주식 용어 사전 및 학습 퀴즈</li>
+                <li>매수 평단가 계산 및 손익 분석</li>
+                <li>기타 주식 관련 계산 도구</li>
+            </ul>
+
+            <h2>제5조 (서비스 이용)</h2>
+            <p>
+                서비스는 회원가입 없이 누구나 무료로 이용할 수 있습니다. 
+                모든 계산은 이용자의 브라우저에서만 처리되며, 서버로 데이터가 전송되지 않습니다.
+            </p>
+
+            <div class="warning">
+                <h2 style="margin-top: 0;">⚠️ 제6조 (면책사항 - 매우 중요)</h2>
+                <p>
+                    <strong>본 서비스는 교육 목적의 계산 도구입니다.</strong> 
+                    다음 사항을 반드시 숙지하시기 바랍니다:
+                </p>
+                <ul style="margin-top: 1rem;">
+                    <li><strong>투자 조언 아님:</strong> 본 서비스는 특정 종목에 대한 투자 조언이나 매매 권유를 하지 않습니다.</li>
+                    <li><strong>정확성 보장 불가:</strong> 계산 결과의 정확성을 보장하지 않으며, 실제 투자 수익과 다를 수 있습니다.</li>
+                    <li><strong>투자 책임:</strong> 모든 투자 결정과 그에 따른 손익은 전적으로 이용자 본인의 책임입니다.</li>
+                    <li><strong>손해배상 책임 없음:</strong> 서비스 이용으로 인한 직간접적 손해에 대해 책임지지 않습니다.</li>
+                    <li><strong>금융상품 판매 아님:</strong> 본 서비스는 금융상품을 판매하거나 중개하지 않습니다.</li>
+                </ul>
+            </div>
+
+            <h2>제7조 (이용자의 의무)</h2>
+            <p>이용자는 다음 사항을 준수해야 합니다:</p>
+            <ul>
+                <li>서비스를 불법적인 목적으로 이용하지 않을 것</li>
+                <li>타인의 권리를 침해하지 않을 것</li>
+                <li>서비스의 운영을 방해하는 행위를 하지 않을 것</li>
+                <li>계산 결과를 맹신하지 않고, 투자 전 충분한 검토를 할 것</li>
+            </ul>
+
+            <h2>제8조 (서비스의 중단)</h2>
+            <p>
+                서비스는 다음의 경우 서비스 제공을 일시적으로 중단할 수 있습니다:
+            </p>
+            <ul>
+                <li>시스템 정기점검, 서버 증설, 네트워크 불안정 등 설비의 보수 또는 공사로 인한 경우</li>
+                <li>전기통신사업법에 규정된 기간통신사업자가 전기통신 서비스를 중지한 경우</li>
+                <li>기타 불가항력적 사유가 발생한 경우</li>
+            </ul>
+
+            <h2>제9조 (저작권)</h2>
+            <p>
+                서비스 내 모든 콘텐츠(텍스트, 디자인, 코드 등)의 저작권은 주린이 계산기에 있습니다. 
+                이용자는 서비스를 개인적 용도로만 이용할 수 있으며, 
+                상업적 목적으로 무단 복제, 배포, 전송할 수 없습니다.
+            </p>
+
+            <h2>제10조 (광고 게재)</h2>
+            <p>
+                서비스는 운영을 위해 Google AdSense 등의 광고를 게재할 수 있습니다. 
+                광고 내용에 대한 책임은 광고주에게 있으며, 
+                서비스는 광고로 인한 손해에 대해 책임지지 않습니다.
+            </p>
+
+            <h2>제11조 (준거법 및 관할법원)</h2>
+            <p>
+                본 약관의 해석 및 서비스 이용과 관련한 분쟁에 대해서는 대한민국 법률을 적용합니다. 
+                서비스 이용으로 발생한 분쟁에 대한 소송은 민사소송법상의 관할법원에 제기합니다.
+            </p>
+
+            <div class="highlight">
+                <strong>📌 이용자 유의사항</strong><br><br>
+                <ul style="margin-top: 0.5rem; margin-bottom: 0;">
+                    <li>본 서비스의 계산 결과는 참고용이며, 실제 투자 시 전문가 상담을 권장합니다.</li>
+                    <li>주식 투자는 원금 손실 위험이 있으니 신중히 결정하시기 바랍니다.</li>
+                    <li>서비스는 금융감독원이나 금융위원회의 인가를 받지 않은 교육용 도구입니다.</li>
+                </ul>
+            </div>
+
+            <p style="margin-top: 3rem; text-align: center; color: #B2BEC3;">
+                본 약관에 동의하지 않을 경우 서비스 이용을 중단해주시기 바랍니다.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

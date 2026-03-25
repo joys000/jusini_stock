@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="배당금 자동 계산기 - 배당 수익, 재투자 효과, 세금까지 한 번에 계산하세요">
+    <title>배당금 자동 계산기 - 주린이 계산기</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #FFD600;
+            --primary-dark: #FFC400;
+            --success: #00D9A3;
+            --danger: #FF6B6B;
+            --neutral: #2D3436;
+            --neutral-light: #F8F9FA;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            
+            /* Light mode colors */
+            --bg-gradient-start: #E8F5E9;
+            --bg-gradient-end: #FFFFFF;
+            --card-bg: #FFFFFF;
+            --text-primary: #2D3436;
+            --text-secondary: #636E72;
+            --border-color: #E8E8E8;
+            --input-bg: #FFFFFF;
+            --pattern-color: rgba(0, 217, 163, 0.03);
+        }
+        
+        /* Dark Mode */
+        body[data-theme="dark"] {
+            --primary: #FFD600;
+            --primary-dark: #FFC400;
+            --success: #00D9A3;
+            --danger: #FF6B6B;
+            --neutral: #E8E8E8;
+            --neutral-light: #2D3436;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            
+            --bg-gradient-start: #1A1A1A;
+            --bg-gradient-end: #2D3436;
+            --card-bg: #333333;
+            --text-primary: #E8E8E8;
+            --text-secondary: #B0B0B0;
+            --border-color: #4A4A4A;
+            --input-bg: #2D3436;
+            --pattern-color: rgba(0, 217, 163, 0.08);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 49px, var(--pattern-color) 49px, var(--pattern-color) 50px),
+                repeating-linear-gradient(90deg, transparent, transparent 49px, var(--pattern-color) 49px, var(--pattern-color) 50px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* Header */
+        header {
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background 0.3s ease;
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .theme-toggle {
+            background: var(--neutral-light);
+            border: 2px solid var(--border-color);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--primary);
+            transform: rotate(20deg) scale(1.1);
+        }
+        
+        .logo {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-btn {
+            background: var(--neutral-light);
+            color: var(--text-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-btn:hover {
+            background: var(--primary);
+            transform: translateX(-5px);
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .page-title h1 {
+            font-family: 'Fredoka', cursive;
+            font-size: 3rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-title .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .page-title p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        /* Calculator Layout */
+        .calculator-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Input Panel */
+        .input-panel {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            transition: background 0.3s ease;
+        }
+        
+        .input-panel h2 {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.75rem;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+        
+        .input-group {
+            margin-bottom: 1.75rem;
+        }
+        
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .input-group label .required {
+            color: var(--danger);
+        }
+        
+        .currency-toggle-btn {
+            background: linear-gradient(135deg, var(--success), #00C292);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 0.75rem;
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .currency-toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 217, 163, 0.3);
+        }
+        
+        .currency-toggle-btn:active {
+            transform: translateY(0);
+        }
+        
+        .search-dividend-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667EEA, #764BA2);
+            color: white;
+            border: none;
+            padding: 0.875rem 1.25rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.75rem;
+            font-family: 'DM Sans', sans-serif;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+        
+        .search-dividend-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .search-dividend-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Modal Popup */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translate(-50%, -48%);
+            }
+            to { 
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+        
+        .modal-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--neutral);
+            font-family: 'Fredoka', sans-serif;
+        }
+        
+        .modal-close {
+            background: #F0F0F0;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.3rem;
+            color: #636E72;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            background: #E0E0E0;
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            margin-bottom: 0;
+        }
+        
+        .modal-stock-name {
+            background: linear-gradient(135deg, #E8F5E9, #DCFCE7);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+            color: var(--success);
+            font-size: 1.1rem;
+        }
+        
+        .modal-description {
+            color: #636E72;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-google-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #4285F4, #34A853);
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        
+        .modal-google-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(66, 133, 244, 0.4);
+        }
+        
+        .modal-google-btn:active {
+            transform: translateY(0);
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .action-btn {
+            padding: 1rem;
+            border-radius: 12px;
+            border: 2px solid var(--success);
+            background: var(--card-bg);
+            color: var(--success);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn:hover {
+            background: var(--success);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 217, 163, 0.25);
+        }
+        
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                padding: 2rem;
+            }
+            
+            .modal-title {
+                font-size: 1.2rem;
+            }
+            
+            .modal-stock-name {
+                font-size: 1rem;
+            }
+            
+            .modal-description {
+                font-size: 0.9rem;
+            }
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #E8E8E8;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s ease;
+            background: var(--neutral-light);
+        }
+        
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--success);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0, 217, 163, 0.1);
+        }
+        
+        .input-suffix {
+            position: absolute;
+            right: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #636E72;
+            font-weight: 500;
+        }
+        
+        .tooltip {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            background: var(--success);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 18px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+            cursor: help;
+            font-weight: bold;
+        }
+        
+        .calculate-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--success), #00C292);
+            color: white;
+            border: none;
+            padding: 1.25rem;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            font-family: 'DM Sans', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .calculate-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .calculate-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 217, 163, 0.3);
+        }
+        
+        .calculate-btn:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        
+        /* Result Panel */
+        .result-panel {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            transition: background 0.3s ease;
+        }
+        
+        .result-panel h2 {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.75rem;
+            margin-bottom: 2rem;
+            color: var(--neutral);
+        }
+        
+        .result-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, #F0FDF4, #DCFCE7);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--success);
+        }
+        
+        .result-card.warning {
+            background: linear-gradient(135deg, #FFF7ED, #FFEDD5);
+            border-left-color: #FB923C;
+        }
+        
+        .result-card-label {
+            font-size: 0.9rem;
+            color: #636E72;
+            margin-bottom: 0.5rem;
+        }
+        
+        .result-card-value {
+            font-family: 'Fredoka', cursive;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .result-card-value .unit {
+            font-size: 1.25rem;
+            color: #636E72;
+            font-weight: 400;
+        }
+        
+        .result-detail {
+            background: var(--neutral-light);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .result-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #E8E8E8;
+        }
+        
+        .result-detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .result-detail-label {
+            color: #636E72;
+        }
+        
+        .result-detail-value {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .chart-container {
+            background: var(--neutral-light);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            height: 300px;
+            position: relative;
+        }
+        
+        /* Tax Warning Boxes */
+        .tax-warning-box {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        body[data-theme="dark"] .tax-warning-box h4 { color: var(--text-primary); }
+        body[data-theme="dark"] .tax-warning-box p, 
+        body[data-theme="dark"] .tax-warning-box ul li,
+        body[data-theme="dark"] .tax-warning-box ul li small { color: var(--text-secondary); }
+        body[data-theme="dark"] .tax-warning-box ul li strong,
+        body[data-theme="dark"] .tax-warning-box ul li span { color: var(--text-primary); }
+
+        .tax-calculator-mini {
+            background: var(--neutral-light);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        body[data-theme="dark"] .tax-calculator-mini label { color: var(--text-primary); }
+        
+        .tax-warning-box.danger {
+            border-left-color: var(--danger);
+            background: linear-gradient(135deg, #FFF5F5, #FFFFFF);
+        }
+        
+        .tax-warning-box.info {
+            border-left-color: #667EEA;
+            background: linear-gradient(135deg, #F7F8FF, #FFFFFF);
+        }
+        
+        .tax-warning-box .warning-icon {
+            font-size: 2.5rem;
+            float: left;
+            margin-right: 1rem;
+        }
+        
+        .tax-warning-box .warning-content {
+            overflow: hidden;
+        }
+        
+        .tax-warning-box h4 {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--neutral);
+        }
+        
+        .tax-warning-box p {
+            color: #636E72;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .tax-warning-box ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 1rem;
+        }
+        
+        .tax-warning-box ul li {
+            padding: 0.5rem 0;
+            color: #636E72;
+            border-bottom: 1px solid #F0F0F0;
+        }
+        
+        .tax-warning-box ul li:last-child {
+            border-bottom: none;
+        }
+        
+        .tax-warning-box ul li strong,
+        .tax-warning-box ul li span {
+            color: var(--neutral);
+            font-weight: 700;
+        }
+        
+        .warning-note {
+            background: rgba(255, 214, 0, 0.1);
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            margin-top: 1rem;
+        }
+        
+        .tax-calculator-mini {
+            background: #F8F9FA;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+        
+        .tax-calculator-mini label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--neutral);
+        }
+        
+        /* Guide Section */
+        .guide-section {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 3rem;
+            color: var(--text-primary);
+        }
+        
+        .guide-section h2 {
+            font-family: 'Fredoka', cursive;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--neutral);
+        }
+        
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .guide-card {
+            background: var(--neutral-light);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        
+        .guide-card h3 {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--neutral);
+        }
+        
+        .guide-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .guide-card li {
+            padding: 0.5rem 0;
+            color: #636E72;
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .guide-card li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        /* Warning Box */
+        .warning-box {
+            background: linear-gradient(135deg, #FFF7ED, #FFEDD5);
+            border-left: 4px solid #FB923C;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .warning-box h3 {
+            font-family: 'Fredoka', cursive;
+            color: #EA580C;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .warning-box p {
+            color: #9A3412;
+            line-height: 1.6;
+        }
+
+        /* Stock Search Results */
+        #search-results {
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            max-height: 350px;
+            overflow-y: auto;
+            z-index: 1000;
+            border: 2px solid var(--success);
+        }
+        
+        .search-result-item {
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 1px solid #F0F0F0;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .search-result-item:first-child {
+            border-top-left-radius: 14px;
+            border-top-right-radius: 14px;
+        }
+        
+        .search-result-item:last-child {
+            border-bottom: none;
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
+        }
+        
+        .search-result-item:hover {
+            background: linear-gradient(135deg, #E8F5E9, #DCFCE7);
+            transform: translateX(5px);
+        }
+        
+        .search-result-item::before {
+            content: '→';
+            position: absolute;
+            left: 1rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        .search-result-item:hover::before {
+            opacity: 1;
+        }
+        
+        .search-result-item:hover .search-result-symbol,
+        .search-result-item:hover .search-result-name {
+            padding-left: 1.5rem;
+        }
+        
+        .search-result-symbol {
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 0.25rem;
+            font-size: 1.1rem;
+            transition: padding-left 0.2s ease;
+        }
+        
+        .search-result-name {
+            color: var(--neutral);
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: padding-left 0.2s ease;
+        }
+        
+        .search-result-exchange {
+            color: #B2BEC3;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        #dividend-history-body tr:hover { background-color: #f8f9fa; }
+        #dividend-history-body td { padding: 12px 10px; border-bottom: 1px solid #eee; }
+        .apply-div-btn { 
+            padding: 4px 12px; background: var(--success); color: white; 
+            border: none; border-radius: 6px; cursor: pointer; font-size: 0.8rem; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .spinner { display: inline-block; font-size: 2rem; animation: spin 2s linear infinite; }
+        
+        @media (max-width: 968px) {
+            .calculator-layout {
+                grid-template-columns: 1fr;
+            }
+            .result-cards {
+                grid-template-columns: 1fr;
+            }
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 다크모드 전용 UI 보정 */
+        body[data-theme="dark"] {
+            #search-results { 
+                background-color: var(--card-bg) !important; 
+                border-color: var(--success) !important; 
+                box-shadow: 0 10px 40px rgba(0,0,0,0.5) !important;
+            }
+            .search-result-item { 
+                color: var(--text-primary) !important; 
+                border-bottom-color: var(--border-color) !important; 
+            }
+            .search-result-item:hover { background: #3d3d3d !important; }
+            .search-result-name { color: var(--text-secondary) !important; }
+
+            .tax-warning-box { 
+                background: var(--card-bg) !important; 
+                border: 1px solid var(--border-color) !important; 
+                box-shadow: var(--shadow) !important;
+            }
+            .tax-warning-box h4 { color: var(--text-primary) !important; }
+            .tax-warning-box p, 
+            .tax-warning-box ul li { color: var(--text-secondary) !important; }
+            
+            .tax-warning-box ul li strong, 
+            .tax-warning-box ul li span,
+            .warning-content strong { color: var(--success) !important; } 
+
+            .result-panel h2 { color: var(--text-primary); }
+            .result-card-label { color: var(--text-secondary); }
+            .result-card-value { color: var(--text-primary) !important; }
+            .result-detail-value { color: var(--text-primary); }
+            .result-card { background: #1E293B !important; border-left: 4px solid var(--success) !important; }
+            .result-card.warning { background: #431407 !important; border-left-color: #FB923C !important; }
+
+            .action-btn { 
+                background-color: var(--card-bg) !important; 
+                border-color: var(--success) !important;
+                color: var(--success) !important; 
+            }
+            .action-btn:hover { background-color: var(--success) !important; color: white !important; }
+
+            .guide-section { background-color: var(--card-bg) !important; color: var(--text-primary) !important; }
+            .guide-section h2 { color: var(--text-primary) !important; }
+            .tax-calculator-mini { background-color: #262626 !important; }
+            .tax-calculator-mini label { color: var(--text-primary) !important; }
+            
+            .modal-content { background-color: var(--card-bg) !important; color: var(--text-primary) !important; }
+            .modal-title { color: var(--text-primary) !important; }
+            .modal-close { background: #4A4A4A !important; color: white !important; }
+        }
+    </style>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                📊 주린이 계산기
+            </a>
+            <div class="nav-actions">
+                <button id="theme-toggle" class="theme-toggle" title="다크모드 전환">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <a href="index.html" class="back-btn">
+                    ← 홈으로
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="page-title">
+            <div class="icon">💰</div>
+            <h1>배당금 자동 계산기</h1>
+            <p>배당 수익과 재투자 효과를 한눈에 확인하세요</p>
+            <div id="exchange-rate-info" style="margin-top: 1rem; color: #00D9A3; font-weight: 600;"></div>
+        </div>
+
+        <div class="calculator-layout">
+            <div class="input-panel">
+                <h2>배당 정보 입력</h2>
+                
+                <div class="input-group">
+                    <label>
+                        주식 검색 🔍
+                        <span class="tooltip" title="종목명이나 티커를 입력하세요 (예: 삼성전자, AAPL)">?</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="text" id="stock-search" placeholder="삼성전자, AAPL, TSLA 등..." autocomplete="off">
+                        <div id="search-results" style="display: none;"></div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>
+                        보유 주식 수 <span class="required">*</span>
+                        <span class="tooltip" title="현재 보유하고 있는 주식 수량을 입력하세요">?</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="text" inputmode="numeric" id="shares" placeholder="예: 100">
+                        <span class="input-suffix">주</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>
+                        주당 배당금 <span class="required">*</span>
+                        <span class="tooltip" title="1주당 받는 배당금 금액입니다">?</span>
+                        <button type="button" id="currency-toggle" class="currency-toggle-btn">
+                            💱 달러로 변환
+                        </button>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="text" inputmode="numeric" id="dividend" placeholder="예: 1000">
+                        <span class="input-suffix" id="currency-symbol">원</span>
+                    </div>
+                    <button type="button" id="search-dividend-btn" class="search-dividend-btn" style="display: none;">
+                        ⚡ 최신 배당 내역 자동 분석 (AI)
+                    </button>
+                    <small id="dividend-info" style="color: #636E72; margin-top: 0.5rem; display: none;"></small>
+                </div>
+
+                <div class="input-group">
+                    <label>
+                        배당 지급 주기
+                        <span class="tooltip" title="배당금을 받는 주기를 선택하세요">?</span>
+                    </label>
+                    <select id="frequency">
+                        <option value="4">분기배당 (연 4회)</option>
+                        <option value="2">반기배당 (연 2회)</option>
+                        <option value="1">연배당 (연 1회)</option>
+                        <option value="12">월배당 (연 12회)</option>
+                        <option value="52">주배당 (연 52회)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>
+                        재투자 여부
+                        <span class="tooltip" title="받은 배당금으로 주식을 추가 매수할지 선택하세요">?</span>
+                    </label>
+                    <select id="reinvest">
+                        <option value="true">재투자 O (복리 효과)</option>
+                        <option value="false">재투자 X (단순 수령)</option>
+                    </select>
+                </div>
+
+                <div class="input-group" id="reinvest-options" style="display: none;">
+                    <label>
+                        재투자 기간
+                        <span class="tooltip" title="재투자를 계속할 기간을 선택하세요">?</span>
+                    </label>
+                    <select id="years">
+                        <option value="1">1년</option>
+                        <option value="3">3년</option>
+                        <option value="5" selected>5년</option>
+                        <option value="10">10년</option>
+                        <option value="20">20년</option>
+                    </select>
+                </div>
+
+                <div class="input-group" id="price-input" style="display: none;">
+                    <label>
+                        현재 주가
+                        <span class="tooltip" title="재투자 계산을 위한 현재 주가입니다">?</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="text" inputmode="numeric" id="price" placeholder="예: 50000">
+                        <span class="input-suffix" id="price-currency-symbol">원</span>
+                    </div>
+                </div>
+
+                <button class="calculate-btn" id="btn-calculate">
+                    💰 배당금 계산하기
+                </button>
+                
+                <div class="action-buttons" style="margin-top: 1rem;">
+                    <button class="action-btn" id="btn-download">
+                        📊 엑셀 다운로드
+                    </button>
+                    <button class="action-btn" id="btn-reset">
+                        🔄 다시 계산하기
+                    </button>
+                </div>
+            </div> 
+            
+            <div class="result-panel">
+                <h2>계산 결과</h2>
+                
+                <div id="results" style="display: none;">
+                    <div class="result-cards">
+                        <div class="result-card">
+                            <div class="result-card-label">연간 배당금 (세전)</div>
+                            <div class="result-card-value">
+                                <span id="annual-before-tax">0</span>
+                                <span class="unit">원</span>
+                            </div>
+                        </div>
+                        <div class="result-card warning">
+                            <div class="result-card-label">연간 배당금 (세후)</div>
+                            <div class="result-card-value">
+                                <span id="annual-after-tax">0</span>
+                                <span class="unit">원</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="result-detail">
+                        <div class="result-detail-row">
+                            <span class="result-detail-label">월 평균 배당금</span>
+                            <span class="result-detail-value" id="monthly">0 원</span>
+                        </div>
+                        <div class="result-detail-row" id="period-average-row" style="display: none;">
+                            <span class="result-detail-label" id="period-average-label">분기별 평균 배당금</span>
+                            <span class="result-detail-value" id="period-average">0 원</span>
+                        </div>
+                        <div class="result-detail-row">
+                            <span class="result-detail-label">배당 세금 (15.4%)</span>
+                            <span class="result-detail-value" id="tax">0 원</span>
+                        </div>
+                        <div class="result-detail-row">
+                            <span class="result-detail-label">배당수익률</span>
+                            <span class="result-detail-value" id="yield">0 %</span>
+                        </div>
+                    </div>
+
+                    <div id="reinvest-result" style="display: none;">
+                        <div class="chart-container">
+                            <canvas id="chart"></canvas>
+                        </div>
+                        
+                        <div class="result-detail">
+                            <div class="result-detail-row">
+                                <span class="result-detail-label">최종 보유 주식 수</span>
+                                <span class="result-detail-value" id="final-shares">0 주</span>
+                            </div>
+                            <div class="result-detail-row">
+                                <span class="result-detail-label">추가 매수 주식 수</span>
+                                <span class="result-detail-value" id="added-shares">0 주</span>
+                            </div>
+                            <div class="result-detail-row">
+                                <span class="result-detail-label">누적 배당금 (세후)</span>
+                                <span class="result-detail-value" id="cumulative">0 원</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tax-warnings" style="display: none; margin-top: 2rem;">
+                        <h3 style="font-family: 'Fredoka', cursive; font-size: 1.5rem; margin-bottom: 1rem; color: var(--neutral);">
+                            ⚠️ 세금 및 비용 안내
+                        </h3>
+                        
+                        <div id="finance-tax-warning" style="display: none;" class="tax-warning-box danger">
+                            <div class="warning-icon">🚨</div>
+                            <div class="warning-content">
+                                <h4>금융소득종합과세 대상!</h4>
+                                <p>연간 배당금이 <strong>2,000만 원을 초과</strong>하면 다른 소득과 합산하여 최대 <strong>45%</strong>까지 종합소득세가 부과될 수 있습니다.</p>
+                                <ul>
+                                    <li>현재 예상 배당금: <span id="warning-dividend-amount">0원</span></li>
+                                    <li>2,000만원 초과분: <span id="warning-excess-amount">0원</span></li>
+                                    <li>예상 추가 세금: <span id="warning-additional-tax">0원</span></li>
+                                </ul>
+                                <p class="warning-note">💡 세무사 상담을 권장하며, 배당금 수령 시기를 조절하여 절세할 수 있습니다.</p>
+                            </div>
+                        </div>
+                        
+                        <div id="capital-gains-info" class="tax-warning-box info">
+                            <div class="warning-icon">📊</div>
+                            <div class="warning-content">
+                                <h4>해외주식 양도소득세 안내</h4>
+                                <p>해외 주식을 매도할 때 발생하는 <strong>양도차익</strong>에 대해 세금이 부과됩니다.</p>
+                                <ul>
+                                    <li>연간 양도차익 <strong>250만 원까지 비과세</strong></li>
+                                    <li>250만 원 초과분에 대해 <strong>22%</strong> 세율 적용 (지방세 포함)</li>
+                                </ul>
+                                <div class="tax-calculator-mini">
+                                    <label>예상 연간 양도차익 (만원):</label>
+                                    <input type="number" id="capital-gains-input" placeholder="예: 1000" style="width: 150px; padding: 0.5rem; border: 1px solid #ddd; border-radius: 8px;">
+                                    <button id="btn-calc-tax" style="padding: 0.5rem 1rem; background: var(--primary); border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">계산</button>
+                                    <div id="capital-gains-result" style="margin-top: 1rem; font-weight: 600;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="transaction-fee-info" class="tax-warning-box info">
+                            <div class="warning-icon">💳</div>
+                            <div class="warning-content">
+                                <h4>국내주식 거래 비용 안내</h4>
+                                <p>국내 주식 거래 시 발생하는 숨은 비용들을 미리 파악하세요.</p>
+                                <ul>
+                                    <li><strong>증권거래세:</strong> 매도 시 0.23% (KOSPI), 0.23% (KOSDAQ)</li>
+                                    <li><strong>농어촌특별세:</strong> 증권거래세의 10% 추가 (0.023%)</li>
+                                    <li><strong>유관기관 제비용:</strong> 약 0.00484%</li>
+                                    <li><strong>증권사 수수료:</strong> 보통 0.015% ~ 0.5%</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                <div id="empty-state" style="text-align: center; padding: 3rem 0; color: #B2BEC3;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">📊</div>
+                    <p>배당 정보를 입력하고<br>계산 버튼을 눌러주세요</p>
+                </div>
+            </div> 
+        </div> 
+        
+        <div class="guide-section">
+            <h2>배당금 계산기 사용 가이드</h2>
+            <div class="guide-grid">
+                <div class="guide-card">
+                    <h3>💡 배당금이란?</h3>
+                    <ul>
+                        <li>기업이 이익의 일부를 주주에게 분배하는 것</li>
+                        <li>보유 주식 수에 비례해서 지급됨</li>
+                        <li>안정적인 현금 흐름 창출 가능</li>
+                        <li>장기 투자자에게 유리한 투자 방식</li>
+                    </ul>
+                </div>
+                
+                <div class="guide-card">
+                    <h3>🌐 실시간 데이터 제공</h3>
+                    <ul>
+                        <li>FinnHub API: 실시간 주식 데이터</li>
+                        <li>ExchangeRate API: 실시간 USD/KRW 환율</li>
+                        <li>30분마다 환율 자동 갱신</li>
+                        <li>통합 서버 기반 하이브리드 검색</li>
+                    </ul>
+                </div>
+                
+                <div class="guide-card">
+                    <h3>📅 배당 지급 주기</h3>
+                    <ul>
+                        <li>연배당: 1년에 1번 (한국 대부분)</li>
+                        <li>반기배당: 1년에 2번</li>
+                        <li>분기배당: 1년에 4번 (미국 일반적)</li>
+                        <li>월배당: 1년에 12번 (리츠, ETF)</li>
+                        <li>주배당: 1년에 52번 (일부 고배당 ETF)</li>
+                    </ul>
+                </div>
+                
+                <div class="guide-card">
+                    <h3>📊 재투자 효과</h3>
+                    <ul>
+                        <li>받은 배당금으로 주식을 추가 매수</li>
+                        <li>복리 효과로 자산 증식 가속화</li>
+                        <li>장기적으로 큰 차이 발생</li>
+                        <li>배당금이 또 다시 배당금을 창출</li>
+                    </ul>
+                </div>
+                
+                <div class="guide-card">
+                    <h3>⚠️ 세금 정보</h3>
+                    <ul>
+                        <li>배당소득세 15.4% 자동 차감</li>
+                        <li>금융소득 2천만원 초과 시 종합과세</li>
+                        <li>해외 주식은 세율이 다를 수 있음</li>
+                        <li>연말정산 시 환급 가능</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ 투자 유의사항</h3>
+                <p>
+                    본 계산기는 교육 및 참고 목적으로 제공됩니다. 
+                    실제 배당금은 기업의 실적과 정책에 따라 변동될 수 있으며, 
+                    배당이 감소하거나 중단될 수도 있습니다. 
+                    투자의 최종 결정은 반드시 본인의 판단과 책임 하에 이루어져야 합니다.
+                </p>
+            </div>
+        </div> 
+    </div> 
+
+    <div id="dividend-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">📊 배당 분석 리포트</h3>
+                <button class="modal-close" id="btn-close-modal">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-stock-name" class="modal-stock-name">종목명 로딩 중...</div>
+                <div id="api-loading" style="text-align: center; padding: 2rem; display: none;">
+                    <div class="spinner">⏳</div>
+                    <p style="margin-top: 1rem; color: #667EEA;">
+                        <strong>서버를 깨우는 중입니다...</strong><br>
+                        <small>(무료 서버 특성상 첫 접속 시 최대 20초가 소요됩니다)</small>
+                    </p>
+                </div>
+                <div id="api-result" style="display: none;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #eee; text-align: left;">
+                                <th style="padding: 10px;">배당락일</th>
+                                <th style="padding: 10px;">배당금</th>
+                                <th style="padding: 10px;">선택</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dividend-history-body"></tbody>
+                    </table>
+                </div>
+                <div id="api-error" style="display: none; color: #FF6B6B; text-align: center; padding: 1rem;">
+                    ❌ 데이터를 가져오지 못했습니다. 서버 상태를 확인해주세요.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const RENDER_SERVER_URL = "https://dividend-server.onrender.com";
+        const FINNHUB_API_KEY = 'd70u9vhr01ql6rg0mgr0d70u9vhr01ql6rg0mgrg';
+
+        let chartInstance = null;
+        let searchTimer = null;
+        let selectedStock = null;
+        let currentCurrency = 'KRW';
+        let EXCHANGE_RATE = 1500;
+        let lastExchangeRateUpdate = null;
+
+        // ==========================================
+        // 1. 이벤트 리스너 통합 (Null 에러 원천 차단)
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // 다크모드 초기화
+            initTheme();
+            
+            // 환율 주기적 로드
+            fetchExchangeRate();
+            setInterval(fetchExchangeRate, 30 * 60 * 1000);
+
+            // 숫자 포맷팅 인풋
+            const sharesInput = document.getElementById('shares');
+            const dividendInput = document.getElementById('dividend');
+            const priceInput = document.getElementById('price');
+            if (sharesInput) sharesInput.addEventListener('input', function() { formatNumberInput(this); });
+            if (dividendInput) dividendInput.addEventListener('input', function() { formatNumberInput(this); });
+            if (priceInput) priceInput.addEventListener('input', function() { formatNumberInput(this); });
+
+            // 검색창 이벤트
+            const searchInput = document.getElementById('stock-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    searchStock(e.target.value.trim());
+                });
+                // 엔터키 입력 시 첫 검색 결과 강제 클릭
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const firstResult = document.querySelector('.search-result-item');
+                        if (firstResult) firstResult.click();
+                    }
+                });
+            }
+
+            // 버튼 클릭 이벤트 바인딩
+            document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+            document.getElementById('currency-toggle')?.addEventListener('click', toggleCurrency);
+            document.getElementById('search-dividend-btn')?.addEventListener('click', openDividendAnalysis);
+            document.getElementById('btn-calculate')?.addEventListener('click', calculate);
+            document.getElementById('btn-download')?.addEventListener('click', downloadExcel);
+            document.getElementById('btn-reset')?.addEventListener('click', resetForm);
+            document.getElementById('btn-calc-tax')?.addEventListener('click', calculateCapitalGainsTax);
+            document.getElementById('btn-close-modal')?.addEventListener('click', closeDividendModal);
+
+            // 재투자 토글
+            const reinvestSelect = document.getElementById('reinvest');
+            if (reinvestSelect) {
+                reinvestSelect.addEventListener('change', toggleReinvestOptions);
+            }
+
+            // 모달 및 외부 영역 클릭 닫기
+            const modal = document.getElementById('dividend-modal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) closeDividendModal();
+                });
+            }
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeDividendModal();
+            });
+            document.addEventListener('click', function(e) {
+                const searchResults = document.getElementById('search-results');
+                if (searchInput && searchResults && !searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.style.display = 'none';
+                }
+            });
+        });
+
+        // ==========================================
+        // 2. 테마 및 환율 로직
+        // ==========================================
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.querySelector('.theme-icon');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                if (themeIcon) themeIcon.textContent = '☀️';
+            }
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.querySelector('.theme-icon');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        async function fetchExchangeRate() {
+            try {
+                const response = await fetch(`${RENDER_SERVER_URL}/exchange`);
+                if (!response.ok) throw new Error('서버 통신 실패');
+                const data = await response.json();
+                if (data.status === "success") {
+                    EXCHANGE_RATE = Math.round(data.rate * 100) / 100; 
+                    lastExchangeRateUpdate = new Date();
+                    console.log(`✅ 환율 갱신: 1 USD = ${EXCHANGE_RATE} KRW`);
+                    updateExchangeRateDisplay();
+                } else throw new Error(data.message);
+            } catch (error) {
+                console.warn('환율 로드 실패, 기본값 1400 적용:', error);
+                EXCHANGE_RATE = 1400;
+                updateExchangeRateDisplay();
+            }
+        }
+
+        function updateExchangeRateDisplay() {
+            const rateInfo = document.getElementById('exchange-rate-info');
+            if (rateInfo && lastExchangeRateUpdate) {
+                const timeStr = lastExchangeRateUpdate.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+                rateInfo.innerHTML = `<small>💱 현재 환율: 1 USD = ${EXCHANGE_RATE.toLocaleString()} KRW (${timeStr} 기준)</small>`;
+            }
+        }
+
+        // ==========================================
+        // 3. 주식 검색 엔진 (디바운싱 & 독립 호출)
+        // ==========================================
+        async function searchStock(query) {
+            const resultsDiv = document.getElementById('search-results');
+            if (!query || query.length < 1) {
+                resultsDiv.style.display = 'none';
+                return;
+            }
+
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(async () => {
+                let combinedResults = [];
+                try {
+                    // 한국 서버 호출
+                    const krTargetUrl = `${RENDER_SERVER_URL}/search/kr?q=${encodeURIComponent(query)}`;
+                    const krRes = await fetch(krTargetUrl).catch(() => null);
+                    if (krRes && krRes.ok) {
+                        const krData = await krRes.json();
+                        if (krData.status === "success") combinedResults = [...combinedResults, ...krData.result];
+                    }
+
+                    // 미국 서버 호출 (FinnHub)
+                    const usRes = await fetch(`https://finnhub.io/api/v1/search?q=${encodeURIComponent(query)}&token=${FINNHUB_API_KEY}`).catch(() => null);
+                    if (usRes && usRes.ok) {
+                        const usData = await usRes.json();
+                        if (usData.result) combinedResults = [...combinedResults, ...usData.result];
+                    }
+
+                    // 결과 표시
+                    if (combinedResults.length > 0) {
+                        displaySearchResults(combinedResults, query);
+                    } else {
+                        resultsDiv.innerHTML = `<div class="no-results">"${query}" 결과가 없습니다.</div>`;
+                        resultsDiv.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error("❌ 검색 에러:", error);
+                }
+            }, 300);
+        }
+
+        function displaySearchResults(results, query) {
+            const resultsDiv = document.getElementById('search-results');
+            const excludedTypes = ['BOND', 'CURRENCY', 'FUTURE', 'INDEX', 'WARRANT'];
+            
+            let filtered = results.filter(r => !excludedTypes.includes(r.type));
+            
+            // 중복 제거 (티커 기준)
+            filtered = Array.from(new Map(filtered.map(item => [item.symbol, item])).values());
+            
+            if (filtered.length === 0) {
+                resultsDiv.innerHTML = `<div class="no-results">결과가 없습니다.</div>`;
+                resultsDiv.style.display = 'block';
+                return;
+            }
+            
+            const resultsHtml = filtered.slice(0, 8).map(r => {
+                const isKorea = r.type === "KOREA" || r.symbol.endsWith('.KS') || r.symbol.endsWith('.KQ');
+                const typeLabel = isKorea ? '🇰🇷 KR' : '🇺🇸 US';
+                return `
+                <div class="search-result-item" onclick="selectStock('${r.symbol}')">
+                    <div class="search-result-symbol">${r.displaySymbol || r.symbol}</div>
+                    <div class="search-result-name">${r.description || 'N/A'}</div>
+                    <div class="search-result-exchange">${typeLabel}</div>
+                </div>
+            `}).join('');
+
+            resultsDiv.innerHTML = resultsHtml;
+            resultsDiv.style.display = 'block';
+        }
+
+        async function selectStock(symbol) {
+            document.getElementById('search-results').style.display = 'none';
+            document.getElementById('stock-search').value = symbol;
+            
+            selectedStock = { symbol: symbol, name: symbol };
+            
+            const isKorean = symbol.endsWith('.KS') || symbol.endsWith('.KQ');
+            forceCurrencyMode(isKorean ? 'KRW' : 'USD');
+            
+            const dividendInfo = document.getElementById('dividend-info');
+            const searchDividendBtn = document.getElementById('search-dividend-btn');
+            
+            if (isKorean) {
+                dividendInfo.innerHTML = `
+                    <div style="background: #E3F2FD; padding: 1rem; border-radius: 12px; border-left: 4px solid #2196F3;">
+                        <strong>🇰🇷 한국 종목 (${symbol}) 선택됨</strong><br>
+                        실시간 주가는 하단 분석 버튼을 통해 확인하세요.
+                    </div>`;
+            } else {
+                try {
+                    const quoteResponse = await fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${FINNHUB_API_KEY}`);
+                    const quoteData = await quoteResponse.json();
+                    if (quoteData.c) {
+                        const priceInput = document.getElementById('price');
+                        priceInput.value = quoteData.c.toFixed(2);
+                        formatNumberInput(priceInput);
+                        dividendInfo.innerHTML = `
+                            <div style="background: #E8F5E9; padding: 1rem; border-radius: 12px; border-left: 4px solid var(--success);">
+                                <strong>🇺🇸 해외 종목 (${symbol}) 선택됨</strong><br>
+                                현재가: $${quoteData.c.toFixed(2)}
+                            </div>`;
+                    }
+                } catch (error) {
+                    console.error("미국 주가 호출 실패:", error);
+                }
+            }
+            
+            dividendInfo.style.display = 'block';
+            searchDividendBtn.style.display = 'block';
+        }
+
+        // ==========================================
+        // 4. 배당 리포트 모달 통신
+        // ==========================================
+        async function openDividendAnalysis() {
+            if (!selectedStock || !selectedStock.symbol) return alert('주식을 먼저 선택하세요!');
+            
+            const modal = document.getElementById('dividend-modal');
+            const loading = document.getElementById('api-loading');
+            const result = document.getElementById('api-result');
+            const error = document.getElementById('api-error');
+            const historyBody = document.getElementById('dividend-history-body');
+            const stockTitle = document.getElementById('modal-stock-name');
+
+            modal.style.display = 'block';
+            stockTitle.textContent = `${selectedStock.symbol} 분석 중...`;
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            error.style.display = 'none';
+            historyBody.innerHTML = '';
+
+            try {
+                const response = await fetch(`${RENDER_SERVER_URL}/dividend/${selectedStock.symbol}`);
+                const data = await response.json();
+
+                if (data.status === "success" && data.history.length > 0) {
+                    data.history.forEach(item => {
+                        historyBody.innerHTML += `
+                            <tr>
+                                <td>${item.date}</td>
+                                <td><strong>${item.amount}</strong></td>
+                                <td><button class="apply-div-btn" onclick="applyDividend('${item.amount}')">적용</button></td>
+                            </tr>`;
+                    });
+                    loading.style.display = 'none';
+                    result.style.display = 'block';
+                    stockTitle.textContent = `${selectedStock.symbol} 배당 히스토리`;
+                } else throw new Error("No data"); 
+            } catch (err) {
+                loading.style.display = 'none';
+                error.style.display = 'block';
+            }
+        }
+
+        function closeDividendModal() {
+            document.getElementById('dividend-modal').style.display = 'none';
+        }
+
+        function applyDividend(amount) {
+            const divInput = document.getElementById('dividend');
+            const isKorean = selectedStock.symbol.endsWith('.KS') || selectedStock.symbol.endsWith('.KQ');
+            const targetCurrency = isKorean ? 'KRW' : 'USD';
+            
+            forceCurrencyMode(targetCurrency);
+            
+            let cleanAmount = amount.replace(/[^0-9.]/g, '');
+            if (targetCurrency === 'KRW') {
+                cleanAmount = Math.round(parseFloat(cleanAmount)).toString();
+            }
+            
+            divInput.value = cleanAmount;
+            formatNumberInput(divInput); 
+            closeDividendModal();
+        }
+
+        // ==========================================
+        // 5. 유틸리티 및 계산 로직
+        // ==========================================
+        function formatNumberInput(input) {
+            if (!input) return;
+            const cursorPosition = input.selectionStart;
+            const oldValue = input.value;
+            const oldLength = oldValue.length;
+            
+            let value = input.value.replace(/[^\d.]/g, '');
+            let parts = value.split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            
+            const newValue = parts.length > 1 ? parts[0] + '.' + parts[1] : parts[0];
+            input.value = newValue;
+            
+            const diff = newValue.length - oldLength;
+            input.setSelectionRange(cursorPosition + diff, cursorPosition + diff);
+        }
+
+        function getNumericValue(input) {
+            if (!input || !input.value) return 0;
+            return parseFloat(input.value.replace(/,/g, '')) || 0;
+        }
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('ko-KR').format(Math.round(num));
+        }
+
+        function toggleReinvestOptions() {
+            const isReinvest = document.getElementById('reinvest').value === 'true';
+            document.getElementById('reinvest-options').style.display = isReinvest ? 'block' : 'none';
+            document.getElementById('price-input').style.display = isReinvest ? 'block' : 'none';
+        }
+
+        function forceCurrencyMode(targetCurrency) {
+            if (currentCurrency === targetCurrency) return; 
+            
+            const currencySymbol = document.getElementById('currency-symbol');
+            const priceCurrencySymbol = document.getElementById('price-currency-symbol');
+            const toggleBtn = document.getElementById('currency-toggle');
+            
+            currentCurrency = targetCurrency;
+            if (targetCurrency === 'USD') {
+                currencySymbol.textContent = '$';
+                priceCurrencySymbol.textContent = '$';
+                toggleBtn.textContent = '💱 원화로 변환';
+            } else {
+                currencySymbol.textContent = '원';
+                priceCurrencySymbol.textContent = '원';
+                toggleBtn.textContent = '💱 달러로 변환';
+            }
+        }
+
+        function toggleCurrency() {
+            const dividendInput = document.getElementById('dividend');
+            const priceInput = document.getElementById('price');
+            const dividendValue = getNumericValue(dividendInput);
+            const priceValue = getNumericValue(priceInput);
+            
+            if (currentCurrency === 'KRW') {
+                dividendInput.value = (dividendValue / EXCHANGE_RATE).toFixed(4);
+                priceInput.value = priceValue > 0 ? (priceValue / EXCHANGE_RATE).toFixed(2) : '';
+                forceCurrencyMode('USD');
+            } else {
+                dividendInput.value = Math.round(dividendValue * EXCHANGE_RATE);
+                priceInput.value = priceValue > 0 ? Math.round(priceValue * EXCHANGE_RATE) : '';
+                formatNumberInput(dividendInput);
+                if(priceInput.value) formatNumberInput(priceInput);
+                forceCurrencyMode('KRW');
+            }
+        }
+
+        function calculateCapitalGainsTax() {
+            const input = document.getElementById('capital-gains-input');
+            const result = document.getElementById('capital-gains-result');
+            const gains = parseFloat(input.value) * 10000; 
+            
+            if (!gains || gains <= 0) {
+                result.innerHTML = '<span style="color: var(--danger);">금액을 입력해주세요!</span>';
+                return;
+            }
+            
+            const DEDUCTION = 2500000;
+            if (gains <= DEDUCTION) {
+                result.innerHTML = `
+                    <span style="color: var(--success);">✅ 비과세 대상</span><br>
+                    <small>연간 ${formatNumber(gains)}원은 250만원 이하로 세금이 없습니다!</small>`;
+            } else {
+                const taxableAmount = gains - DEDUCTION;
+                const tax = taxableAmount * 0.22;
+                const netProfit = gains - tax;
+                result.innerHTML = `
+                    <div style="background: white; padding: 1rem; border-radius: 8px; margin-top: 0.5rem; color: #333;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>총 양도차익:</span><strong>${formatNumber(gains)}원</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: var(--success);">
+                            <span>공제금액:</span><strong>-${formatNumber(DEDUCTION)}원</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; border-top: 2px solid #E8E8E8; padding-top: 0.5rem;">
+                            <span>과세 대상:</span><strong>${formatNumber(taxableAmount)}원</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: var(--danger);">
+                            <span>납부 세금 (22%):</span><strong style="font-size: 1.2rem;">${formatNumber(tax)}원</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-top: 2px solid var(--primary); padding-top: 0.5rem; font-size: 1.1rem;">
+                            <span>실제 수령액:</span><strong style="color: var(--success);">${formatNumber(netProfit)}원</strong>
+                        </div>
+                    </div>`;
+            }
+        }
+
+        function calculate() {
+            const shares = getNumericValue(document.getElementById('shares'));
+            let dividend = getNumericValue(document.getElementById('dividend'));
+            const frequency = parseInt(document.getElementById('frequency').value);
+            const isReinvest = document.getElementById('reinvest').value === 'true';
+            const years = parseInt(document.getElementById('years').value) || 1;
+            let price = getNumericValue(document.getElementById('price'));
+
+            if (shares <= 0 || dividend <= 0) return alert('보유 주식 수와 주당 배당금을 입력해주세요!');
+            if (isReinvest && price <= 0) return alert('재투자 계산을 위해 현재 주가를 입력해주세요!');
+
+            if (currentCurrency === 'USD') {
+                dividend *= EXCHANGE_RATE;
+                price *= EXCHANGE_RATE;
+            }
+
+            const annualDividendBeforeTax = shares * dividend * frequency;
+            const tax = annualDividendBeforeTax * 0.154;
+            const annualDividendAfterTax = annualDividendBeforeTax - tax;
+            const monthlyDividend = annualDividendAfterTax / 12;
+            const yieldRate = isReinvest && price > 0 ? (dividend * frequency / price * 100) : 0;
+
+            document.getElementById('annual-before-tax').textContent = formatNumber(annualDividendBeforeTax);
+            document.getElementById('annual-after-tax').textContent = formatNumber(annualDividendAfterTax);
+            document.getElementById('monthly').textContent = formatNumber(monthlyDividend) + ' 원';
+            document.getElementById('tax').textContent = formatNumber(tax) + ' 원';
+            document.getElementById('yield').textContent = yieldRate > 0 ? yieldRate.toFixed(2) + ' %' : 'N/A';
+
+            if (frequency !== 12) { 
+                const periodNames = { 1: '연간 배당금', 2: '반기별 평균 배당금', 4: '분기별 평균 배당금', 52: '주별 평균 배당금' };
+                document.getElementById('period-average-label').textContent = periodNames[frequency] || '주기별 평균 배당금';
+                document.getElementById('period-average').textContent = formatNumber(annualDividendAfterTax / frequency) + ' 원';
+                document.getElementById('period-average-row').style.display = 'flex';
+            } else {
+                document.getElementById('period-average-row').style.display = 'none'; 
+            }
+
+            checkTaxWarnings(annualDividendBeforeTax);
+
+            if (isReinvest) {
+                let currentShares = shares;
+                let totalDividend = 0;
+                const labels = [], sharesData = [], dividendData = [];
+
+                for (let year = 0; year <= years; year++) {
+                    labels.push(year + '년');
+                    sharesData.push(Math.round(currentShares));
+                    dividendData.push(Math.round(totalDividend));
+                    if (year < years) {
+                        const yearDividend = currentShares * dividend * frequency * 0.846;
+                        totalDividend += yearDividend;
+                        currentShares += (yearDividend / price);
+                    }
+                }
+
+                document.getElementById('final-shares').textContent = formatNumber(currentShares) + ' 주';
+                document.getElementById('added-shares').textContent = formatNumber(currentShares - shares) + ' 주';
+                document.getElementById('cumulative').textContent = formatNumber(totalDividend) + ' 원';
+                document.getElementById('reinvest-result').style.display = 'block';
+
+                if (chartInstance) chartInstance.destroy();
+                const ctx = document.getElementById('chart').getContext('2d');
+                chartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: '보유 주식 수', data: sharesData, borderColor: '#00D9A3', backgroundColor: 'rgba(0, 217, 163, 0.1)', tension: 0.4, fill: true, yAxisID: 'y' },
+                            { label: '누적 배당금', data: dividendData, borderColor: '#FFD600', backgroundColor: 'rgba(255, 214, 0, 0.1)', tension: 0.4, fill: true, yAxisID: 'y1' }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            y: { type: 'linear', display: true, position: 'left', title: { display: true, text: '보유 주식 수 (주)' } },
+                            y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: '누적 배당금 (원)' }, grid: { drawOnChartArea: false } }
+                        }
+                    }
+                });
+            } else {
+                document.getElementById('reinvest-result').style.display = 'none';
+            }
+
+            document.getElementById('empty-state').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            document.querySelector('.result-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function checkTaxWarnings(annualBeforeTax) {
+            document.getElementById('tax-warnings').style.display = 'block';
+            const financeWarning = document.getElementById('finance-tax-warning');
+            
+            if (annualBeforeTax > 20000000) {
+                financeWarning.style.display = 'block';
+                document.getElementById('warning-dividend-amount').textContent = formatNumber(annualBeforeTax) + '원';
+                document.getElementById('warning-excess-amount').textContent = formatNumber(annualBeforeTax - 20000000) + '원';
+                document.getElementById('warning-additional-tax').textContent = formatNumber((annualBeforeTax - 20000000) * 0.24) + '원';
+            } else {
+                financeWarning.style.display = 'none';
+            }
+        }
+
+        function downloadExcel() {
+            const basicData = [
+                ['배당금 계산 결과'], [''], ['기본 정보'],
+                ['주식명', document.getElementById('stock-search').value || '주식'],
+                ['보유 주식 수', document.getElementById('shares').value + ' 주'],
+                ['주당 배당금', document.getElementById('dividend').value + ' ' + document.getElementById('currency-symbol').textContent],
+                ['배당 지급 주기', document.getElementById('frequency').options[document.getElementById('frequency').selectedIndex].text],
+                ['현재 주가', document.getElementById('price').value + ' ' + document.getElementById('price-currency-symbol').textContent],
+                ['재투자 여부', document.getElementById('reinvest').value === 'true' ? 'O (복리 효과)' : 'X (단리)'],
+                [''], ['계산 결과'],
+                ['연간 배당금 (세전)', document.getElementById('annual-before-tax').textContent + ' 원'],
+                ['연간 배당금 (세후)', document.getElementById('annual-after-tax').textContent + ' 원'],
+                ['월 평균 배당금', document.getElementById('monthly').textContent]
+            ];
+            
+            if (document.getElementById('frequency').value !== '12') {
+                basicData.push([document.getElementById('period-average-label').textContent, document.getElementById('period-average').textContent]);
+            }
+            basicData.push(['배당 세금 (15.4%)', document.getElementById('tax').textContent], ['배당수익률', document.getElementById('yield').textContent]);
+            
+            if (document.getElementById('reinvest').value === 'true') {
+                basicData.push(
+                    [''], [`재투자 결과 (${document.getElementById('years').value}년)`],
+                    ['최종 보유 주식 수', document.getElementById('final-shares').textContent],
+                    ['추가 매수 주식 수', document.getElementById('added-shares').textContent],
+                    ['누적 배당금 (세후)', document.getElementById('cumulative').textContent]
+                );
+            }
+            
+            const ws = XLSX.utils.aoa_to_sheet(basicData);
+            ws['!cols'] = [{ wch: 20 }, { wch: 25 }];
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, '배당금 계산');
+            XLSX.writeFile(wb, `배당금_계산_${document.getElementById('stock-search').value || '주식'}_${new Date().toISOString().split('T')[0]}.xlsx`);
+        }
+
+        function resetForm() {
+            document.getElementById('stock-search').value = '';
+            document.getElementById('shares').value = '';
+            document.getElementById('dividend').value = '';
+            document.getElementById('frequency').value = '4';
+            document.getElementById('reinvest').value = 'false';
+            document.getElementById('years').value = '5';
+            document.getElementById('price').value = '';
+            
+            document.getElementById('reinvest-options').style.display = 'none';
+            document.getElementById('price-input').style.display = 'none';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('empty-state').style.display = 'block';
+            document.getElementById('dividend-info').style.display = 'none';
+            document.getElementById('search-dividend-btn').style.display = 'none';
+            
+            forceCurrencyMode('KRW');
+            selectedStock = null;
+            if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+        }
+    </script>
+</body>
+</html>
