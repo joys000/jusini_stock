@@ -1,4 +1,4 @@
-name: Release_Notification
+name: UPDATE
 on:
   release:
     # 오직 '새로운 릴리즈가 발행되었을 때' 한 번만 알림을 보냅니다.
@@ -14,7 +14,7 @@ jobs:
       - name: Discord 알림 전송
         uses: sarisia/actions-status-discord@v1
         with:
-          webhook: ${{ secrets.RELEASE_NOTIFICATION }}
+          webhook: ${{ secrets.UPDATE }}
           status: success
           title: "🎉 주리니 계산기 신규 업데이트 공지! "
           description: |
