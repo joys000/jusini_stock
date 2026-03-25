@@ -1,0 +1,25 @@
+name: Release_Notification
+on:
+  release:
+    # 오직 '새로운 릴리즈가 발행되었을 때' 한 번만 알림을 보냅니다.
+    types: [published]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Discord 알림 전송
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.RELEASE_NOTIFICATION }}
+          status: success
+          title: "🎉 주리니 계산기 신규 업데이트 공지! "
+          description: |
+            📦 **버전:** ${{ github.event.release.tag_name }}
+            📝 **업데이트 내용:** ${{ github.event.release.body }}
+            
+            🔗 **상세정보:** [GitHub Release 바로가기](${{ github.event.release.html_url }})
+          color: 0x00ff00
