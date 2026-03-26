@@ -494,13 +494,14 @@
             font-family: 'DM Sans', sans-serif;
             transition: all 0.3s ease;
             background: var(--neutral-light);
+            color: var(--text-primary); /* 다크모드 글자색 보정 */
         }
         
         .input-group input:focus,
         .input-group select:focus {
             outline: none;
             border-color: var(--success);
-            background: white;
+            background: var(--card-bg);
             box-shadow: 0 0 0 4px rgba(0, 217, 163, 0.1);
         }
         
@@ -748,13 +749,6 @@
             padding: 1rem;
             border-radius: 12px;
             font-size: 0.95rem;
-            margin-top: 1rem;
-        }
-        
-        .tax-calculator-mini {
-            background: #F8F9FA;
-            padding: 1.5rem;
-            border-radius: 12px;
             margin-top: 1rem;
         }
         
@@ -1088,8 +1082,8 @@
                         <span class="tooltip" title="받은 배당금으로 주식을 추가 매수할지 선택하세요">?</span>
                     </label>
                     <select id="reinvest">
+                        <option value="false" selected>재투자 X (단순 수령)</option>
                         <option value="true">재투자 O (복리 효과)</option>
-                        <option value="false">재투자 X (단순 수령)</option>
                     </select>
                 </div>
 
@@ -1109,8 +1103,8 @@
 
                 <div class="input-group" id="price-input" style="display: none;">
                     <label>
-                        현재 주가
-                        <span class="tooltip" title="재투자 계산을 위한 현재 주가입니다">?</span>
+                        현재 주가 <span class="required">*</span>
+                        <span class="tooltip" title="재투자 계산을 위한 현재 주가입니다 (재투자 시 필수)">?</span>
                     </label>
                     <div class="input-wrapper">
                         <input type="text" inputmode="numeric" id="price" placeholder="예: 50000">
@@ -1330,7 +1324,7 @@
                 <div id="api-loading" style="text-align: center; padding: 2rem; display: none;">
                     <div class="spinner">⏳</div>
                     <p style="margin-top: 1rem; color: #667EEA;">
-                        <strong>서버를 깨우는 중입니다...</strong><br>
+                        <strong id="loading-message">서버를 깨우는 중입니다...</strong><br>
                         <small>(무료 서버 특성상 첫 접속 시 최대 20초가 소요됩니다)</small>
                     </p>
                 </div>
@@ -1365,17 +1359,14 @@
         let lastExchangeRateUpdate = null;
 
         // ==========================================
-        // 1. 이벤트 리스너 통합 (Null 에러 원천 차단)
+        // 1. 이벤트 리스너 통합
         // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
-            // 다크모드 초기화
             initTheme();
             
-            // 환율 주기적 로드
             fetchExchangeRate();
             setInterval(fetchExchangeRate, 30 * 60 * 1000);
 
-            // 숫자 포맷팅 인풋
             const sharesInput = document.getElementById('shares');
             const dividendInput = document.getElementById('dividend');
             const priceInput = document.getElementById('price');
@@ -1383,13 +1374,11 @@
             if (dividendInput) dividendInput.addEventListener('input', function() { formatNumberInput(this); });
             if (priceInput) priceInput.addEventListener('input', function() { formatNumberInput(this); });
 
-            // 검색창 이벤트
             const searchInput = document.getElementById('stock-search');
             if (searchInput) {
                 searchInput.addEventListener('input', (e) => {
                     searchStock(e.target.value.trim());
                 });
-                // 엔터키 입력 시 첫 검색 결과 강제 클릭
                 searchInput.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
@@ -1399,7 +1388,6 @@
                 });
             }
 
-            // 버튼 클릭 이벤트 바인딩
             document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
             document.getElementById('currency-toggle')?.addEventListener('click', toggleCurrency);
             document.getElementById('search-dividend-btn')?.addEventListener('click', openDividendAnalysis);
@@ -1409,13 +1397,11 @@
             document.getElementById('btn-calc-tax')?.addEventListener('click', calculateCapitalGainsTax);
             document.getElementById('btn-close-modal')?.addEventListener('click', closeDividendModal);
 
-            // 재투자 토글
             const reinvestSelect = document.getElementById('reinvest');
             if (reinvestSelect) {
                 reinvestSelect.addEventListener('change', toggleReinvestOptions);
             }
 
-            // 모달 및 외부 영역 클릭 닫기
             const modal = document.getElementById('dividend-modal');
             if (modal) {
                 modal.addEventListener('click', function(e) {
@@ -1434,53 +1420,35 @@
         });
 
         // ==========================================
-        // 2. 테마 및 환율 로직
+        // 2. 테마 (Bug 3 완벽 수정) 및 환율 로직
         // ==========================================
-        // 🚨 테마 관리 로직 완전 재건축
-function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    // 'dark'일 때만 속성을 넣고, 아니면 확실히 제거하네.
-    if (savedTheme === 'dark') {
-        document.body.setAttribute('data-theme', 'dark');
-        updateThemeIcon('🌙');
-    } else {
-        document.body.removeAttribute('data-theme');
-        updateThemeIcon('☀️');
-    }
-}
-
-function toggleTheme() {
-    const isDark = document.body.hasAttribute('data-theme');
-    if (isDark) {
-        // 다크 -> 라이트
-        document.body.removeAttribute('data-theme');
-        localStorage.setItem('theme', 'light');
-        updateThemeIcon('☀️');
-    } else {
-        // 라이트 -> 다크
-        document.body.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-        updateThemeIcon('🌙');
-    }
-}
-
-function updateThemeIcon(icon) {
-    const iconEl = document.querySelector('.theme-icon');
-    if (iconEl) iconEl.textContent = icon;
-}
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                updateThemeIcon('🌙');
+            } else {
+                document.body.removeAttribute('data-theme');
+                updateThemeIcon('☀️');
+            }
+        }
 
         function toggleTheme() {
-            const body = document.body;
-            const themeIcon = document.querySelector('.theme-icon');
-            if (body.getAttribute('data-theme') === 'dark') {
-                body.removeAttribute('data-theme');
-                themeIcon.textContent = '🌙';
+            const isDark = document.body.hasAttribute('data-theme');
+            if (isDark) {
+                document.body.removeAttribute('data-theme');
                 localStorage.setItem('theme', 'light');
+                updateThemeIcon('☀️');
             } else {
-                body.setAttribute('data-theme', 'dark');
-                themeIcon.textContent = '☀️';
+                document.body.setAttribute('data-theme', 'dark');
                 localStorage.setItem('theme', 'dark');
+                updateThemeIcon('🌙');
             }
+        }
+
+        function updateThemeIcon(icon) {
+            const iconEl = document.querySelector('.theme-icon');
+            if (iconEl) iconEl.textContent = icon;
         }
 
         async function fetchExchangeRate() {
@@ -1510,7 +1478,7 @@ function updateThemeIcon(icon) {
         }
 
         // ==========================================
-        // 3. 주식 검색 엔진 (디바운싱 & 독립 호출)
+        // 3. 주식 검색 엔진
         // ==========================================
         async function searchStock(query) {
             const resultsDiv = document.getElementById('search-results');
@@ -1523,7 +1491,6 @@ function updateThemeIcon(icon) {
             searchTimer = setTimeout(async () => {
                 let combinedResults = [];
                 try {
-                    // 한국 서버 호출
                     const krTargetUrl = `${RENDER_SERVER_URL}/search/kr?q=${encodeURIComponent(query)}`;
                     const krRes = await fetch(krTargetUrl).catch(() => null);
                     if (krRes && krRes.ok) {
@@ -1531,14 +1498,12 @@ function updateThemeIcon(icon) {
                         if (krData.status === "success") combinedResults = [...combinedResults, ...krData.result];
                     }
 
-                    // 미국 서버 호출 (FinnHub)
                     const usRes = await fetch(`https://finnhub.io/api/v1/search?q=${encodeURIComponent(query)}&token=${FINNHUB_API_KEY}`).catch(() => null);
                     if (usRes && usRes.ok) {
                         const usData = await usRes.json();
                         if (usData.result) combinedResults = [...combinedResults, ...usData.result];
                     }
 
-                    // 결과 표시
                     if (combinedResults.length > 0) {
                         displaySearchResults(combinedResults, query);
                     } else {
@@ -1556,8 +1521,6 @@ function updateThemeIcon(icon) {
             const excludedTypes = ['BOND', 'CURRENCY', 'FUTURE', 'INDEX', 'WARRANT'];
             
             let filtered = results.filter(r => !excludedTypes.includes(r.type));
-            
-            // 중복 제거 (티커 기준)
             filtered = Array.from(new Map(filtered.map(item => [item.symbol, item])).values());
             
             if (filtered.length === 0) {
@@ -1623,7 +1586,7 @@ function updateThemeIcon(icon) {
         }
 
         // ==========================================
-        // 4. 배당 리포트 모달 통신
+        // 4. 배당 리포트 (Bug 1 완벽 수정: 자동 재시도)
         // ==========================================
         async function openDividendAnalysis() {
             if (!selectedStock || !selectedStock.symbol) return alert('주식을 먼저 선택하세요!');
@@ -1634,31 +1597,56 @@ function updateThemeIcon(icon) {
             const error = document.getElementById('api-error');
             const historyBody = document.getElementById('dividend-history-body');
             const stockTitle = document.getElementById('modal-stock-name');
+            const msgEl = document.getElementById('loading-message');
 
             modal.style.display = 'block';
             stockTitle.textContent = `${selectedStock.symbol} 분석 중...`;
             loading.style.display = 'block';
+            msgEl.textContent = '서버를 깨우는 중입니다...';
             result.style.display = 'none';
             error.style.display = 'none';
             historyBody.innerHTML = '';
 
-            try {
-                const response = await fetch(`${RENDER_SERVER_URL}/dividend/${selectedStock.symbol}`);
-                const data = await response.json();
+            let retryCount = 0;
+            const maxRetries = 1; // 실패 시 1회 자동 재시도
 
-                if (data.status === "success" && data.history.length > 0) {
-                    data.history.forEach(item => {
-                        historyBody.innerHTML += `
-                            <tr>
-                                <td>${item.date}</td>
-                                <td><strong>${item.amount}</strong></td>
-                                <td><button class="apply-div-btn" onclick="applyDividend('${item.amount}')">적용</button></td>
-                            </tr>`;
-                    });
-                    loading.style.display = 'none';
-                    result.style.display = 'block';
-                    stockTitle.textContent = `${selectedStock.symbol} 배당 히스토리`;
-                } else throw new Error("No data"); 
+            // 🚨 내부 통신 함수 (실패 시 스스로 다시 호출함)
+            async function fetchWithRetry() {
+                try {
+                    const response = await fetch(`${RENDER_SERVER_URL}/dividend/${selectedStock.symbol}`);
+                    const data = await response.json();
+                    
+                    if (data.status === "success" && data.history.length > 0) {
+                        return data; // 성공하면 데이터 반환
+                    }
+                    throw new Error("No Data");
+                } catch (err) {
+                    if (retryCount < maxRetries) {
+                        retryCount++;
+                        msgEl.textContent = `응답 지연, 재시도 중입니다... (${retryCount}/${maxRetries})`;
+                        console.log("⚠️ 서버 응답 없음. 1.5초 후 재시도합니다.");
+                        await new Promise(resolve => setTimeout(resolve, 1500)); 
+                        return await fetchWithRetry(); // 자기 자신을 다시 부름
+                    }
+                    throw err; // 재시도까지 다 실패하면 최종 에러
+                }
+            }
+
+            try {
+                // 재시도 장착된 통신 시작!
+                const data = await fetchWithRetry();
+                
+                data.history.forEach(item => {
+                    historyBody.innerHTML += `
+                        <tr>
+                            <td>${item.date}</td>
+                            <td><strong>${item.amount}</strong></td>
+                            <td><button class="apply-div-btn" onclick="applyDividend('${item.amount}')">적용</button></td>
+                        </tr>`;
+                });
+                loading.style.display = 'none';
+                result.style.display = 'block';
+                stockTitle.textContent = `${selectedStock.symbol} 배당 히스토리`;
             } catch (err) {
                 loading.style.display = 'none';
                 error.style.display = 'block';
@@ -1687,7 +1675,7 @@ function updateThemeIcon(icon) {
         }
 
         // ==========================================
-        // 5. 유틸리티 및 계산 로직
+        // 5. 계산 로직 (Bug 2 완벽 수정)
         // ==========================================
         function formatNumberInput(input) {
             if (!input) return;
@@ -1808,7 +1796,12 @@ function updateThemeIcon(icon) {
             let price = getNumericValue(document.getElementById('price'));
 
             if (shares <= 0 || dividend <= 0) return alert('보유 주식 수와 주당 배당금을 입력해주세요!');
-            if (isReinvest && price <= 0) return alert('재투자 계산을 위해 현재 주가를 입력해주세요!');
+            
+            // 🚨 Bug 2 수정: 사용자가 재투자를 'O'로 명확히 바꿨을 때만 주가를 요구함
+            if (isReinvest && price <= 0) {
+                document.getElementById('price').focus();
+                return alert('재투자 계산을 위해 현재 주가를 입력해주세요!');
+            }
 
             if (currentCurrency === 'USD') {
                 dividend *= EXCHANGE_RATE;
