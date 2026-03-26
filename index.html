@@ -59,7 +59,6 @@
             transition: background 0.3s ease, color 0.3s ease;
         }
         
-        /* Background Pattern */
         body::before {
             content: '';
             position: fixed;
@@ -74,7 +73,6 @@
             z-index: 0;
         }
         
-        /* Header */
         header {
             position: relative;
             background: var(--card-bg);
@@ -174,7 +172,6 @@
             width: 100%;
         }
         
-        /* Hero Section */
         .hero {
             position: relative;
             max-width: 1200px;
@@ -249,7 +246,6 @@
             font-size: 1.25rem;
         }
         
-        /* Tools Grid */
         .tools-section {
             position: relative;
             max-width: 1200px;
@@ -382,7 +378,6 @@
             transform: scale(1.05);
         }
         
-        /* Features Section */
         .features-section {
             position: relative;
             max-width: 1200px;
@@ -427,7 +422,6 @@
             color: var(--text-secondary);
         }
         
-        /* Stock Search Section */
         .stock-search-section {
             position: relative;
             max-width: 900px;
@@ -540,10 +534,6 @@
             font-weight: 600;
         }
         
-        .stock-price-box {
-            /* flex 배치를 사용하므로 text-align: right는 제거합니다. */
-        }
-        
         .stock-price {
             font-size: 2.5rem;
             font-weight: 700;
@@ -561,7 +551,6 @@
         .stock-change.positive { color: var(--success); }
         .stock-change.negative { color: var(--danger); }
         
-        /* 🚨 실시간 새로고침 버튼 디자인 추가 */
         .refresh-btn {
             background: var(--neutral-light);
             border: 1px solid var(--border-color);
@@ -626,7 +615,6 @@
             display: none;
         }
         
-        /* Footer */
         footer {
             position: relative;
             background: #1A1A1A;
@@ -677,49 +665,45 @@
             color: #B2BEC3;
         }
         
-        /* Animations */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
-        /* Responsive */
         @media (max-width: 768px) {
             .hero h1 { font-size: 2.5rem; }
             .nav-links { display: none; }
             .tools-grid { grid-template-columns: 1fr; }
         }
         
-        /* 🚨 시장 지수 티커 디자인 */
+        /* 🚨 시장 지수 고정형 디자인 (수정됨) */
         .index-ticker {
-            background: rgba(0, 0, 0, 0.05);
-            padding: 10px 0;
-            overflow: hidden;
-            white-space: nowrap;
+            background: var(--card-bg);
+            padding: 15px 2rem;
             margin-bottom: 2rem;
-            border-radius: 12px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
         }
         .ticker-wrapper {
-            display: inline-flex;
+            display: flex;
+            flex-wrap: wrap;
             gap: 30px;
-            animation: ticker-scroll 30s linear infinite;
+            justify-content: center;
+            width: 100%;
         }
         .index-item {
             display: flex;
             align-items: center;
             gap: 8px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
         .index-up { color: var(--success); }
         .index-down { color: var(--danger); }
-        
-        @keyframes ticker-scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
 
-        /* 🚨 최근 검색 칩 디자인 */
         .recent-searches {
             margin-top: 15px;
             display: flex;
@@ -766,9 +750,10 @@
     <section class="hero">
         <div class="index-ticker">
             <div id="ticker-content" class="ticker-wrapper">
-                <span class="index-item">시계 열리는 중... ⏳</span>
+                <span class="index-item">데이터를 불러오는 중... ⏳</span>
             </div>
         </div>
+        
         <h1>
             주식 투자, 이제 <span class="highlight">쉽게</span> 시작하세요
         </h1>
@@ -891,7 +876,7 @@
     </section>
 
     <section class="features-section" id="features">
-        <h2 class="section-title">왜 주린이 계산인가요?</h2>
+        <h2 class="section-title">왜 주린이 계산기인가요?</h2>
         <div class="features-grid">
             <div class="feature-item">
                 <div class="feature-item-icon">🔒</div>
@@ -964,7 +949,6 @@
     </footer>
 
     <script>
-        // [설정] 전역 변수
         const RENDER_SERVER_URL = "https://dividend-server.onrender.com";
         const FINNHUB_API_KEY = 'd70u9vhr01ql6rg0mgr0d70u9vhr01ql6rg0mgrg';
         
@@ -972,21 +956,12 @@
         let currentSelectedSymbol = null;
         let isCurrentKR = false;
 
-        // ==========================================
-        // 1. 통합 초기화 (중복 리스너 완벽 제거)
-        // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
-            console.log("🚀 시스템 가동 시작...");
-            
-            // A. 서버 예열 & 테마 초기화
             fetch(`${RENDER_SERVER_URL}/`).catch(() => {}); 
             initTheme();
-
-            // B. 핵심 데이터 로드 (최근 검색 & 시장 지수)
             loadRecentSearches(); 
             fetchMarketIndices(); 
 
-            // C. 검색창 이벤트 바인딩
             const stockSearchInput = document.getElementById('stock-search-input');
             const stockSearchResults = document.getElementById('stock-search-results');
 
@@ -1003,7 +978,6 @@
                 });
             }
 
-            // D. 외부 클릭 시 검색 결과 닫기
             document.addEventListener('click', (e) => {
                 if (stockSearchInput && !stockSearchInput.contains(e.target) && 
                     stockSearchResults && !stockSearchResults.contains(e.target)) {
@@ -1011,28 +985,47 @@
                 }
             });
 
-            // E. 기타 UI 효과 (애니메이션 등)
             initScrollAnimations();
         });
 
-        // ==========================================
-        // 2. 시장 지수 및 검색 데이터 로직
-        // ==========================================
+        // 🚨 시장 지수 로직 수정: 4대 지수 매핑 및 고정 출력
         async function fetchMarketIndices() {
             const tickerContainer = document.getElementById('ticker-content');
             try {
                 const res = await fetch(`${RENDER_SERVER_URL}/indices`);
                 const result = await res.json();
+                
                 if (result.status === "success") {
-                    const itemsHtml = result.data.map(idx => `
+                    // 서버에서 어떤 데이터가 오든 클라이언트 단에서 4대 지수만 확실하게 매핑
+                    const targetNames = {
+                        "KS11": "KOSPI",
+                        "^KS11": "KOSPI",
+                        "KQ11": "KOSDAQ",
+                        "^KQ11": "KOSDAQ",
+                        "^GSPC": "S&P 500",
+                        "^IXIC": "NASDAQ"
+                    };
+
+                    let validIndices = result.data.map(idx => {
+                        // 서버에서 심볼 단위로 줄 경우를 대비한 1차 매핑, 없으면 이름으로 매핑
+                        const displayName = targetNames[idx.symbol] || targetNames[idx.name] || idx.name;
+                        return { ...idx, displayName };
+                    });
+
+                    // 특정 지수만 보여주고 싶다면 여기서 한 번 더 필터링 할 수 있습니다. 
+                    // 현재는 서버가 제공하는 데이터를 고정 출력하되 텍스트만 정리합니다.
+                    
+                    const itemsHtml = validIndices.map(idx => `
                         <span class="index-item">
-                            ${idx.name}: ${idx.price.toLocaleString()} 
+                            ${idx.displayName}: ${idx.price.toLocaleString()} 
                             <span class="${idx.change >= 0 ? 'index-up' : 'index-down'}">
                                 ${idx.change >= 0 ? '▲' : '▼'} ${Math.abs(idx.pct)}%
                             </span>
                         </span>
                     `).join('');
-                    tickerContainer.innerHTML = itemsHtml + itemsHtml; // 무한 스크롤 효과
+                    
+                    // 🚨 중복 출력(무한 스크롤) 코드 제거
+                    tickerContainer.innerHTML = itemsHtml;
                 } else {
                     tickerContainer.innerHTML = "지수 데이터를 불러올 수 없습니다.";
                 }
@@ -1067,9 +1060,6 @@
 
         function loadRecentSearches() { renderRecentSearches(); }
 
-        // ==========================================
-        // 3. 주식 검색 및 상세 데이터 표시
-        // ==========================================
         async function searchStocks(query) {
             const resultsDiv = document.getElementById('stock-search-results');
             if (!query) { resultsDiv.style.display = 'none'; return; }
@@ -1122,7 +1112,6 @@
             currentSelectedSymbol = symbol;
             isCurrentKR = symbol.endsWith('.KS') || symbol.endsWith('.KQ');
 
-            // 🚨 최근 검색 저장 실행
             saveRecentSearch(symbol, name);
             await fetchAndDisplayData();
         }
@@ -1167,9 +1156,6 @@
             setTimeout(() => btn.classList.remove('spinning'), 1000);
         }
 
-        // ==========================================
-        // 4. 테마 및 애니메이션
-        // ==========================================
         function initTheme() {
             const saved = localStorage.getItem('theme') || 'light';
             if (saved === 'dark') document.body.setAttribute('data-theme', 'dark');
