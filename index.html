@@ -1088,9 +1088,9 @@
             loadRecentSearches(); 
             fetchMarketIndices(); 
 
-            // 🚨 고래 데이터 로딩 로직 즉시 실행 및 60초 주기 갱신
-            updateWhaleCards();
-            setInterval(updateWhaleCards, 60000);
+            // 🚨 고래 & 뉴스 데이터 로딩 로직 즉시 실행 및 60초 주기 갱신
+            updateIntelligenceCards();
+            setInterval(updateIntelligenceCards, 60000);
 
             const stockSearchInput = document.getElementById('stock-search-input');
             const stockSearchResults = document.getElementById('stock-search-results');
@@ -1118,8 +1118,8 @@
             initScrollAnimations();
         });
 
-        // 🚨 고래 및 뉴스 데이터 자동 로딩 엔진
-        async function updateWhaleCards() {
+        // 🚨 서버에서 실시간 고래 & 뉴스 데이터 가져오기 (전역 함수로 분리)
+        async function updateIntelligenceCards() {
             const container = document.getElementById('news-container');
             if (!container) return;
 
@@ -1136,26 +1136,34 @@
                                 <div class="news-card" onclick="window.open('https://finviz.com/quote.ashx?t=${item.symbol}')">
                                     <span class="news-badge badge-whale">🐋 초대형 고래 포착</span>
                                     <h3>[${item.symbol}] 내부자 ${item.value} 매수!</h3>
-                                    <p>
-                                        <span>👤 ${item.owner}</span>
-                                        <span>⏰ ${item.timestamp || item.date}</span>
-                                    </p>
+                                    <p><span>👤 ${item.owner}</span> <span>⏰ ${item.timestamp || item.date}</span></p>
+                                </div>
+                            `;
+                        } else if (item.type === 'NEWS') {
+                            const sourceIcon = item.source === '해외경제' ? '🌐' : '🇰🇷';
+                            cardsHtml += `
+                                <div class="news-card" onclick="window.open('${item.link}')">
+                                    <span class="news-badge badge-cnbc" style="background:#f1f2f6; color:#2f3542;">
+                                        ${sourceIcon} ${item.source}
+                                    </span>
+                                    <h3>${item.title}</h3>
+                                    <p><span>📌 주요 뉴스</span> <span>⏰ ${item.timestamp || '실시간'}</span></p>
                                 </div>
                             `;
                         }
                     });
 
-                    // "전체보기" 카드를 항상 마지막에 추가
+                    // "전체보기" 카드 추가
                     cardsHtml += `
                         <div class="news-card" style="opacity: 0.6; display: flex; justify-content: center; align-items: center;" onclick="location.href='news-intelligence.html'">
-                            <h3 style="text-align: center;">실시간 고래 기록<br>전체보기 →</h3>
+                            <h3 style="text-align: center;">전체 투자 정보<br>보러가기 →</h3>
                         </div>
                     `;
                     
                     container.innerHTML = cardsHtml;
                 }
             } catch (error) {
-                console.error("고래 데이터 로드 실패:", error);
+                console.error("인텔리전스 로드 실패:", error);
             }
         }
 
