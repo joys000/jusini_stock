@@ -1138,21 +1138,38 @@
         }
 
         // 5. 다크모드 관리
-        function initTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
-        }
+        // 🚨 테마 관리 로직 완전 재건축
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    // 'dark'일 때만 속성을 넣고, 아니면 확실히 제거하네.
+    if (savedTheme === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        updateThemeIcon('🌙');
+    } else {
+        document.body.removeAttribute('data-theme');
+        updateThemeIcon('☀️');
+    }
+}
 
-        function toggleTheme() {
-            const body = document.body;
-            if (body.getAttribute('data-theme') === 'dark') {
-                body.removeAttribute('data-theme');
-                localStorage.setItem('theme', 'light');
-            } else {
-                body.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        }
+function toggleTheme() {
+    const isDark = document.body.hasAttribute('data-theme');
+    if (isDark) {
+        // 다크 -> 라이트
+        document.body.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+        updateThemeIcon('☀️');
+    } else {
+        // 라이트 -> 다크
+        document.body.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        updateThemeIcon('🌙');
+    }
+}
+
+function updateThemeIcon(icon) {
+    const iconEl = document.querySelector('.theme-icon');
+    if (iconEl) iconEl.textContent = icon;
+}
     </script>
 </body>
 </html>
