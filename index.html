@@ -245,13 +245,41 @@
         .badge-icon {
             font-size: 1.25rem;
         }
+
+        /* 🚨 시장 지수 고정형 디자인 */
+        .index-ticker {
+            background: var(--card-bg);
+            padding: 15px 2rem;
+            margin-bottom: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+        }
+        .ticker-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            width: 100%;
+        }
+        .index-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        .index-up { color: var(--success); }
+        .index-down { color: var(--danger); }
         
-        .tools-section {
+        .stock-search-section {
             position: relative;
-            max-width: 1200px;
-            margin: 0 auto 6rem;
+            max-width: 900px;
+            margin: 4rem auto;
             padding: 0 2rem;
-            z-index: 1;
+            z-index: 100;
         }
         
         .section-title {
@@ -260,6 +288,216 @@
             text-align: center;
             margin-bottom: 3rem;
             color: var(--text-primary);
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .search-container {
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            transition: background 0.3s ease;
+        }
+        
+        .search-box {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        
+        #stock-search-input {
+            width: 100%;
+            padding: 1.25rem 1.5rem;
+            border: 2px solid var(--border-color);
+            background: var(--neutral-light);
+            color: var(--text-primary);
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        #stock-search-input:focus {
+            outline: none;
+            border-color: var(--success);
+            background: var(--card-bg);
+            box-shadow: 0 0 0 4px rgba(0, 217, 163, 0.1);
+        }
+        
+        .search-results {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-height: 350px;
+            overflow-y: auto;
+            z-index: 9999;
+            border: 2px solid var(--success);
+        }
+        
+        .search-result-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+        
+        .search-result-item:hover {
+            background: rgba(0, 217, 163, 0.1);
+        }
+        
+        .search-result-symbol {
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 0.25rem;
+        }
+        
+        .search-result-name {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .recent-searches {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+        .search-chip {
+            background: var(--neutral-light);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+        .search-chip:hover {
+            background: var(--primary);
+            border-color: var(--primary-dark);
+        }
+        
+        .stock-info-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 2px solid var(--border-color);
+            transition: background 0.3s ease;
+        }
+        
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .stock-header h3 {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.75rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stock-symbol {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        
+        .stock-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'Fredoka', cursive;
+        }
+        
+        .stock-change {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            text-align: right;
+        }
+        
+        .stock-change.positive { color: var(--success); }
+        .stock-change.negative { color: var(--danger); }
+        
+        .refresh-btn {
+            background: var(--neutral-light);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            outline: none;
+        }
+        
+        .refresh-btn:hover {
+            background: var(--primary);
+            color: #2D3436;
+        }
+        
+        .refresh-btn.spinning {
+            animation: spin-fast 1s linear infinite;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        @keyframes spin-fast {
+            100% { transform: rotate(360deg); }
+        }
+        
+        .stock-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--neutral-light);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .detail-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .detail-value {
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: right;
+        }
+
+        .tools-section {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto 6rem;
+            padding: 0 2rem;
+            z-index: 1;
         }
         
         .tools-grid {
@@ -377,7 +615,118 @@
             background: var(--primary-dark);
             transform: scale(1.05);
         }
+
+        /* 🚨 실시간 뉴스 & 고래 슬라이더 섹션 (정리됨) */
+        .news-section {
+            max-width: 1200px;
+            margin: 0 auto 6rem;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .news-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 2rem;
+        }
+
+        .news-header h2 { 
+            font-family: 'Fredoka', cursive; 
+            font-size: 2.5rem; 
+            color: var(--text-primary); 
+            margin: 0; 
+        }
+
+        .view-more-btn {
+            color: var(--success); 
+            font-weight: 700; 
+            text-decoration: none;
+            display: flex; 
+            align-items: center; 
+            gap: 0.5rem; 
+            transition: 0.3s;
+            background: var(--neutral-light); 
+            padding: 0.5rem 1rem; 
+            border-radius: 20px; 
+            border: 1px solid var(--success);
+        }
+
+        .view-more-btn:hover { 
+            background: var(--success); 
+            color: white; 
+            transform: translateX(5px); 
+        }
+
+        .news-slider {
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto;
+            padding: 20px 10px 25px 10px; /* 상단 짤림 방지 */
+            margin-top: -20px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .news-slider::-webkit-scrollbar { height: 6px; }
+        .news-slider::-webkit-scrollbar-track { background: transparent; }
+        .news-slider::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 10px; }
+
+        .news-card {
+            background: var(--card-bg); 
+            border-radius: 24px; 
+            padding: 1.5rem;
+            min-width: 280px; 
+            max-width: 320px; 
+            flex-shrink: 0;
+            scroll-snap-align: start; 
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex; 
+            flex-direction: column; 
+            cursor: pointer;
+        }
+
+        .news-card:hover {
+            transform: translateY(-10px); 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: var(--success);
+        }
+
+        .news-badge {
+            align-self: flex-start; 
+            font-size: 0.75rem; 
+            font-weight: 700;
+            padding: 0.25rem 0.75rem; 
+            border-radius: 50px; 
+            margin-bottom: 1rem;
+        }
         
+        .badge-cnbc { background: #E3F2FD; color: #1565C0; }
+        .badge-whale { background: #E8F5E9; color: #2E7D32; }
+
+        .news-card h3 { 
+            font-size: 1.1rem; 
+            margin-bottom: 0.75rem; 
+            color: var(--text-primary); 
+            line-height: 1.4; 
+            display: -webkit-box; 
+            -webkit-line-clamp: 3; 
+            -webkit-box-orient: vertical; 
+            overflow: hidden; 
+        }
+        
+        .news-card p { 
+            font-size: 0.85rem; 
+            color: var(--text-secondary); 
+            margin-top: auto; 
+            padding-top: 1rem; 
+            display: flex; 
+            justify-content: space-between; 
+        }
+
         .features-section {
             position: relative;
             max-width: 1200px;
@@ -420,199 +769,6 @@
         
         .feature-item p {
             color: var(--text-secondary);
-        }
-        
-        .stock-search-section {
-            position: relative;
-            max-width: 900px;
-            margin: 4rem auto;
-            padding: 0 2rem;
-            z-index: 100;
-        }
-        
-        .section-subtitle {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .search-container {
-            background: var(--card-bg);
-            padding: 3rem;
-            border-radius: 24px;
-            box-shadow: var(--shadow);
-            transition: background 0.3s ease;
-        }
-        
-        .search-box {
-            position: relative;
-            margin-bottom: 2rem;
-        }
-        
-        #stock-search-input {
-            width: 100%;
-            padding: 1.25rem 1.5rem;
-            border: 2px solid var(--border-color);
-            background: var(--neutral-light);
-            color: var(--text-primary);
-            border-radius: 16px;
-            font-size: 1.1rem;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.3s ease;
-        }
-        
-        #stock-search-input:focus {
-            outline: none;
-            border-color: var(--success);
-            background: var(--card-bg);
-            box-shadow: 0 0 0 4px rgba(0, 217, 163, 0.1);
-        }
-        
-        .search-results {
-            position: absolute;
-            top: calc(100% + 10px);
-            left: 0;
-            right: 0;
-            background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            max-height: 350px;
-            overflow-y: auto;
-            z-index: 9999;
-            border: 2px solid var(--success);
-        }
-        
-        .search-result-item {
-            padding: 1rem 1.5rem;
-            cursor: pointer;
-            border-bottom: 1px solid var(--border-color);
-            transition: all 0.2s ease;
-        }
-        
-        .search-result-item:hover {
-            background: rgba(0, 217, 163, 0.1);
-        }
-        
-        .search-result-symbol {
-            font-weight: 700;
-            color: var(--success);
-            margin-bottom: 0.25rem;
-        }
-        
-        .search-result-name {
-            color: var(--text-primary);
-            font-size: 0.9rem;
-        }
-        
-        .stock-info-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 2rem;
-            border: 2px solid var(--border-color);
-            transition: background 0.3s ease;
-        }
-        
-        .stock-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 2px solid var(--border-color);
-        }
-        
-        .stock-header h3 {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.75rem;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-        
-        .stock-symbol {
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-        
-        .stock-price {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            font-family: 'Fredoka', cursive;
-        }
-        
-        .stock-change {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-top: 0.5rem;
-            text-align: right;
-        }
-        
-        .stock-change.positive { color: var(--success); }
-        .stock-change.negative { color: var(--danger); }
-        
-        .refresh-btn {
-            background: var(--neutral-light);
-            border: 1px solid var(--border-color);
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-            color: var(--text-primary);
-            outline: none;
-        }
-        
-        .refresh-btn:hover {
-            background: var(--primary);
-            color: #2D3436;
-        }
-        
-        .refresh-btn.spinning {
-            animation: spin-fast 1s linear infinite;
-            pointer-events: none;
-            opacity: 0.7;
-        }
-        
-        @keyframes spin-fast {
-            100% { transform: rotate(360deg); }
-        }
-        
-        .stock-details {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .detail-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            background: var(--neutral-light);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            transition: background 0.3s ease, border-color 0.3s ease;
-        }
-        
-        .detail-label {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-        
-        .detail-value {
-            font-weight: 700;
-            color: var(--text-primary);
-            text-align: right;
-        }
-        
-        .chart-container-small {
-            display: none;
         }
         
         footer {
@@ -674,55 +830,9 @@
             .hero h1 { font-size: 2.5rem; }
             .nav-links { display: none; }
             .tools-grid { grid-template-columns: 1fr; }
-        }
-        
-        /* 🚨 시장 지수 고정형 디자인 (수정됨) */
-        .index-ticker {
-            background: var(--card-bg);
-            padding: 15px 2rem;
-            margin-bottom: 2rem;
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-            display: flex;
-            justify-content: center;
-        }
-        .ticker-wrapper {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-            width: 100%;
-        }
-        .index-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-            font-size: 1rem;
-        }
-        .index-up { color: var(--success); }
-        .index-down { color: var(--danger); }
-
-        .recent-searches {
-            margin-top: 15px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-        }
-        .search-chip {
-            background: var(--neutral-light);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            border: 1px solid var(--border-color);
-            transition: all 0.2s ease;
-        }
-        .search-chip:hover {
-            background: var(--primary);
-            border-color: var(--primary-dark);
+            .news-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .news-header h2 { font-size: 1.8rem; }
+            .news-card { min-width: 260px; }
         }
     </style>
 </head>
@@ -739,8 +849,8 @@
                 </button>
                 <ul class="nav-links">
                     <li><a href="#tools">도구</a></li>
+                    <li><a href="#intelligence">안테나</a></li>
                     <li><a href="#features">특징</a></li>
-                    <li><a href="#about">소개</a></li>
                     <li><a href="https://discord.gg/a3rB4u6QXF" target="_blank" rel="noopener noreferrer">문의</a></li>
                 </ul>
             </div>
@@ -825,8 +935,6 @@
                         <span id="stock-prev-close" class="detail-value">-</span>
                     </div>
                 </div>
-                
-                <div class="chart-container-small"></div>
             </div>
         </div>
     </section>
@@ -871,6 +979,24 @@
                     <li>시각적 차트 제공</li>
                 </ul>
                 <button class="tool-btn">평단가 계산하기 →</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="news-section" id="intelligence">
+        <div class="news-header">
+            <h2>📡 글로벌 투자 안테나</h2>
+            <a href="news-intelligence.html" class="view-more-btn">인텔리전스 전체보기 →</a>
+        </div>
+        
+        <div class="news-slider" id="news-container">
+            <div class="news-card">
+                <span class="news-badge badge-cnbc">시스템 대기중</span>
+                <h3>실시간 고래 데이터와 시장 속보를 수집하고 있습니다.</h3>
+                <p><span>잠시만 기다려주세요</span></p>
+            </div>
+            <div class="news-card" style="opacity: 0.6; display: flex; justify-content: center; align-items: center;" onclick="location.href='news-intelligence.html'">
+                <h3 style="text-align: center;">더 많은 투자 정보<br>보러가기 →</h3>
             </div>
         </div>
     </section>
@@ -962,6 +1088,10 @@
             loadRecentSearches(); 
             fetchMarketIndices(); 
 
+            // 🚨 고래 데이터 로딩 로직 즉시 실행 및 60초 주기 갱신
+            updateWhaleCards();
+            setInterval(updateWhaleCards, 60000);
+
             const stockSearchInput = document.getElementById('stock-search-input');
             const stockSearchResults = document.getElementById('stock-search-results');
 
@@ -988,7 +1118,47 @@
             initScrollAnimations();
         });
 
-        // 🚨 시장 지수 로직 수정: 4대 지수 매핑 및 고정 출력
+        // 🚨 고래 및 뉴스 데이터 자동 로딩 엔진
+        async function updateWhaleCards() {
+            const container = document.getElementById('news-container');
+            if (!container) return;
+
+            try {
+                const response = await fetch(`${RENDER_SERVER_URL}/get_intel`);
+                const result = await response.json();
+
+                if (result.status === "success" && result.data && result.data.length > 0) {
+                    let cardsHtml = '';
+                    
+                    result.data.forEach(item => {
+                        if (item.type === 'WHALE') {
+                            cardsHtml += `
+                                <div class="news-card" onclick="window.open('https://finviz.com/quote.ashx?t=${item.symbol}')">
+                                    <span class="news-badge badge-whale">🐋 초대형 고래 포착</span>
+                                    <h3>[${item.symbol}] 내부자 ${item.value} 매수!</h3>
+                                    <p>
+                                        <span>👤 ${item.owner}</span>
+                                        <span>⏰ ${item.timestamp || item.date}</span>
+                                    </p>
+                                </div>
+                            `;
+                        }
+                    });
+
+                    // "전체보기" 카드를 항상 마지막에 추가
+                    cardsHtml += `
+                        <div class="news-card" style="opacity: 0.6; display: flex; justify-content: center; align-items: center;" onclick="location.href='news-intelligence.html'">
+                            <h3 style="text-align: center;">실시간 고래 기록<br>전체보기 →</h3>
+                        </div>
+                    `;
+                    
+                    container.innerHTML = cardsHtml;
+                }
+            } catch (error) {
+                console.error("고래 데이터 로드 실패:", error);
+            }
+        }
+
         async function fetchMarketIndices() {
             const tickerContainer = document.getElementById('ticker-content');
             try {
@@ -996,24 +1166,17 @@
                 const result = await res.json();
                 
                 if (result.status === "success") {
-                    // 서버에서 어떤 데이터가 오든 클라이언트 단에서 4대 지수만 확실하게 매핑
                     const targetNames = {
-                        "KS11": "KOSPI",
-                        "^KS11": "KOSPI",
-                        "KQ11": "KOSDAQ",
-                        "^KQ11": "KOSDAQ",
-                        "^GSPC": "S&P 500",
-                        "^IXIC": "NASDAQ"
+                        "KS11": "KOSPI", "^KS11": "KOSPI",
+                        "KQ11": "KOSDAQ", "^KQ11": "KOSDAQ",
+                        "^GSPC": "S&P 500", "SPY": "S&P 500",
+                        "^IXIC": "NASDAQ", "QQQ": "NASDAQ"
                     };
 
                     let validIndices = result.data.map(idx => {
-                        // 서버에서 심볼 단위로 줄 경우를 대비한 1차 매핑, 없으면 이름으로 매핑
                         const displayName = targetNames[idx.symbol] || targetNames[idx.name] || idx.name;
                         return { ...idx, displayName };
                     });
-
-                    // 특정 지수만 보여주고 싶다면 여기서 한 번 더 필터링 할 수 있습니다. 
-                    // 현재는 서버가 제공하는 데이터를 고정 출력하되 텍스트만 정리합니다.
                     
                     const itemsHtml = validIndices.map(idx => `
                         <span class="index-item">
@@ -1024,7 +1187,6 @@
                         </span>
                     `).join('');
                     
-                    // 🚨 중복 출력(무한 스크롤) 코드 제거
                     tickerContainer.innerHTML = itemsHtml;
                 } else {
                     tickerContainer.innerHTML = "지수 데이터를 불러올 수 없습니다.";
@@ -1181,51 +1343,6 @@
             }, { threshold: 0.1 });
             document.querySelectorAll('.tool-card, .feature-item').forEach(el => { el.style.opacity = '0'; observer.observe(el); });
         }
-        // 📡 서버에서 실시간 고래 데이터 가져오기
-async function updateWhaleCards() {
-    const container = document.getElementById('news-container');
-    if (!container) return;
-
-    try {
-        const response = await fetch('https://dividend-server.onrender.com/get_intel');
-        const result = await response.json();
-
-        if (result.status === "success" && result.data.length > 0) {
-            let cardsHtml = '';
-            
-            result.data.forEach(whale => {
-                cardsHtml += `
-                    <div class="news-card" onclick="window.open('https://finviz.com/quote.ashx?t=${whale.symbol}')">
-                        <span class="news-badge badge-whale">🐋 초대형 고래 포착</span>
-                        <h3>[${whale.symbol}] 내부자 ${whale.value} 매수!</h3>
-                        <p>
-                            <span>👤 ${whale.owner}</span>
-                            <span>⏰ ${whale.timestamp}</span>
-                        </p>
-                    </div>
-                `;
-            });
-
-            // "전체보기" 카드를 마지막에 추가
-            cardsHtml += `
-                <div class="news-card" style="opacity: 0.6; display: flex; justify-content: center; align-items: center;" onclick="location.href='news-intelligence.html'">
-                    <h3 style="text-align: center;">실시간 고래 기록<br>전체보기 →</h3>
-                </div>
-            `;
-            
-            container.innerHTML = cardsHtml;
-        }
-    } catch (error) {
-        console.error("고래 데이터 로드 실패:", error);
-    }
-}
-
-// 1. 페이지 로드 시 즉시 실행
-// 2. 1분마다 새로운 고래가 있는지 체크
-document.addEventListener('DOMContentLoaded', () => {
-    updateWhaleCards();
-    setInterval(updateWhaleCards, 60000); 
-});
     </script>
 </body>
 </html>
