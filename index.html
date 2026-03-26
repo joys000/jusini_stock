@@ -1181,6 +1181,51 @@
             }, { threshold: 0.1 });
             document.querySelectorAll('.tool-card, .feature-item').forEach(el => { el.style.opacity = '0'; observer.observe(el); });
         }
+        // 📡 서버에서 실시간 고래 데이터 가져오기
+async function updateWhaleCards() {
+    const container = document.getElementById('news-container');
+    if (!container) return;
+
+    try {
+        const response = await fetch('https://dividend-server.onrender.com/get_intel');
+        const result = await response.json();
+
+        if (result.status === "success" && result.data.length > 0) {
+            let cardsHtml = '';
+            
+            result.data.forEach(whale => {
+                cardsHtml += `
+                    <div class="news-card" onclick="window.open('https://finviz.com/quote.ashx?t=${whale.symbol}')">
+                        <span class="news-badge badge-whale">🐋 초대형 고래 포착</span>
+                        <h3>[${whale.symbol}] 내부자 ${whale.value} 매수!</h3>
+                        <p>
+                            <span>👤 ${whale.owner}</span>
+                            <span>⏰ ${whale.timestamp}</span>
+                        </p>
+                    </div>
+                `;
+            });
+
+            // "전체보기" 카드를 마지막에 추가
+            cardsHtml += `
+                <div class="news-card" style="opacity: 0.6; display: flex; justify-content: center; align-items: center;" onclick="location.href='news-intelligence.html'">
+                    <h3 style="text-align: center;">실시간 고래 기록<br>전체보기 →</h3>
+                </div>
+            `;
+            
+            container.innerHTML = cardsHtml;
+        }
+    } catch (error) {
+        console.error("고래 데이터 로드 실패:", error);
+    }
+}
+
+// 1. 페이지 로드 시 즉시 실행
+// 2. 1분마다 새로운 고래가 있는지 체크
+document.addEventListener('DOMContentLoaded', () => {
+    updateWhaleCards();
+    setInterval(updateWhaleCards, 60000); 
+});
     </script>
 </body>
 </html>
