@@ -1436,14 +1436,38 @@
         // ==========================================
         // 2. 테마 및 환율 로직
         // ==========================================
-        function initTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            const themeIcon = document.querySelector('.theme-icon');
-            if (savedTheme === 'dark') {
-                document.body.setAttribute('data-theme', 'dark');
-                if (themeIcon) themeIcon.textContent = '☀️';
-            }
-        }
+        // 🚨 테마 관리 로직 완전 재건축
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    // 'dark'일 때만 속성을 넣고, 아니면 확실히 제거하네.
+    if (savedTheme === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        updateThemeIcon('🌙');
+    } else {
+        document.body.removeAttribute('data-theme');
+        updateThemeIcon('☀️');
+    }
+}
+
+function toggleTheme() {
+    const isDark = document.body.hasAttribute('data-theme');
+    if (isDark) {
+        // 다크 -> 라이트
+        document.body.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+        updateThemeIcon('☀️');
+    } else {
+        // 라이트 -> 다크
+        document.body.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        updateThemeIcon('🌙');
+    }
+}
+
+function updateThemeIcon(icon) {
+    const iconEl = document.querySelector('.theme-icon');
+    if (iconEl) iconEl.textContent = icon;
+}
 
         function toggleTheme() {
             const body = document.body;
