@@ -690,19 +690,30 @@
             .tools-grid { grid-template-columns: 1fr; }
         }
         
-        /* 🚨 시장 지수 티커 디자인 */
+       /* 🚨 시장 지수 정적(Static) 디자인 */
         .index-ticker {
-            background: rgba(0, 0, 0, 0.05);
-            padding: 10px 0;
-            overflow: hidden;
-            white-space: nowrap;
-            margin-bottom: 2rem;
-            border-radius: 12px;
+            padding: 15px 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color); /* 구분선만 하나 남겼네 */
         }
         .ticker-wrapper {
-            display: inline-flex;
-            gap: 30px;
-            animation: ticker-scroll 30s linear infinite;
+            display: flex;
+            justify-content: center; /* 가운데 정렬 */
+            flex-wrap: wrap; /* 모바일 대응 */
+            gap: 25px;
+            animation: none !important; /* 애니메이션 삭제 */
+        }
+        .index-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+        /* 박스 형태를 없애기 위해 배경색이나 패딩을 제거했네 */
+        .index-up { color: var(--success); }
+        .index-down { color: var(--danger); }
         }
         .index-item {
             display: flex;
@@ -1026,19 +1037,21 @@
                 if (result.status === "success") {
                     const itemsHtml = result.data.map(idx => `
                         <span class="index-item">
-                            ${idx.name}: ${idx.price.toLocaleString()} 
+                            ${idx.name} ${idx.price.toLocaleString()} 
                             <span class="${idx.change >= 0 ? 'index-up' : 'index-down'}">
                                 ${idx.change >= 0 ? '▲' : '▼'} ${Math.abs(idx.pct)}%
                             </span>
                         </span>
                     `).join('');
-                    tickerContainer.innerHTML = itemsHtml + itemsHtml; // 무한 스크롤 효과
+                    
+                    // 🚨 itemsHtml을 한 번만 할당하게! (중복 제거)
+                    tickerContainer.innerHTML = itemsHtml; 
                 } else {
-                    tickerContainer.innerHTML = "지수 데이터를 불러올 수 없습니다.";
+                    tickerContainer.innerHTML = "";
                 }
             } catch (e) {
                 console.error("지수 로드 실패", e);
-                tickerContainer.innerHTML = "서버 연결 대기 중...";
+                tickerContainer.innerHTML = "";
             }
         }
 
