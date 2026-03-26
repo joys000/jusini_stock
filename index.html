@@ -964,7 +964,7 @@
     </footer>
 
     <script>
-        // 전역 변수
+        // [설정] 전역 변수
         const RENDER_SERVER_URL = "https://dividend-server.onrender.com";
         const FINNHUB_API_KEY = 'd70u9vhr01ql6rg0mgr0d70u9vhr01ql6rg0mgrg';
         
@@ -972,25 +972,28 @@
         let currentSelectedSymbol = null;
         let isCurrentKR = false;
 
-        // 1. 이벤트 리스너 통합 관리 (중복 제거 완료)
+        // ==========================================
+        // 1. 통합 초기화 (중복 리스너 완벽 제거)
+        // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
-            // 🔥 서버 예열 신호
-            console.log("🚀 서버 예열 엔진 가동...");
+            console.log("🚀 시스템 가동 시작...");
+            
+            // A. 서버 예열 & 테마 초기화
             fetch(`${RENDER_SERVER_URL}/`).catch(() => {}); 
-
             initTheme();
-            loadRecentSearches(); // 페이지 로드 시 최근 검색 불러오기
-            fetchMarketIndices(); // 시장 지수 불러오기
 
+            // B. 핵심 데이터 로드 (최근 검색 & 시장 지수)
+            loadRecentSearches(); 
+            fetchMarketIndices(); 
+
+            // C. 검색창 이벤트 바인딩
             const stockSearchInput = document.getElementById('stock-search-input');
             const stockSearchResults = document.getElementById('stock-search-results');
 
             if (stockSearchInput) {
                 stockSearchInput.addEventListener('input', function() {
-                    const query = this.value.trim();
-                    searchStocks(query);
+                    searchStocks(this.value.trim());
                 });
-
                 stockSearchInput.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') {
                         e.preventDefault();
@@ -1000,69 +1003,49 @@
                 });
             }
 
-            // 외부 클릭 시 결과창 닫기
+            // D. 외부 클릭 시 검색 결과 닫기
             document.addEventListener('click', (e) => {
-                if (stockSearchInput && stockSearchResults && 
-                    !stockSearchInput.contains(e.target) && !stockSearchResults.contains(e.target)) {
+                if (stockSearchInput && !stockSearchInput.contains(e.target) && 
+                    stockSearchResults && !stockSearchResults.contains(e.target)) {
                     stockSearchResults.style.display = 'none';
                 }
             });
 
-            // Smooth scroll 적용
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                });
-            });
-
-            // 스크롤 애니메이션
-            const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -100px 0px' };
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.animation = 'fadeInUp 0.8s ease forwards';
-                    }
-                });
-            }, observerOptions);
-            
-            document.querySelectorAll('.tool-card, .feature-item').forEach(el => {
-                el.style.opacity = '0';
-                observer.observe(el);
-            });
+            // E. 기타 UI 효과 (애니메이션 등)
+            initScrollAnimations();
         });
 
-        // 🚨 시장 지수 데이터 호출
+        // ==========================================
+        // 2. 시장 지수 및 검색 데이터 로직
+        // ==========================================
         async function fetchMarketIndices() {
+            const tickerContainer = document.getElementById('ticker-content');
             try {
                 const res = await fetch(`${RENDER_SERVER_URL}/indices`);
                 const result = await res.json();
                 if (result.status === "success") {
-                    const content = document.getElementById('ticker-content');
-                    // 무한 루프처럼 보이게 2번 반복해서 넣음
                     const itemsHtml = result.data.map(idx => `
                         <span class="index-item">
                             ${idx.name}: ${idx.price.toLocaleString()} 
                             <span class="${idx.change >= 0 ? 'index-up' : 'index-down'}">
-                                ${idx.change >= 0 ? '▲' : '▼'} ${idx.pct}%
+                                ${idx.change >= 0 ? '▲' : '▼'} ${Math.abs(idx.pct)}%
                             </span>
                         </span>
                     `).join('');
-                    content.innerHTML = itemsHtml + itemsHtml; 
+                    tickerContainer.innerHTML = itemsHtml + itemsHtml; // 무한 스크롤 효과
+                } else {
+                    tickerContainer.innerHTML = "지수 데이터를 불러올 수 없습니다.";
                 }
-            } catch (e) { console.error("지수 로드 실패", e); }
+            } catch (e) {
+                console.error("지수 로드 실패", e);
+                tickerContainer.innerHTML = "서버 연결 대기 중...";
+            }
         }
 
-        // 🚨 최근 검색 저장 및 로드 로직
         function saveRecentSearch(symbol, name) {
             let searches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
-            // 중복 제거 및 최신순 정렬
             searches = searches.filter(s => s.symbol !== symbol);
             searches.unshift({ symbol, name });
-            // 최대 5개만 저장
             if (searches.length > 5) searches.pop();
             localStorage.setItem('recentSearches', JSON.stringify(searches));
             renderRecentSearches();
@@ -1084,14 +1067,12 @@
 
         function loadRecentSearches() { renderRecentSearches(); }
 
-        // 2. 통합 검색 엔진 (한국 서버 + 미국 API)
+        // ==========================================
+        // 3. 주식 검색 및 상세 데이터 표시
+        // ==========================================
         async function searchStocks(query) {
-            const stockSearchResults = document.getElementById('stock-search-results');
-            
-            if (!query || query.length < 1) {
-                stockSearchResults.style.display = 'none';
-                return;
-            }
+            const resultsDiv = document.getElementById('stock-search-results');
+            if (!query) { resultsDiv.style.display = 'none'; return; }
 
             clearTimeout(searchTimer);
             searchTimer = setTimeout(async () => {
@@ -1101,180 +1082,118 @@
                         fetch(`https://finnhub.io/api/v1/search?q=${encodeURIComponent(query)}&token=${FINNHUB_API_KEY}`).catch(() => null)
                     ]);
 
-                    let combinedResults = [];
-
-                    if (krRes && krRes.ok) {
+                    let combined = [];
+                    if (krRes?.ok) {
                         const krData = await krRes.json();
-                        if (krData.status === "success") combinedResults = [...combinedResults, ...krData.result];
+                        if (krData.status === "success") combined = [...combined, ...krData.result];
                     }
-
-                    if (usRes && usRes.ok) {
+                    if (usRes?.ok) {
                         const usData = await usRes.json();
-                        if (usData.result) {
-                            const filteredUs = usData.result.filter(item => 
-                                !['BOND', 'CURRENCY', 'FUTURE', 'INDEX', 'WARRANT'].includes(item.type)
-                            );
-                            combinedResults = [...combinedResults, ...filteredUs];
-                        }
+                        if (usData.result) combined = [...combined, ...usData.result.filter(i => !['BOND','FUTURE'].includes(i.type))];
                     }
 
-                    if (combinedResults.length > 0) {
-                        displaySearchResults(combinedResults);
-                    } else {
-                        stockSearchResults.innerHTML = '<div class="search-result-item">결과가 없습니다.</div>';
-                        stockSearchResults.style.display = 'block';
-                    }
-                } catch (error) {
-                    console.error('검색 중 오류 발생:', error);
-                }
+                    displaySearchResults(combined);
+                } catch (e) { console.error("검색 실패", e); }
             }, 300);
         }
 
-        // 3. 검색 결과 목록 표시
         function displaySearchResults(results) {
-            const stockSearchResults = document.getElementById('stock-search-results');
-            const uniqueResults = Array.from(new Map(results.map(item => [item.symbol, item])).values());
-
-            stockSearchResults.innerHTML = uniqueResults.slice(0, 10).map(item => {
+            const container = document.getElementById('stock-search-results');
+            const unique = Array.from(new Map(results.map(i => [i.symbol, i])).values());
+            container.innerHTML = unique.slice(0, 10).map(item => {
                 const isKR = item.type === "KOREA" || item.symbol.endsWith('.KS') || item.symbol.endsWith('.KQ');
-                const badge = isKR ? '<span style="color:var(--success); font-weight:bold;">[KR]</span>' : '<span style="color:#3498db; font-weight:bold;">[US]</span>';
-                
                 return `
                     <div class="search-result-item" onclick="selectStock('${item.symbol}', '${item.description || item.displaySymbol}')">
-                        <div class="search-result-symbol" style="color:var(--success);">${item.symbol} ${badge}</div>
-                        <div class="search-result-name" style="color:var(--text-primary);">${item.description || item.displaySymbol}</div>
-                    </div>
-                `;
+                        <div class="search-result-symbol" style="color:var(--success);">${item.symbol} ${isKR ? '[KR]' : '[US]'}</div>
+                        <div class="search-result-name">${item.description || item.displaySymbol}</div>
+                    </div>`;
             }).join('');
-            
-            stockSearchResults.style.display = 'block';
+            container.style.display = 'block';
         }
 
-        // 4. 종목 선택 및 수동 새로고침 로직
         async function selectStock(symbol, name) {
             document.getElementById('stock-search-results').style.display = 'none';
             document.getElementById('stock-search-input').value = symbol;
-            
-            const stockInfoCard = document.getElementById('stock-info-card');
-            stockInfoCard.style.display = 'block';
-            document.getElementById('stock-name').textContent = name || symbol;
+            document.getElementById('stock-info-card').style.display = 'block';
+            document.getElementById('stock-name').textContent = name;
             document.getElementById('stock-symbol').textContent = symbol;
-            
-            // 데이터 표는 항상 보이게 설정
-            document.querySelector('.stock-details').style.display = 'grid';
-
-            // 현재 종목 정보 저장
-            currentSelectedSymbol = symbol;
-            isCurrentKR = symbol.endsWith('.KS') || symbol.endsWith('.KQ');
-            
-            // 새로고침 버튼 나타나게 하기
             document.getElementById('refresh-price-btn').style.display = 'flex';
 
-            // 🚨 [핵심!] 사용자가 종목을 클릭했을 때 최근 검색에 저장한다!
-            saveRecentSearch(symbol, name || symbol);
+            currentSelectedSymbol = symbol;
+            isCurrentKR = symbol.endsWith('.KS') || symbol.endsWith('.KQ');
 
-            // 최초 1회 데이터 즉시 로드
+            // 🚨 최근 검색 저장 실행
+            saveRecentSearch(symbol, name);
             await fetchAndDisplayData();
-        }
-
-        async function refreshCurrentPrice() {
-            if (!currentSelectedSymbol) return;
-            
-            const btn = document.getElementById('refresh-price-btn');
-            btn.classList.add('spinning'); // 애니메이션 시작
-            
-            await fetchAndDisplayData();
-            
-            setTimeout(() => btn.classList.remove('spinning'), 1000); // 1초 후 애니메이션 종료
         }
 
         async function fetchAndDisplayData() {
-            const symbol = currentSelectedSymbol;
-            const isKR = isCurrentKR;
+            const priceEl = document.getElementById('stock-price');
+            priceEl.textContent = "불러오는 중...";
+            
+            try {
+                let url = isCurrentKR ? `${RENDER_SERVER_URL}/quote/kr/${currentSelectedSymbol}` : `https://finnhub.io/api/v1/quote?symbol=${currentSelectedSymbol}&token=${FINNHUB_API_KEY}`;
+                const res = await fetch(url);
+                const data = await res.json();
 
-            if (isKR) {
-                document.getElementById('stock-price').textContent = "불러오는 중...";
-                try {
-                    const res = await fetch(`${RENDER_SERVER_URL}/quote/kr/${symbol}`);
-                    const data = await res.json();
-                    
-                    if (data.status === "success") {
-                        document.getElementById('stock-price').textContent = data.price + '원';
-                        const changeEl = document.getElementById('stock-change');
-                        changeEl.innerHTML = `${data.change}원 (${data.change_percent})<br><span style="font-size:0.85rem; color:var(--text-secondary); font-weight:normal;">${data.time} 기준</span>`;
-                        changeEl.className = 'stock-change ' + (data.is_positive ? 'positive' : (data.is_negative ? 'negative' : ''));
-                        
-                        document.getElementById('stock-open').textContent = data.open + '원';
-                        document.getElementById('stock-high').textContent = data.high + '원';
-                        document.getElementById('stock-low').textContent = data.low + '원';
-                        document.getElementById('stock-prev-close').textContent = data.prev_close + '원';
-                    } else {
-                        document.getElementById('stock-price').textContent = "데이터 없음";
-                    }
-                } catch (error) {
-                    console.error('크롤링 API 실패:', error);
-                    document.getElementById('stock-price').textContent = "서버 에러";
+                if (isCurrentKR && data.status === "success") {
+                    priceEl.textContent = data.price + '원';
+                    updateChangeUI(data.change, data.change_percent, data.time, data.is_positive);
+                    document.getElementById('stock-open').textContent = data.open + '원';
+                    document.getElementById('stock-high').textContent = data.high + '원';
+                    document.getElementById('stock-low').textContent = data.low + '원';
+                    document.getElementById('stock-prev-close').textContent = data.prev_close + '원';
+                } else if (!isCurrentKR && data.c) {
+                    priceEl.textContent = '$' + data.c.toFixed(2);
+                    updateChangeUI(data.d.toFixed(2), data.dp.toFixed(2) + '%', '실시간', data.d >= 0);
+                    document.getElementById('stock-open').textContent = '$' + data.o.toFixed(2);
+                    document.getElementById('stock-high').textContent = '$' + data.h.toFixed(2);
+                    document.getElementById('stock-low').textContent = '$' + data.l.toFixed(2);
+                    document.getElementById('stock-prev-close').textContent = '$' + data.pc.toFixed(2);
                 }
-            } else {
-                // 미국 주식
-                document.getElementById('stock-price').textContent = "Loading...";
-                try {
-                    const quoteRes = await fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${FINNHUB_API_KEY}`);
-                    const data = await quoteRes.json();
-                    
-                    if (data.c && data.c > 0) {
-                        document.getElementById('stock-price').textContent = '$' + data.c.toFixed(2);
-                        const changeEl = document.getElementById('stock-change');
-                        const now = new Date();
-                        const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} 갱신`;
-                        
-                        changeEl.innerHTML = `${data.d >= 0 ? '+' : ''}${data.d.toFixed(2)} (${data.dp >= 0 ? '+' : ''}${data.dp.toFixed(2)}%)<br><span style="font-size:0.85rem; color:var(--text-secondary); font-weight:normal;">${timeString}</span>`;
-                        changeEl.className = 'stock-change ' + (data.d >= 0 ? 'positive' : 'negative');
-                        
-                        document.getElementById('stock-open').textContent = '$' + (data.o || 0).toFixed(2);
-                        document.getElementById('stock-high').textContent = '$' + (data.h || 0).toFixed(2);
-                        document.getElementById('stock-low').textContent = '$' + (data.l || 0).toFixed(2);
-                        document.getElementById('stock-prev-close').textContent = '$' + (data.pc || 0).toFixed(2);
-                    } else {
-                        document.getElementById('stock-price').textContent = "No Data";
-                    }
-                } catch (error) {
-                    console.error('시세 호출 실패:', error);
-                    document.getElementById('stock-price').textContent = "API Error";
-                }
-            }
+            } catch (e) { priceEl.textContent = "에러 발생"; }
         }
 
-        // 5. 다크모드 관리
+        function updateChangeUI(val, pct, time, isPos) {
+            const el = document.getElementById('stock-change');
+            el.innerHTML = `${val} (${pct})<br><small>${time}</small>`;
+            el.className = 'stock-change ' + (isPos ? 'positive' : 'negative');
+        }
+
+        async function refreshCurrentPrice() {
+            const btn = document.getElementById('refresh-price-btn');
+            btn.classList.add('spinning');
+            await fetchAndDisplayData();
+            setTimeout(() => btn.classList.remove('spinning'), 1000);
+        }
+
+        // ==========================================
+        // 4. 테마 및 애니메이션
+        // ==========================================
         function initTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            if (savedTheme === 'dark') {
-                document.body.setAttribute('data-theme', 'dark');
-                updateThemeIcon('🌙');
-            } else {
-                document.body.removeAttribute('data-theme');
-                updateThemeIcon('☀️');
-            }
+            const saved = localStorage.getItem('theme') || 'light';
+            if (saved === 'dark') document.body.setAttribute('data-theme', 'dark');
+            document.querySelector('.theme-icon').textContent = saved === 'dark' ? '🌙' : '☀️';
         }
 
         function toggleTheme() {
             const isDark = document.body.hasAttribute('data-theme');
             if (isDark) {
-                // 다크 -> 라이트
                 document.body.removeAttribute('data-theme');
                 localStorage.setItem('theme', 'light');
-                updateThemeIcon('☀️');
+                document.querySelector('.theme-icon').textContent = '☀️';
             } else {
-                // 라이트 -> 다크
                 document.body.setAttribute('data-theme', 'dark');
                 localStorage.setItem('theme', 'dark');
-                updateThemeIcon('🌙');
+                document.querySelector('.theme-icon').textContent = '🌙';
             }
         }
 
-        function updateThemeIcon(icon) {
-            const iconEl = document.querySelector('.theme-icon');
-            if (iconEl) iconEl.textContent = icon;
+        function initScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if(e.isIntersecting) e.target.style.animation = 'fadeInUp 0.8s ease forwards'; });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.tool-card, .feature-item').forEach(el => { el.style.opacity = '0'; observer.observe(el); });
         }
     </script>
 </body>
