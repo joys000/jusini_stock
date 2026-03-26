@@ -603,7 +603,7 @@
         .detail-item {
             display: flex;
             justify-content: space-between;
-            align-items: center; /* 라이트 모드 글씨 붕 뜸 방지 */
+            align-items: center;
             padding: 1rem;
             background: var(--neutral-light);
             border-radius: 12px;
@@ -619,10 +619,9 @@
         .detail-value {
             font-weight: 700;
             color: var(--text-primary);
-            text-align: right; /* Y축 데이터 밀림 방지 */
+            text-align: right;
         }
         
-        /* 🚨 그래프를 없애기로 했으므로 차트 영역을 숨깁니다. */
         .chart-container-small {
             display: none;
         }
@@ -630,7 +629,7 @@
         /* Footer */
         footer {
             position: relative;
-            background: #1A1A1A; /* 푸터는 고정 어두운 색상 */
+            background: #1A1A1A;
             color: white;
             padding: 3rem 2rem 2rem;
             margin-top: 6rem;
@@ -690,6 +689,57 @@
             .nav-links { display: none; }
             .tools-grid { grid-template-columns: 1fr; }
         }
+        
+        /* 🚨 시장 지수 티커 디자인 */
+        .index-ticker {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 10px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+        }
+        .ticker-wrapper {
+            display: inline-flex;
+            gap: 30px;
+            animation: ticker-scroll 30s linear infinite;
+        }
+        .index-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .index-up { color: var(--success); }
+        .index-down { color: var(--danger); }
+        
+        @keyframes ticker-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* 🚨 최근 검색 칩 디자인 */
+        .recent-searches {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+        .search-chip {
+            background: var(--neutral-light);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+        .search-chip:hover {
+            background: var(--primary);
+            border-color: var(--primary-dark);
+        }
     </style>
 </head>
 <body>
@@ -714,6 +764,11 @@
     </header>
 
     <section class="hero">
+        <div class="index-ticker">
+            <div id="ticker-content" class="ticker-wrapper">
+                <span class="index-item">시계 열리는 중... ⏳</span>
+            </div>
+        </div>
         <h1>
             주식 투자, 이제 <span class="highlight">쉽게</span> 시작하세요
         </h1>
@@ -748,6 +803,7 @@
             
             <div class="search-box">
                 <input type="text" id="stock-search-input" placeholder="종목명 또는 티커 입력 (예: AAPL, 삼성전자)" autocomplete="off">
+                <div id="recent-search-container" class="recent-searches"></div>
                 <div id="stock-search-results" class="search-results" style="display: none;"></div>
             </div>
             
@@ -916,16 +972,16 @@
         let currentSelectedSymbol = null;
         let isCurrentKR = false;
 
-        // 1. 이벤트 리스너 통합 관리
+        // 1. 이벤트 리스너 통합 관리 (중복 제거 완료)
         document.addEventListener('DOMContentLoaded', () => {
-            // 🔥 [추가] 서버 예열 신호 (Pre-warming)
-            // 사용자가 페이지에 들어온 순간, 잠든 서버를 깨우기 시작하네.
+            // 🔥 서버 예열 신호
             console.log("🚀 서버 예열 엔진 가동...");
             fetch(`${RENDER_SERVER_URL}/`).catch(() => {}); 
 
             initTheme();
-            
-            
+            loadRecentSearches(); // 페이지 로드 시 최근 검색 불러오기
+            fetchMarketIndices(); // 시장 지수 불러오기
+
             const stockSearchInput = document.getElementById('stock-search-input');
             const stockSearchResults = document.getElementById('stock-search-results');
 
@@ -978,6 +1034,55 @@
                 observer.observe(el);
             });
         });
+
+        // 🚨 시장 지수 데이터 호출
+        async function fetchMarketIndices() {
+            try {
+                const res = await fetch(`${RENDER_SERVER_URL}/indices`);
+                const result = await res.json();
+                if (result.status === "success") {
+                    const content = document.getElementById('ticker-content');
+                    // 무한 루프처럼 보이게 2번 반복해서 넣음
+                    const itemsHtml = result.data.map(idx => `
+                        <span class="index-item">
+                            ${idx.name}: ${idx.price.toLocaleString()} 
+                            <span class="${idx.change >= 0 ? 'index-up' : 'index-down'}">
+                                ${idx.change >= 0 ? '▲' : '▼'} ${idx.pct}%
+                            </span>
+                        </span>
+                    `).join('');
+                    content.innerHTML = itemsHtml + itemsHtml; 
+                }
+            } catch (e) { console.error("지수 로드 실패", e); }
+        }
+
+        // 🚨 최근 검색 저장 및 로드 로직
+        function saveRecentSearch(symbol, name) {
+            let searches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+            // 중복 제거 및 최신순 정렬
+            searches = searches.filter(s => s.symbol !== symbol);
+            searches.unshift({ symbol, name });
+            // 최대 5개만 저장
+            if (searches.length > 5) searches.pop();
+            localStorage.setItem('recentSearches', JSON.stringify(searches));
+            renderRecentSearches();
+        }
+
+        function renderRecentSearches() {
+            const container = document.getElementById('recent-search-container');
+            const searches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+            if (searches.length === 0) {
+                container.innerHTML = '<small style="color:var(--text-secondary)">최근 검색 기록이 없습니다.</small>';
+                return;
+            }
+            container.innerHTML = searches.map(s => `
+                <div class="search-chip" onclick="selectStock('${s.symbol}', '${s.name}')">
+                    ${s.name} (${s.symbol})
+                </div>
+            `).join('');
+        }
+
+        function loadRecentSearches() { renderRecentSearches(); }
 
         // 2. 통합 검색 엔진 (한국 서버 + 미국 API)
         async function searchStocks(query) {
@@ -1065,6 +1170,9 @@
             // 새로고침 버튼 나타나게 하기
             document.getElementById('refresh-price-btn').style.display = 'flex';
 
+            // 🚨 [핵심!] 사용자가 종목을 클릭했을 때 최근 검색에 저장한다!
+            saveRecentSearch(symbol, name || symbol);
+
             // 최초 1회 데이터 즉시 로드
             await fetchAndDisplayData();
         }
@@ -1138,38 +1246,36 @@
         }
 
         // 5. 다크모드 관리
-        // 🚨 테마 관리 로직 완전 재건축
-function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    // 'dark'일 때만 속성을 넣고, 아니면 확실히 제거하네.
-    if (savedTheme === 'dark') {
-        document.body.setAttribute('data-theme', 'dark');
-        updateThemeIcon('🌙');
-    } else {
-        document.body.removeAttribute('data-theme');
-        updateThemeIcon('☀️');
-    }
-}
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                updateThemeIcon('🌙');
+            } else {
+                document.body.removeAttribute('data-theme');
+                updateThemeIcon('☀️');
+            }
+        }
 
-function toggleTheme() {
-    const isDark = document.body.hasAttribute('data-theme');
-    if (isDark) {
-        // 다크 -> 라이트
-        document.body.removeAttribute('data-theme');
-        localStorage.setItem('theme', 'light');
-        updateThemeIcon('☀️');
-    } else {
-        // 라이트 -> 다크
-        document.body.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-        updateThemeIcon('🌙');
-    }
-}
+        function toggleTheme() {
+            const isDark = document.body.hasAttribute('data-theme');
+            if (isDark) {
+                // 다크 -> 라이트
+                document.body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                updateThemeIcon('☀️');
+            } else {
+                // 라이트 -> 다크
+                document.body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                updateThemeIcon('🌙');
+            }
+        }
 
-function updateThemeIcon(icon) {
-    const iconEl = document.querySelector('.theme-icon');
-    if (iconEl) iconEl.textContent = icon;
-}
+        function updateThemeIcon(icon) {
+            const iconEl = document.querySelector('.theme-icon');
+            if (iconEl) iconEl.textContent = icon;
+        }
     </script>
 </body>
 </html>
