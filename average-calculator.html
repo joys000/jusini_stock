@@ -3,731 +3,327 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="매수 평단가 계산기 - 물타기/불타기 전략으로 평균 단가를 계산하고 손익을 분석하세요">
-    <title>평단가 계산기 - 주린이 계산기</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    
+    <title>전략 평단가 계산기 | 주린이 인텔리전스</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #FFD600;
-            --primary-dark: #FFC400;
-            --success: #00D9A3;
-            --danger: #FF6B6B;
-            --neutral: #2D3436;
-            --neutral-light: #F8F9FA;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --primary: #FFD600; --primary-dark: #FFC400; --primary-glow: rgba(255, 214, 0, 0.3);
+            --success: #00D9A3; --danger: #FF6B6B; --bg: #F8F9FA;
+            --card-bg: #FFFFFF; --text: #2D3436; --secondary: #636E72;
+            --border: #E8E8E8;
         }
+
+        [data-theme="dark"] {
+            --bg: #0A0B10; --card-bg: #1E202D; --text: #E8E8E8;
+            --secondary: #B0B0B0; --border: #333;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text);
+            transition: 0.3s; min-height: 100vh; padding: 20px;
+        }
+
+        header { max-width: 1200px; margin: 0 auto 30px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: 'Fredoka', cursive; font-size: 1.5rem; text-decoration: none; color: var(--text); display: flex; align-items: center; gap: 10px; }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'DM Sans', sans-serif;
-            color: var(--neutral);
-            background: linear-gradient(135deg, #FFE8E8 0%, #FFFFFF 100%);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(255, 107, 107, 0.03) 49px, rgba(255, 107, 107, 0.03) 50px),
-                repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(255, 107, 107, 0.03) 49px, rgba(255, 107, 107, 0.03) 50px);
-            pointer-events: none;
-            z-index: 0;
-        }
-        
-        header {
-            background: white;
-            box-shadow: var(--shadow);
-            padding: 1.5rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--neutral);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .back-btn {
-            background: var(--neutral-light);
-            color: var(--neutral);
-            padding: 0.75rem 1.5rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .back-btn:hover {
-            background: var(--primary);
-            transform: translateX(-5px);
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 3rem auto;
-            padding: 0 2rem;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .page-title {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
-        .page-title h1 {
-            font-family: 'Fredoka', cursive;
-            font-size: 3rem;
-            color: var(--neutral);
-            margin-bottom: 0.5rem;
-        }
-        
-        .page-title .icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-        
-        .main-layout {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-        
-        .input-section {
-            background: white;
-            border-radius: 24px;
-            padding: 2.5rem;
-            box-shadow: var(--shadow);
-        }
-        
-        .input-section h2 {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.75rem;
-            margin-bottom: 2rem;
-            color: var(--neutral);
-        }
-        
-        .purchase-form {
-            display: grid;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .input-group {
-            display: grid;
-            gap: 0.5rem;
-        }
-        
-        .input-group label {
-            font-weight: 600;
-            color: var(--neutral);
-        }
-        
-        .input-group input {
-            padding: 1rem;
-            border: 2px solid #E8E8E8;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.3s ease;
-        }
-        
-        .input-group input:focus {
-            outline: none;
-            border-color: var(--danger);
-            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
-        }
-        
-        .add-btn {
-            background: linear-gradient(135deg, var(--danger), #FF5252);
-            color: white;
-            border: none;
-            padding: 1rem;
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'DM Sans', sans-serif;
-        }
-        
-        .add-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
-        }
-        
-        .purchase-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .purchase-item {
-            background: var(--neutral-light);
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 0.75rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .purchase-info {
-            flex: 1;
-        }
-        
-        .purchase-price {
-            font-weight: 700;
-            color: var(--neutral);
-            font-size: 1.1rem;
-        }
-        
-        .purchase-shares {
-            color: #636E72;
-            font-size: 0.9rem;
-        }
-        
-        .delete-btn {
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .delete-btn:hover {
-            background: #FF5252;
-        }
-        
-        .result-section {
-            display: grid;
-            gap: 2rem;
-        }
-        
-        .result-card {
-            background: white;
-            border-radius: 24px;
-            padding: 2.5rem;
-            box-shadow: var(--shadow);
-        }
-        
-        .result-card h2 {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.75rem;
-            margin-bottom: 2rem;
-            color: var(--neutral);
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .stat-box {
-            background: linear-gradient(135deg, #FFF5F5, #FEE2E2);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border-left: 4px solid var(--danger);
-        }
-        
-        .stat-box.success {
-            background: linear-gradient(135deg, #F0FDF4, #DCFCE7);
-            border-left-color: var(--success);
-        }
-        
-        .stat-box.warning {
-            background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
-            border-left-color: #F59E0B;
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            color: #636E72;
-            margin-bottom: 0.5rem;
-        }
-        
-        .stat-value {
-            font-family: 'Fredoka', cursive;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--neutral);
-        }
-        
-        .stat-value .unit {
-            font-size: 1rem;
-            color: #636E72;
-            font-weight: 400;
-        }
-        
-        .current-price-input {
-            background: var(--neutral-light);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .current-price-input label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--neutral);
-        }
-        
-        .current-price-input input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #E8E8E8;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-family: 'DM Sans', sans-serif;
-        }
-        
-        .profit-display {
-            text-align: center;
-            padding: 2rem;
-            background: var(--neutral-light);
-            border-radius: 16px;
-        }
-        
-        .profit-label {
-            font-size: 1rem;
-            color: #636E72;
-            margin-bottom: 0.5rem;
-        }
-        
-        .profit-value {
-            font-family: 'Fredoka', cursive;
-            font-size: 3rem;
-            font-weight: 700;
-        }
-        
-        .profit-value.positive {
-            color: var(--success);
-        }
-        
-        .profit-value.negative {
-            color: var(--danger);
-        }
-        
-        .chart-container {
-            background: var(--neutral-light);
-            border-radius: 16px;
-            padding: 2rem;
-            height: 300px;
-        }
-        
-        .guide-section {
-            background: white;
-            border-radius: 24px;
-            padding: 2.5rem;
-            box-shadow: var(--shadow);
-        }
-        
-        .guide-section h2 {
-            font-family: 'Fredoka', cursive;
-            font-size: 2rem;
-            margin-bottom: 2rem;
-            color: var(--neutral);
-        }
-        
-        .guide-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        
-        .guide-card {
-            background: var(--neutral-light);
-            border-radius: 16px;
-            padding: 2rem;
-        }
-        
-        .guide-card h3 {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--neutral);
-        }
-        
-        .guide-card ul {
-            list-style: none;
-        }
-        
-        .guide-card li {
-            padding: 0.5rem 0;
-            color: #636E72;
-            display: flex;
-            gap: 0.75rem;
-        }
-        
-        .guide-card li::before {
-            content: '✓';
-            color: var(--danger);
-            font-weight: bold;
-        }
-        
-        @media (max-width: 968px) {
-            .main-layout {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+        .app-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.2fr; gap: 25px; }
+
+        .card { background: var(--card-bg); border-radius: 30px; padding: 30px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; }
+        .card h2 { font-family: 'Fredoka', cursive; font-size: 1.4rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+
+        /* 📡 멘토 브리핑 */
+        .mentor-briefing { background: rgba(0,0,0,0.03); padding: 18px; border-radius: 20px; margin-bottom: 25px; border-left: 5px solid var(--primary); }
+        .typewriter { font-size: 0.9rem; font-weight: 600; line-height: 1.6; min-height: 3.5em; }
+
+        /* 입력 그룹 최적화 */
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 0.8rem; font-weight: 800; margin-bottom: 8px; color: var(--secondary); }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; }
+        input { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--border); background: var(--bg); color: var(--text); font-weight: 700; outline: none; transition: 0.2s; }
+        input:focus { border-color: var(--primary); }
+
+        .btn-unit { padding: 5px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; font-size: 0.7rem; cursor: pointer; color: var(--secondary); transition: 0.2s; }
+        .btn-unit:hover { background: var(--primary); color: #000; }
+
+        .btn-add { background: var(--primary); color: #000; border: none; padding: 0 25px; border-radius: 12px; font-weight: 800; cursor: pointer; }
+        .btn-reset { position: absolute; top: 30px; right: 30px; background: none; border: none; color: var(--danger); text-decoration: underline; font-size: 0.8rem; cursor: pointer; }
+
+        /* 통화 스위치 */
+        .currency-switch { display: flex; background: var(--bg); padding: 5px; border-radius: 10px; gap: 5px; margin-bottom: 20px; }
+        .cur-btn { flex: 1; padding: 8px; border-radius: 8px; border: none; font-weight: 800; cursor: pointer; background: none; color: var(--secondary); transition: 0.3s; }
+        .cur-btn.active { background: var(--card-bg); color: var(--text); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        /* 분석 보드 */
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 25px; }
+        .stat-box { background: var(--bg); padding: 15px; border-radius: 15px; border: 1px solid var(--border); }
+        .stat-label { font-size: 0.7rem; color: var(--secondary); font-weight: 700; }
+        .stat-value { font-size: 1.2rem; font-weight: 800; color: var(--text); margin-top: 5px; font-family: 'Fredoka'; }
+
+        /* 결과 연출 */
+        .profit-badge { text-align: center; padding: 30px; border-radius: 25px; background: var(--bg); border: 2px solid var(--border); margin-bottom: 25px; transition: 0.3s; }
+        .profit-val { font-size: 2.8rem; font-weight: 900; font-family: 'Fredoka'; }
+
+        .target-box { background: rgba(0, 217, 163, 0.05); border: 1px solid var(--success); padding: 20px; border-radius: 20px; margin-top: 20px; }
+        .target-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: var(--bg); border-radius: 12px; margin-bottom: 8px; font-size: 0.85rem; border: 1px solid var(--border); }
+        .btn-del { color: var(--danger); font-weight: 800; cursor: pointer; border: none; background: none; }
+
+        .theme-toggle { background: var(--card-bg); border: 1px solid var(--border); width: 45px; height: 45px; border-radius: 15px; cursor: pointer; font-size: 1.2rem; }
+
+        @media (max-width: 900px) { .app-container { grid-template-columns: 1fr; } }
     </style>
 </head>
-<body>
+<body data-theme="light">
+
     <header>
-        <nav>
-            <a href="index.html" class="logo">
-                📊 주린이 계산기
-            </a>
-            <a href="index.html" class="back-btn">
-                ← 홈으로
-            </a>
-        </nav>
+        <a href="index.html" class="logo">📊 <span>전략 평단가 계산기</span></a>
+        <div style="display: flex; gap: 10px;">
+            <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙</button>
+            <button class="theme-toggle" onclick="location.href='index.html'">🏠</button>
+        </div>
     </header>
 
-    <div class="container">
-        <div class="page-title">
-            <div class="icon">📊</div>
-            <h1>매수 평단가 계산기</h1>
-            <p>물타기/불타기 전략으로 평균 단가를 분석하세요</p>
-        </div>
-
-        <div class="main-layout">
-            <!-- Input Section -->
-            <div class="input-section">
-                <h2>매수 내역 추가</h2>
-                
-                <div class="purchase-form">
-                    <div class="input-group">
-                        <label>매수 가격 (원)</label>
-                        <input type="number" id="price" placeholder="예: 50000" min="0" step="100">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>매수 수량 (주)</label>
-                        <input type="number" id="shares" placeholder="예: 10" min="1" step="1">
-                    </div>
-                    
-                    <button class="add-btn" onclick="addPurchase()">
-                        ➕ 매수 내역 추가
-                    </button>
+    <div class="app-container">
+        <div class="left-col">
+            <div class="card">
+                <button class="btn-reset" onclick="resetAll()">전체 초기화</button>
+                <div class="mentor-briefing">
+                    <span style="font-weight:900; color:var(--primary-dark); font-size:0.7rem; display:block; margin-bottom:5px;">📡 MENTOR JAEWOO</span>
+                    <p id="mentor-msg" class="typewriter"></p>
                 </div>
 
-                <div id="purchase-list" class="purchase-list"></div>
-            </div>
+                <div class="currency-switch">
+                    <button class="cur-btn active" id="cur-krw" onclick="setCurrency('KRW')">🇰🇷 원화 (₩)</button>
+                    <button class="cur-btn" id="cur-usd" onclick="setCurrency('USD')">🇺🇸 달러 ($)</button>
+                </div>
 
-            <!-- Result Section -->
-            <div class="result-section">
-                <div class="result-card">
-                    <h2>평단가 분석</h2>
-                    
-                    <div class="stats-grid">
-                        <div class="stat-box warning">
-                            <div class="stat-label">평균 매수 단가</div>
-                            <div class="stat-value">
-                                <span id="avg-price">0</span>
-                                <span class="unit">원</span>
+                <h2>➕ 매수 내역 입력</h2>
+                <div class="input-group">
+                    <div class="input-row">
+                        <div>
+                            <label id="label-price">매수가 (₩)</label>
+                            <input type="number" id="price-in" placeholder="0">
+                            <div style="margin-top: 5px; display: flex; gap: 4px;">
+                                <button class="btn-unit" onclick="adjustInput('price-in', 100)">+100</button>
+                                <button class="btn-unit" onclick="adjustInput('price-in', 1000)">+1k</button>
+                                <button class="btn-unit" onclick="adjustInput('price-in', 10000)">+10k</button>
                             </div>
                         </div>
-                        
-                        <div class="stat-box">
-                            <div class="stat-label">총 보유 수량</div>
-                            <div class="stat-value">
-                                <span id="total-shares">0</span>
-                                <span class="unit">주</span>
+                        <div>
+                            <label>수량 (주)</label>
+                            <input type="number" id="shares-in" placeholder="0">
+                            <div style="margin-top: 5px; display: flex; gap: 4px;">
+                                <button class="btn-unit" onclick="adjustInput('shares-in', 1)">+1</button>
+                                <button class="btn-unit" onclick="adjustInput('shares-in', 10)">+10</button>
+                                <button class="btn-unit" onclick="adjustInput('shares-in', 100)">+100</button>
                             </div>
                         </div>
-                        
-                        <div class="stat-box">
-                            <div class="stat-label">총 투자 금액</div>
-                            <div class="stat-value">
-                                <span id="total-cost">0</span>
-                                <span class="unit">원</span>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-box">
-                            <div class="stat-label">매수 횟수</div>
-                            <div class="stat-value">
-                                <span id="purchase-count">0</span>
-                                <span class="unit">회</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="current-price-input">
-                        <label>현재 주가 입력 (손익 계산용)</label>
-                        <input 
-                            type="number" 
-                            id="current-price" 
-                            placeholder="예: 55000"
-                            oninput="calculateProfit()"
-                        >
-                    </div>
-
-                    <div id="profit-section" style="display: none;">
-                        <div class="profit-display">
-                            <div class="profit-label">평가 손익</div>
-                            <div class="profit-value" id="profit-value">0원</div>
-                            <div class="profit-label" style="margin-top: 1rem;">수익률</div>
-                            <div class="profit-value" id="profit-rate" style="font-size: 2rem;">0%</div>
-                        </div>
+                        <button class="btn-add" onclick="addPosition()" style="height: 48px; margin-top: 24px;">추가</button>
                     </div>
                 </div>
 
-                <div class="result-card">
-                    <h2>매수 내역 차트</h2>
-                    <div class="chart-container">
-                        <canvas id="chart"></canvas>
+                <div class="purchase-list" id="pos-list" style="max-height: 150px; overflow-y: auto; margin-bottom: 20px;"></div>
+
+                <div class="target-box">
+                    <h3 style="font-size: 0.9rem; font-weight: 800; color: var(--success);">🎯 목표 탈출 시뮬레이션</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                        <div>
+                            <label style="font-size: 0.75rem; font-weight: 700; color: var(--secondary);">희망 평단가</label>
+                            <input type="number" id="target-avg" placeholder="목표 평단" oninput="runCalculations()">
+                        </div>
+                        <div style="background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border); text-align: center;">
+                            <span style="font-size: 0.7rem; display: block; color: var(--secondary);">필요 추가 매수</span>
+                            <strong id="req-shares" style="font-size: 1.1rem; color: var(--success);">0</strong>주
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Guide Section -->
-        <div class="guide-section">
-            <h2>평단가 계산기 활용 가이드</h2>
-            <div class="guide-grid">
-                <div class="guide-card">
-                    <h3>💡 평단가란?</h3>
-                    <ul>
-                        <li>여러 번 매수한 주식의 평균 가격</li>
-                        <li>총 투자금액 ÷ 총 보유수량</li>
-                        <li>손익 분기점을 파악하는 핵심 지표</li>
-                        <li>투자 전략 수립의 기준점</li>
-                    </ul>
-                </div>
+        <div class="right-col">
+            <div class="card">
+                <h2>📈 전략 분석 리포트</h2>
                 
-                <div class="guide-card">
-                    <h3>📉 물타기 전략</h3>
-                    <ul>
-                        <li>주가 하락 시 추가 매수</li>
-                        <li>평단가를 낮춰 손익 분기점 개선</li>
-                        <li>장기 투자에 유리한 전략</li>
-                        <li>신중한 자금 관리 필요</li>
-                    </ul>
+                <div class="stats-grid">
+                    <div class="stat-box"><div class="stat-label">최종 평균단가</div><div class="stat-value" id="res-avg">0</div></div>
+                    <div class="stat-box"><div class="stat-label">총 보유 수량</div><div class="stat-value" id="res-total-shares">0</div></div>
+                    <div class="stat-box"><div class="stat-label">총 투자 금액</div><div class="stat-value" id="res-total-cost">0</div></div>
+                    <div class="stat-box"><div class="stat-label">현재 주가</div><input type="number" id="current-price" style="margin-top:5px; border:none; background:none; padding:0; font-size:1.2rem; height:auto;" placeholder="입력..." oninput="runCalculations()"></div>
                 </div>
-                
-                <div class="guide-card">
-                    <h3>📈 불타기 전략</h3>
-                    <ul>
-                        <li>주가 상승 시 추가 매수</li>
-                        <li>상승 추세 확신 시 활용</li>
-                        <li>수익 극대화 전략</li>
-                        <li>고점 매수 주의 필요</li>
-                    </ul>
+
+                <div class="profit-badge" id="profit-card">
+                    <div class="stat-label">실시간 예상 손익</div>
+                    <div id="res-profit" class="profit-val">0</div>
+                    <div id="res-rate" style="font-weight: 800; font-size: 1.3rem; margin-top: 5px;">0.00%</div>
+                </div>
+
+                <div class="target-box" style="background: rgba(255, 214, 0, 0.05); border-color: var(--primary);">
+                    <h3 style="font-size: 0.9rem; font-weight: 800; color: var(--primary-dark);">💰 목표 수익 매도가 계산</h3>
+                    <div class="target-row">
+                        <span style="font-size: 0.85rem; font-weight: 600;">원하는 수익률 (%)</span>
+                        <input type="number" id="target-profit-rate" value="5" style="width: 80px; text-align: center;" oninput="runCalculations()">
+                    </div>
+                    <div class="target-row" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border);">
+                        <strong>예상 매도 가격</strong>
+                        <strong id="target-sell-price" style="font-size: 1.3rem; color: var(--primary-dark);">0</strong>
+                    </div>
+                </div>
+
+                <div style="height: 200px; margin-top: 25px;">
+                    <canvas id="avgChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        let purchases = [];
-        let chartInstance = null;
+        let positions = [];
+        let currency = 'KRW';
+        let chart = null;
 
-        function formatNumber(num) {
-            return new Intl.NumberFormat('ko-KR').format(Math.round(num));
+        function init() {
+            const saved = localStorage.getItem('avg_positions_v3');
+            if(saved) positions = JSON.parse(saved);
+            typeWriter("어설픈 물타기는 파산을 부른다. 정확한 '탈출 지점'과 '목표가'를 설정해라. 멘토 재우가 끝까지 돕지.", "mentor-msg");
+            renderUI();
+            initTheme();
         }
 
-        function addPurchase() {
-            const price = parseFloat(document.getElementById('price').value);
-            const shares = parseInt(document.getElementById('shares').value);
+        function typeWriter(text, elementId) {
+            const el = document.getElementById(elementId); el.innerHTML = '';
+            let i = 0;
+            const timer = setInterval(() => {
+                if (i < text.length) { el.innerHTML += text.charAt(i); i++; }
+                else clearInterval(timer);
+            }, 30);
+        }
 
-            if (!price || price <= 0 || !shares || shares <= 0) {
-                alert('매수 가격과 수량을 올바르게 입력해주세요!');
-                return;
+        function setCurrency(cur) {
+            currency = cur;
+            document.getElementById('cur-krw').classList.toggle('active', cur === 'KRW');
+            document.getElementById('cur-usd').classList.toggle('active', cur === 'USD');
+            document.getElementById('label-price').innerText = `매수가 (${cur === 'KRW' ? '₩' : '$'})`;
+            runCalculations();
+        }
+
+        function adjustInput(id, val) {
+            const el = document.getElementById(id);
+            el.value = (parseFloat(el.value) || 0) + val;
+            if(id === 'price-in' || id === 'shares-in') {} else { runCalculations(); }
+        }
+
+        function addPosition() {
+            const p = parseFloat(document.getElementById('price-in').value);
+            const s = parseFloat(document.getElementById('shares-in').value);
+            if(!p || !s) return;
+            positions.push({ price: p, shares: s, id: Date.now() });
+            document.getElementById('price-in').value = '';
+            document.getElementById('shares-in').value = '';
+            renderUI();
+        }
+
+        function deletePosition(id) {
+            positions = positions.filter(pos => pos.id !== id);
+            renderUI();
+        }
+
+        function resetAll() {
+            if(confirm("모든 내역을 삭제할까?")) {
+                positions = [];
+                localStorage.removeItem('avg_positions_v3');
+                location.reload();
             }
-
-            purchases.push({ price, shares });
-            document.getElementById('price').value = '';
-            document.getElementById('shares').value = '';
-            
-            updateDisplay();
         }
 
-        function deletePurchase(index) {
-            purchases.splice(index, 1);
-            updateDisplay();
+        function format(num) {
+            if (currency === 'KRW') return Math.round(num).toLocaleString() + '원';
+            return '$' + num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
 
-        function updateDisplay() {
-            // Update purchase list
-            const listHtml = purchases.map((p, i) => `
-                <div class="purchase-item">
-                    <div class="purchase-info">
-                        <div class="purchase-price">${formatNumber(p.price)}원</div>
-                        <div class="purchase-shares">${formatNumber(p.shares)}주 매수</div>
-                    </div>
-                    <button class="delete-btn" onclick="deletePurchase(${i})">삭제</button>
+        function renderUI() {
+            localStorage.setItem('avg_positions_v3', JSON.stringify(positions));
+            const list = document.getElementById('pos-list');
+            list.innerHTML = positions.map(pos => `
+                <div class="list-item">
+                    <span><strong>${format(pos.price)}</strong> / ${pos.shares}주</span>
+                    <button class="btn-del" onclick="deletePosition(${pos.id})">삭제</button>
                 </div>
             `).join('');
-            document.getElementById('purchase-list').innerHTML = listHtml || '<p style="text-align: center; color: #B2BEC3; padding: 2rem;">매수 내역이 없습니다</p>';
-
-            // Calculate stats
-            if (purchases.length === 0) {
-                document.getElementById('avg-price').textContent = '0';
-                document.getElementById('total-shares').textContent = '0';
-                document.getElementById('total-cost').textContent = '0';
-                document.getElementById('purchase-count').textContent = '0';
-                document.getElementById('profit-section').style.display = 'none';
-                if (chartInstance) {
-                    chartInstance.destroy();
-                    chartInstance = null;
-                }
-                return;
-            }
-
-            const totalShares = purchases.reduce((sum, p) => sum + p.shares, 0);
-            const totalCost = purchases.reduce((sum, p) => sum + (p.price * p.shares), 0);
-            const avgPrice = totalCost / totalShares;
-
-            document.getElementById('avg-price').textContent = formatNumber(avgPrice);
-            document.getElementById('total-shares').textContent = formatNumber(totalShares);
-            document.getElementById('total-cost').textContent = formatNumber(totalCost);
-            document.getElementById('purchase-count').textContent = purchases.length;
-
-            // Update chart
-            updateChart();
-            calculateProfit();
+            runCalculations();
         }
 
-        function updateChart() {
-            const ctx = document.getElementById('chart').getContext('2d');
-            
-            if (chartInstance) {
-                chartInstance.destroy();
+        function runCalculations() {
+            if(positions.length === 0) return;
+
+            const totalShares = positions.reduce((acc, cur) => acc + cur.shares, 0);
+            const totalCost = positions.reduce((acc, cur) => acc + (cur.price * cur.shares), 0);
+            const avgPrice = totalCost / totalShares;
+            const curPrice = parseFloat(document.getElementById('current-price').value) || 0;
+
+            document.getElementById('res-avg').innerText = format(avgPrice);
+            document.getElementById('res-total-shares').innerText = totalShares.toLocaleString() + '주';
+            document.getElementById('res-total-cost').innerText = format(totalCost);
+
+            // 손익 계산
+            if(curPrice > 0) {
+                const profit = (curPrice * totalShares) - totalCost;
+                const rate = (profit / totalCost) * 100;
+                document.getElementById('res-profit').innerText = (profit > 0 ? '+' : '') + format(profit);
+                document.getElementById('res-rate').innerText = (profit > 0 ? '+' : '') + rate.toFixed(2) + '%';
+                document.getElementById('profit-card').style.borderColor = profit >= 0 ? 'var(--success)' : 'var(--danger)';
+                document.getElementById('res-profit').style.color = profit >= 0 ? 'var(--success)' : 'var(--danger)';
+                document.getElementById('res-rate').style.color = profit >= 0 ? 'var(--success)' : 'var(--danger)';
             }
 
-            const labels = purchases.map((_, i) => `${i + 1}차 매수`);
-            const prices = purchases.map(p => p.price);
-            const cumulativeAvg = [];
-            
-            let cumShares = 0;
-            let cumCost = 0;
-            purchases.forEach(p => {
-                cumShares += p.shares;
-                cumCost += p.price * p.shares;
-                cumulativeAvg.push(cumCost / cumShares);
-            });
+            // 탈출 시뮬레이션
+            const target = parseFloat(document.getElementById('target-avg').value);
+            if(target && curPrice > 0) {
+                let req = (target * totalShares - totalCost) / (curPrice - target);
+                document.getElementById('req-shares').innerText = req > 0 ? Math.ceil(req).toLocaleString() : '0';
+            }
 
-            chartInstance = new Chart(ctx, {
-                type: 'line',
+            // 목표 수익가 계산
+            const targetRate = parseFloat(document.getElementById('target-profit-rate').value) || 0;
+            const targetSell = avgPrice * (1 + targetRate / 100);
+            document.getElementById('target-sell-price').innerText = format(targetSell);
+
+            updateChart(avgPrice, curPrice);
+        }
+
+        function updateChart(avg, cur) {
+            const ctx = document.getElementById('avgChart').getContext('2d');
+            if(chart) chart.destroy();
+            chart = new Chart(ctx, {
+                type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: ['현재 평단', '현재 주가'],
                     datasets: [{
-                        label: '매수 가격',
-                        data: prices,
-                        borderColor: '#FF6B6B',
-                        backgroundColor: 'rgba(255, 107, 107, 0.1)',
-                        tension: 0.4,
-                        fill: false,
-                        pointRadius: 6,
-                        pointHoverRadius: 8
-                    }, {
-                        label: '평균 단가',
-                        data: cumulativeAvg,
-                        borderColor: '#FFD600',
-                        backgroundColor: 'rgba(255, 214, 0, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        borderDash: [5, 5],
-                        pointRadius: 6,
-                        pointHoverRadius: 8
+                        data: [avg, cur],
+                        backgroundColor: ['#FFD600', cur >= avg ? '#00D9A3' : '#FF6B6B'],
+                        borderRadius: 8
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            ticks: {
-                                callback: function(value) {
-                                    return formatNumber(value) + '원';
-                                }
-                            }
-                        }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } }
             });
         }
 
-        function calculateProfit() {
-            const currentPrice = parseFloat(document.getElementById('current-price').value);
-            
-            if (!currentPrice || currentPrice <= 0 || purchases.length === 0) {
-                document.getElementById('profit-section').style.display = 'none';
-                return;
-            }
-
-            const totalShares = purchases.reduce((sum, p) => sum + p.shares, 0);
-            const totalCost = purchases.reduce((sum, p) => sum + (p.price * p.shares), 0);
-            const avgPrice = totalCost / totalShares;
-            
-            const currentValue = currentPrice * totalShares;
-            const profit = currentValue - totalCost;
-            const profitRate = (profit / totalCost) * 100;
-
-            const profitElement = document.getElementById('profit-value');
-            const rateElement = document.getElementById('profit-rate');
-
-            profitElement.textContent = (profit >= 0 ? '+' : '') + formatNumber(profit) + '원';
-            rateElement.textContent = (profitRate >= 0 ? '+' : '') + profitRate.toFixed(2) + '%';
-
-            profitElement.className = 'profit-value ' + (profit >= 0 ? 'positive' : 'negative');
-            rateElement.className = 'profit-value ' + (profitRate >= 0 ? 'positive' : 'negative');
-
-            document.getElementById('profit-section').style.display = 'block';
+        function toggleTheme() {
+            const next = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            document.getElementById('theme-btn').innerText = next === 'dark' ? '☀️' : '🌙';
         }
+
+        function initTheme() {
+            const saved = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', saved);
+            document.getElementById('theme-btn').innerText = saved === 'dark' ? '☀️' : '🌙';
+        }
+
+        init();
     </script>
 </body>
 </html>
