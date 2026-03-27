@@ -44,11 +44,7 @@
             --neutral-light: #2D3436;
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -60,770 +56,146 @@
         }
         
         body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-image: 
                 repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(255, 214, 0, 0.03) 49px, rgba(255, 214, 0, 0.03) 50px),
                 repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(255, 214, 0, 0.03) 49px, rgba(255, 214, 0, 0.03) 50px);
-            pointer-events: none;
-            z-index: 0;
+            pointer-events: none; z-index: 0;
         }
         
-        header {
-            position: relative;
-            background: var(--card-bg);
-            box-shadow: var(--shadow);
-            padding: 1.5rem 0;
-            z-index: 100;
-            transition: background 0.3s ease;
-        }
-        
-        nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        header { position: relative; background: var(--card-bg); box-shadow: var(--shadow); padding: 1.5rem 0; z-index: 100; transition: background 0.3s ease; }
+        nav { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
         
         .theme-toggle {
-            background: var(--neutral-light);
-            border: 2px solid var(--border-color);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.5rem;
+            background: var(--neutral-light); border: 2px solid var(--border-color); width: 45px; height: 45px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: all 0.3s ease; font-size: 1.5rem;
         }
+        .theme-toggle:hover { background: var(--primary); transform: rotate(20deg) scale(1.1); }
         
-        .theme-toggle:hover {
-            background: var(--primary);
-            transform: rotate(20deg) scale(1.1);
-        }
+        .logo { font-family: 'Fredoka', cursive; font-size: 2rem; font-weight: 700; color: var(--text-primary); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+        .logo-icon { background: var(--primary); width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transform: rotate(-5deg); transition: transform 0.3s ease; }
+        .logo:hover .logo-icon { transform: rotate(5deg) scale(1.1); }
         
-        .logo {
-            font-family: 'Fredoka', cursive;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: var(--text-primary); text-decoration: none; font-weight: 500; transition: color 0.3s ease; position: relative; }
+        .nav-links a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 3px; background: var(--primary); border-radius: 2px; transition: width 0.3s ease; }
+        .nav-links a:hover { color: var(--primary-dark); }
+        .nav-links a:hover::after { width: 100%; }
         
-        .logo-icon {
-            background: var(--primary);
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            transform: rotate(-5deg);
-            transition: transform 0.3s ease;
-        }
+        .hero { position: relative; max-width: 1200px; margin: 4rem auto; padding: 0 2rem; text-align: center; z-index: 1; }
+        .hero h1 { font-family: 'Fredoka', cursive; font-size: 3.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; line-height: 1.2; animation: fadeInUp 0.8s ease; }
+        .hero .highlight { color: var(--primary-dark); position: relative; display: inline-block; }
+        .hero .highlight::after { content: ''; position: absolute; bottom: 5px; left: 0; width: 100%; height: 15px; background: var(--primary); opacity: 0.3; z-index: -1; border-radius: 3px; }
+        .hero p { font-size: 1.25rem; color: var(--text-secondary); margin-bottom: 2rem; animation: fadeInUp 0.8s ease 0.2s backwards; }
         
-        .logo:hover .logo-icon {
-            transform: rotate(5deg) scale(1.1);
-        }
+        .hero-badges { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; animation: fadeInUp 0.8s ease 0.4s backwards; }
+        .badge { background: var(--card-bg); padding: 0.75rem 1.5rem; border-radius: 50px; box-shadow: var(--shadow); font-weight: 500; display: flex; align-items: center; gap: 0.5rem; transition: transform 0.3s ease; }
+        .badge:hover { transform: translateY(-3px); }
         
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-        
-        .nav-links a {
-            color: var(--text-primary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-            position: relative;
-        }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 3px;
-            background: var(--primary);
-            border-radius: 2px;
-            transition: width 0.3s ease;
-        }
-        
-        .nav-links a:hover {
-            color: var(--primary-dark);
-        }
-        
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-        
-        .hero {
-            position: relative;
-            max-width: 1200px;
-            margin: 4rem auto;
-            padding: 0 2rem;
-            text-align: center;
-            z-index: 1;
-        }
-        
-        .hero h1 {
-            font-family: 'Fredoka', cursive;
-            font-size: 3.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-            line-height: 1.2;
-            animation: fadeInUp 0.8s ease;
-        }
-        
-        .hero .highlight {
-            color: var(--primary-dark);
-            position: relative;
-            display: inline-block;
-        }
-        
-        .hero .highlight::after {
-            content: '';
-            position: absolute;
-            bottom: 5px;
-            left: 0;
-            width: 100%;
-            height: 15px;
-            background: var(--primary);
-            opacity: 0.3;
-            z-index: -1;
-            border-radius: 3px;
-        }
-        
-        .hero p {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            animation: fadeInUp 0.8s ease 0.2s backwards;
-        }
-        
-        .hero-badges {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-bottom: 3rem;
-            animation: fadeInUp 0.8s ease 0.4s backwards;
-        }
-        
-        .badge {
-            background: var(--card-bg);
-            padding: 0.75rem 1.5rem;
-            border-radius: 50px;
-            box-shadow: var(--shadow);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: transform 0.3s ease, background 0.3s ease;
-        }
-        
-        .badge:hover {
-            transform: translateY(-3px);
-        }
-        
-        .badge-icon {
-            font-size: 1.25rem;
-        }
-
         /* 🚨 시장 지수 고정형 디자인 */
-        .index-ticker {
-            background: var(--card-bg);
-            padding: 15px 2rem;
-            margin-bottom: 2rem;
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-            display: flex;
-            justify-content: center;
-        }
-        .ticker-wrapper {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-            width: 100%;
-        }
-        .index-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-            font-size: 1rem;
-        }
+        .index-ticker { background: var(--card-bg); padding: 15px 2rem; margin-bottom: 2rem; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--border-color); display: flex; justify-content: center; }
+        .ticker-wrapper { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; width: 100%; }
+        .index-item { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1rem; }
         .index-up { color: var(--success); }
         .index-down { color: var(--danger); }
         
-        .stock-search-section {
-            position: relative;
-            max-width: 900px;
-            margin: 4rem auto;
-            padding: 0 2rem;
-            z-index: 100;
-        }
+        .stock-search-section { position: relative; max-width: 900px; margin: 4rem auto; padding: 0 2rem; z-index: 100; }
+        .section-title { font-family: 'Fredoka', cursive; font-size: 2.5rem; text-align: center; margin-bottom: 3rem; color: var(--text-primary); }
+        .section-subtitle { text-align: center; color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 2rem; }
         
-        .section-title {
-            font-family: 'Fredoka', cursive;
-            font-size: 2.5rem;
-            text-align: center;
-            margin-bottom: 3rem;
-            color: var(--text-primary);
-        }
+        .search-container { background: var(--card-bg); padding: 3rem; border-radius: 24px; box-shadow: var(--shadow); transition: background 0.3s ease; }
+        .search-box { position: relative; margin-bottom: 2rem; }
+        #stock-search-input { width: 100%; padding: 1.25rem 1.5rem; border: 2px solid var(--border-color); background: var(--neutral-light); color: var(--text-primary); border-radius: 16px; font-size: 1.1rem; font-family: 'DM Sans', sans-serif; transition: all 0.3s ease; }
+        #stock-search-input:focus { outline: none; border-color: var(--success); background: var(--card-bg); box-shadow: 0 0 0 4px rgba(0, 217, 163, 0.1); }
         
-        .section-subtitle {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .search-container {
-            background: var(--card-bg);
-            padding: 3rem;
-            border-radius: 24px;
-            box-shadow: var(--shadow);
-            transition: background 0.3s ease;
-        }
-        
-        .search-box {
-            position: relative;
-            margin-bottom: 2rem;
-        }
-        
-        #stock-search-input {
-            width: 100%;
-            padding: 1.25rem 1.5rem;
-            border: 2px solid var(--border-color);
-            background: var(--neutral-light);
-            color: var(--text-primary);
-            border-radius: 16px;
-            font-size: 1.1rem;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.3s ease;
-        }
-        
-        #stock-search-input:focus {
-            outline: none;
-            border-color: var(--success);
-            background: var(--card-bg);
-            box-shadow: 0 0 0 4px rgba(0, 217, 163, 0.1);
-        }
-        
-        .search-results {
-            position: absolute;
-            top: calc(100% + 10px);
-            left: 0;
-            right: 0;
-            background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            max-height: 350px;
-            overflow-y: auto;
-            z-index: 9999;
-            border: 2px solid var(--success);
-        }
-        
-        .search-result-item {
-            padding: 1rem 1.5rem;
-            cursor: pointer;
-            border-bottom: 1px solid var(--border-color);
-            transition: all 0.2s ease;
-        }
-        
-        .search-result-item:hover {
-            background: rgba(0, 217, 163, 0.1);
-        }
-        
-        .search-result-symbol {
-            font-weight: 700;
-            color: var(--success);
-            margin-bottom: 0.25rem;
-        }
-        
-        .search-result-name {
-            color: var(--text-primary);
-            font-size: 0.9rem;
-        }
+        .search-results { position: absolute; top: calc(100% + 10px); left: 0; right: 0; background: var(--card-bg); border-radius: 16px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); max-height: 350px; overflow-y: auto; z-index: 9999; border: 2px solid var(--success); }
+        .search-result-item { padding: 1rem 1.5rem; cursor: pointer; border-bottom: 1px solid var(--border-color); transition: all 0.2s ease; }
+        .search-result-item:hover { background: rgba(0, 217, 163, 0.1); }
+        .search-result-symbol { font-weight: 700; color: var(--success); margin-bottom: 0.25rem; }
+        .search-result-name { color: var(--text-primary); font-size: 0.9rem; }
 
-        .recent-searches {
-            margin-top: 15px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-        }
-        .search-chip {
-            background: var(--neutral-light);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            border: 1px solid var(--border-color);
-            transition: all 0.2s ease;
-        }
-        .search-chip:hover {
-            background: var(--primary);
-            border-color: var(--primary-dark);
-        }
+        .recent-searches { margin-top: 15px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .search-chip { background: var(--neutral-light); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; border: 1px solid var(--border-color); transition: all 0.2s ease; }
+        .search-chip:hover { background: var(--primary); border-color: var(--primary-dark); }
         
-        .stock-info-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 2rem;
-            border: 2px solid var(--border-color);
-            transition: background 0.3s ease;
-        }
-        
-        .stock-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 2px solid var(--border-color);
-        }
-        
-        .stock-header h3 {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.75rem;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-        
-        .stock-symbol {
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-        
-        .stock-price {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            font-family: 'Fredoka', cursive;
-        }
-        
-        .stock-change {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-top: 0.5rem;
-            text-align: right;
-        }
-        
+        .stock-info-card { background: var(--card-bg); border-radius: 20px; padding: 2rem; border: 2px solid var(--border-color); transition: background 0.3s ease; }
+        .stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--border-color); }
+        .stock-header h3 { font-family: 'Fredoka', cursive; font-size: 1.75rem; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .stock-symbol { color: var(--text-secondary); font-weight: 600; }
+        .stock-price { font-size: 2.5rem; font-weight: 700; color: var(--text-primary); font-family: 'Fredoka', cursive; }
+        .stock-change { font-size: 1.1rem; font-weight: 600; margin-top: 0.5rem; text-align: right; }
         .stock-change.positive { color: var(--success); }
         .stock-change.negative { color: var(--danger); }
         
-        .refresh-btn {
-            background: var(--neutral-light);
-            border: 1px solid var(--border-color);
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-            color: var(--text-primary);
-            outline: none;
-        }
+        .refresh-btn { background: var(--neutral-light); border: 1px solid var(--border-color); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.2rem; transition: all 0.3s ease; color: var(--text-primary); outline: none; }
+        .refresh-btn:hover { background: var(--primary); color: #2D3436; }
+        .refresh-btn.spinning { animation: spin-fast 1s linear infinite; pointer-events: none; opacity: 0.7; }
+        @keyframes spin-fast { 100% { transform: rotate(360deg); } }
         
-        .refresh-btn:hover {
-            background: var(--primary);
-            color: #2D3436;
-        }
-        
-        .refresh-btn.spinning {
-            animation: spin-fast 1s linear infinite;
-            pointer-events: none;
-            opacity: 0.7;
-        }
-        
-        @keyframes spin-fast {
-            100% { transform: rotate(360deg); }
-        }
-        
-        .stock-details {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .detail-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            background: var(--neutral-light);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            transition: background 0.3s ease, border-color 0.3s ease;
-        }
-        
-        .detail-label {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-        
-        .detail-value {
-            font-weight: 700;
-            color: var(--text-primary);
-            text-align: right;
-        }
+        .stock-details { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .detail-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--neutral-light); border-radius: 12px; border: 1px solid var(--border-color); transition: 0.3s; }
+        .detail-label { color: var(--text-secondary); font-size: 0.9rem; }
+        .detail-value { font-weight: 700; color: var(--text-primary); text-align: right; }
 
-        .tools-section {
-            position: relative;
-            max-width: 1200px;
-            margin: 0 auto 6rem;
-            padding: 0 2rem;
-            z-index: 1;
-        }
+        .tools-section { position: relative; max-width: 1200px; margin: 0 auto 6rem; padding: 0 2rem; z-index: 1; }
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+        .tool-card { background: var(--card-bg); border-radius: 24px; padding: 2.5rem; box-shadow: var(--shadow); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; cursor: pointer; border: 1px solid transparent; }
+        .tool-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, var(--primary), var(--success)); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
+        .tool-card:hover { transform: translateY(-10px) rotate(1deg); box-shadow: var(--shadow-hover); }
+        .tool-card:hover::before { transform: scaleX(1); }
         
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
-        }
+        .tool-icon { width: 70px; height: 70px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 1.5rem; transition: transform 0.4s ease; }
+        .tool-card:hover .tool-icon { transform: rotate(10deg) scale(1.1); }
+        .tool-card.success .tool-icon { background: linear-gradient(135deg, var(--success), #00C292); }
+        .tool-card.danger .tool-icon { background: linear-gradient(135deg, var(--danger), #FF5252); }
         
-        .tool-card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 2.5rem;
-            box-shadow: var(--shadow);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
+        .tool-card h3 { font-family: 'Fredoka', cursive; font-size: 1.75rem; margin-bottom: 0.75rem; color: var(--text-primary); }
+        .tool-card p { color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.6; }
+        .tool-features { list-style: none; margin-bottom: 2rem; }
+        .tool-features li { padding: 0.5rem 0; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem; }
+        .tool-features li::before { content: '✓'; color: var(--success); font-weight: bold; font-size: 1.25rem; }
         
-        .tool-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary), var(--success));
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.4s ease;
-        }
-        
-        .tool-card:hover {
-            transform: translateY(-10px) rotate(1deg);
-            box-shadow: var(--shadow-hover);
-        }
-        
-        .tool-card:hover::before {
-            transform: scaleX(1);
-        }
-        
-        .tool-icon {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            transition: transform 0.4s ease;
-        }
-        
-        .tool-card:hover .tool-icon {
-            transform: rotate(10deg) scale(1.1);
-        }
-        
-        .tool-card.success .tool-icon {
-            background: linear-gradient(135deg, var(--success), #00C292);
-        }
-        
-        .tool-card.danger .tool-icon {
-            background: linear-gradient(135deg, var(--danger), #FF5252);
-        }
-        
-        .tool-card h3 {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.75rem;
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
-        }
-        
-        .tool-card p {
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-        }
-        
-        .tool-features {
-            list-style: none;
-            margin-bottom: 2rem;
-        }
-        
-        .tool-features li {
-            padding: 0.5rem 0;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .tool-features li::before {
-            content: '✓';
-            color: var(--success);
-            font-weight: bold;
-            font-size: 1.25rem;
-        }
-        
-        .tool-btn {
-            background: var(--primary);
-            color: #2D3436;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            font-family: 'DM Sans', sans-serif;
-        }
-        
-        .tool-btn:hover {
-            background: var(--primary-dark);
-            transform: scale(1.05);
-        }
+        .tool-btn { background: var(--primary); color: #2D3436; border: none; padding: 1rem 2rem; border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; width: 100%; font-family: 'DM Sans', sans-serif; }
+        .tool-btn:hover { background: var(--primary-dark); transform: scale(1.05); }
 
         /* 🚨 실시간 뉴스 & 고래 슬라이더 섹션 */
-        .news-section {
-            max-width: 1200px;
-            margin: 0 auto 6rem;
-            padding: 0 2rem;
-            position: relative;
-            z-index: 1;
-        }
+        .news-section { max-width: 1200px; margin: 0 auto 6rem; padding: 0 2rem; position: relative; z-index: 1; }
+        .news-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; }
+        .news-header h2 { font-family: 'Fredoka', cursive; font-size: 2.5rem; color: var(--text-primary); margin: 0; }
+        .view-more-btn { color: var(--success); font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: 0.3s; background: var(--neutral-light); padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid var(--success); }
+        .view-more-btn:hover { background: var(--success); color: white; transform: translateX(5px); }
 
-        .news-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 2rem;
-        }
-
-        .news-header h2 { 
-            font-family: 'Fredoka', cursive; 
-            font-size: 2.5rem; 
-            color: var(--text-primary); 
-            margin: 0; 
-        }
-
-        .view-more-btn {
-            color: var(--success); 
-            font-weight: 700; 
-            text-decoration: none;
-            display: flex; 
-            align-items: center; 
-            gap: 0.5rem; 
-            transition: 0.3s;
-            background: var(--neutral-light); 
-            padding: 0.5rem 1rem; 
-            border-radius: 20px; 
-            border: 1px solid var(--success);
-        }
-
-        .view-more-btn:hover { 
-            background: var(--success); 
-            color: white; 
-            transform: translateX(5px); 
-        }
-
-        .news-slider {
-            display: flex;
-            gap: 1.5rem;
-            overflow-x: auto;
-            padding: 20px 10px 25px 10px; 
-            margin-top: -20px;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-        }
-
+        .news-slider { display: flex; gap: 1.5rem; overflow-x: auto; padding: 20px 10px 25px 10px; margin-top: -20px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
         .news-slider::-webkit-scrollbar { height: 6px; }
         .news-slider::-webkit-scrollbar-track { background: transparent; }
         .news-slider::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 10px; }
 
-        .news-card {
-            background: var(--card-bg); 
-            border-radius: 24px; 
-            padding: 1.5rem;
-            min-width: 280px; 
-            max-width: 320px; 
-            flex-shrink: 0;
-            scroll-snap-align: start; 
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            display: flex; 
-            flex-direction: column; 
-            cursor: pointer;
-        }
-
-        .news-card:hover {
-            transform: translateY(-10px); 
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-            border-color: var(--success);
-        }
-
-        .news-badge {
-            align-self: flex-start; 
-            font-size: 0.75rem; 
-            font-weight: 700;
-            padding: 0.25rem 0.75rem; 
-            border-radius: 50px; 
-            margin-bottom: 1rem;
-        }
-        
+        .news-card { background: var(--card-bg); border-radius: 24px; padding: 1.5rem; min-width: 280px; max-width: 320px; flex-shrink: 0; scroll-snap-align: start; box-shadow: var(--shadow); border: 1px solid var(--border-color); transition: all 0.3s ease; display: flex; flex-direction: column; cursor: pointer; }
+        .news-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-color: var(--success); }
+        .news-badge { align-self: flex-start; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 50px; margin-bottom: 1rem; }
         .badge-cnbc { background: #E3F2FD; color: #1565C0; }
 
-        .news-card h3 { 
-            font-size: 1.1rem; 
-            margin-bottom: 0.75rem; 
-            color: var(--text-primary); 
-            line-height: 1.4; 
-            display: -webkit-box; 
-            -webkit-line-clamp: 3; 
-            -webkit-box-orient: vertical; 
-            overflow: hidden; 
-        }
-        
-        .news-card p { 
-            font-size: 0.85rem; 
-            color: var(--text-secondary); 
-            margin-top: auto; 
-            padding-top: 1rem; 
-            display: flex; 
-            justify-content: space-between; 
-        }
+        .news-card h3 { font-size: 1.1rem; margin-bottom: 0.75rem; color: var(--text-primary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .news-card p { font-size: 0.85rem; color: var(--text-secondary); margin-top: auto; padding-top: 1rem; display: flex; justify-content: space-between; }
 
-        .features-section {
-            position: relative;
-            max-width: 1200px;
-            margin: 6rem auto;
-            padding: 0 2rem;
-            z-index: 1;
-        }
+        /* 특징 섹션 */
+        .features-section { position: relative; max-width: 1200px; margin: 6rem auto; padding: 0 2rem; z-index: 1; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .feature-item { text-align: center; padding: 2rem; background: var(--card-bg); border-radius: 20px; box-shadow: var(--shadow); transition: transform 0.3s ease; opacity: 0; }
+        .feature-item:hover { transform: translateY(-5px); }
+        .feature-item-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .feature-item h4 { font-family: 'Fredoka', cursive; font-size: 1.5rem; margin-bottom: 0.75rem; color: var(--text-primary); }
         
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-        
-        .feature-item {
-            text-align: center;
-            padding: 2rem;
-            background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s ease, background 0.3s ease;
-        }
-        
-        .feature-item:hover {
-            transform: translateY(-5px);
-        }
-        
-        .feature-item-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        
-        .feature-item h4 {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.5rem;
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
-        }
-        
-        .feature-item p {
-            color: var(--text-secondary);
-        }
-        
-        footer {
-            position: relative;
-            background: #1A1A1A;
-            color: white;
-            padding: 3rem 2rem 2rem;
-            margin-top: 6rem;
-            z-index: 1;
-        }
-        
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-            margin-bottom: 2rem;
-        }
-        
-        .footer-section h4 {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-            color: white;
-        }
-        
-        .footer-links {
-            list-style: none;
-        }
-        
-        .footer-links a {
-            color: #B2BEC3;
-            text-decoration: none;
-            display: block;
-            padding: 0.5rem 0;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-links a:hover {
-            color: var(--primary);
-        }
-        
-        .footer-bottom {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-            color: #B2BEC3;
-        }
-        
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        footer { position: relative; background: #1A1A1A; color: white; padding: 3rem 2rem 2rem; margin-top: 6rem; z-index: 1; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-bottom: 2rem; }
+        .footer-section h4 { font-family: 'Fredoka', cursive; font-size: 1.25rem; margin-bottom: 1rem; color: white; }
+        .footer-links { list-style: none; }
+        .footer-links a { color: #B2BEC3; text-decoration: none; display: block; padding: 0.5rem 0; transition: color 0.3s ease; }
+        .footer-links a:hover { color: var(--primary); }
+        .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center; color: #B2BEC3; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         
         @media (max-width: 768px) {
             .hero h1 { font-size: 2.5rem; }
@@ -834,57 +206,19 @@
             .news-card { min-width: 260px; }
         }
 
-        /* 👑 고래 카드 전용 프리미엄 스타일 */
-        .news-card.whale-card {
-            border: 2px solid #FFD700 !important; /* 금색 테두리 */
-            background: linear-gradient(145deg, var(--card-bg), rgba(255, 215, 0, 0.05)); /* 은은한 금빛 배경 */
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
-        }
+        /* 👑 고래 카드 및 🎓 졸업자 프리미엄 스타일 */
+        .news-card.whale-card { border: 2px solid #FFD700 !important; background: linear-gradient(145deg, var(--card-bg), rgba(255, 215, 0, 0.05)); box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2); }
+        .whale-tag { background: linear-gradient(135deg, #FFD700, #FFB300); color: #000; padding: 4px 12px; border-radius: 50px; font-weight: 800; font-size: 0.8rem; margin-bottom: 1rem; display: inline-block; box-shadow: 0 2px 5px rgba(255, 215, 0, 0.3); }
 
-        .whale-tag {
-            background: linear-gradient(135deg, #FFD700, #FFB300);
-            color: #000;
-            padding: 4px 12px;
-            border-radius: 50px;
-            font-weight: 800;
-            font-size: 0.8rem;
-            margin-bottom: 1rem;
-            display: inline-block;
-            box-shadow: 0 2px 5px rgba(255, 215, 0, 0.3);
-        }
-
-        /* 🎓 수료생 전용 배지 스타일 (추가됨) */
-        .grad-welcome-banner {
-            display: none; /* 기본은 숨김 */
-            background: linear-gradient(90deg, #FFD700, #FFB300);
-            color: #000;
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-weight: 800;
-            font-size: 0.95rem;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
-            margin: 0 auto 20px auto; /* 중앙 정렬 */
-            width: fit-content;
-            animation: bounceIn 1s ease;
-        }
-
-        @keyframes bounceIn {
-            0% { transform: scale(0.3); opacity: 0; }
-            50% { transform: scale(1.05); opacity: 1; }
-            70% { transform: scale(0.9); }
-            100% { transform: scale(1); }
-        }
-
+        .grad-welcome-banner { display: none; background: linear-gradient(90deg, #FFD700, #FFB300); color: #000; padding: 10px 20px; border-radius: 50px; font-weight: 800; font-size: 0.95rem; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); margin: 0 auto 20px auto; width: fit-content; animation: bounceIn 1s ease; }
         .grad-icon { font-size: 1.3rem; }
+        .completed-badge { display: none; position: absolute; top: 15px; right: 15px; background: #000; color: #FFD600; padding: 5px 12px; border-radius: 10px; font-size: 0.8rem; font-weight: 900; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
     <header>
         <nav>
-            <a href="/" class="logo">
+            <a href="index.html" class="logo">
                 <div class="logo-icon">📊</div>
                 <span>주린이 계산기(베타)</span>
             </a>
@@ -914,30 +248,14 @@
             </div>
         </div>
         
-        <h1>
-            주식 투자, 이제 <span class="highlight">쉽게</span> 시작하세요
-        </h1>
-        <p>
-            복잡한 계산은 맡기고, 투자에만 집중하세요.<br>
-            100% 무료, 서버 저장 없는 안전한 도구
-        </p>
+        <h1>주식 투자, 이제 <span class="highlight">쉽게</span> 시작하세요</h1>
+        <p>복잡한 계산은 맡기고, 투자에만 집중하세요.<br>100% 무료, 서버 저장 없는 안전한 도구</p>
+        
         <div class="hero-badges">
-            <div class="badge">
-                <span class="badge-icon">🔒</span>
-                <span>서버 저장 0%</span>
-            </div>
-            <div class="badge">
-                <span class="badge-icon">💯</span>
-                <span>완전 무료</span>
-            </div>
-            <div class="badge">
-                <span class="badge-icon">⚡</span>
-                <span>즉시 계산</span>
-            </div>
-            <div class="badge">
-                <span class="badge-icon">📱</span>
-                <span>모바일 지원</span>
-            </div>
+            <div class="badge"><span class="badge-icon">🔒</span><span>서버 저장 0%</span></div>
+            <div class="badge"><span class="badge-icon">💯</span><span>완전 무료</span></div>
+            <div class="badge"><span class="badge-icon">⚡</span><span>즉시 계산</span></div>
+            <div class="badge"><span class="badge-icon">📱</span><span>모바일 지원</span></div>
         </div>
     </section>
 
@@ -968,22 +286,10 @@
                 </div>
                 
                 <div class="stock-details">
-                    <div class="detail-item">
-                        <span class="detail-label">시가</span>
-                        <span id="stock-open" class="detail-value">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">고가</span>
-                        <span id="stock-high" class="detail-value">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">저가</span>
-                        <span id="stock-low" class="detail-value">-</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">전일종가</span>
-                        <span id="stock-prev-close" class="detail-value">-</span>
-                    </div>
+                    <div class="detail-item"><span class="detail-label">시가</span><span id="stock-open" class="detail-value">-</span></div>
+                    <div class="detail-item"><span class="detail-label">고가</span><span id="stock-high" class="detail-value">-</span></div>
+                    <div class="detail-item"><span class="detail-label">저가</span><span id="stock-low" class="detail-value">-</span></div>
+                    <div class="detail-item"><span class="detail-label">전일종가</span><span id="stock-prev-close" class="detail-value">-</span></div>
                 </div>
             </div>
         </div>
@@ -1004,7 +310,8 @@
                 <button class="tool-btn">배당금 계산하기 →</button>
             </div>
 
-            <div class="tool-card" style="border: 2px solid var(--primary);" onclick="location.href='beginner-guide.html'">
+            <div class="tool-card" id="academy-card" style="border: 2px solid var(--primary);" onclick="location.href='beginner-guide.html'">
+                <div id="academy-badge" class="completed-badge">🎓 수료 완료</div>
                 <div class="tool-icon">🏫</div>
                 <h3>주식 사관학교 (트레이닝)</h3>
                 <p>멘토 재우와 함께하는 스테이지형 실전 압축 훈련</p>
@@ -1013,7 +320,7 @@
                     <li>고래(내부자) 데이터 분석법</li>
                     <li>전 스테이지 클리어 시 졸업장 수여</li>
                 </ul>
-                <button class="tool-btn" style="background: var(--primary-dark);">입학하기 (추천) →</button>
+                <button id="academy-btn" class="tool-btn" style="background: var(--primary-dark);">입학하기 (추천) →</button>
             </div>
 
             <div class="tool-card" onclick="location.href='stock-dictionary.html'">
@@ -1047,7 +354,6 @@
             <h2>🐋 내부자 매수 포착</h2>
             <a href="news-intelligence.html" class="view-more-btn">고래 정보 전체보기 →</a>
         </div>
-        
         <div class="news-slider" id="whale-container">
             <div class="news-card">
                 <span class="news-badge badge-whale" style="background:#E8F5E9; color:#2E7D32;">시스템 대기중</span>
@@ -1061,7 +367,6 @@
             <h2>📡 글로벌 경제 뉴스</h2>
             <a href="news-intelligence.html" class="view-more-btn">인텔리전스 전체보기 →</a>
         </div>
-        
         <div class="news-slider" id="news-container">
             <div class="news-card">
                 <span class="news-badge badge-cnbc">시스템 대기중</span>
@@ -1073,36 +378,12 @@
     <section class="features-section" id="features">
         <h2 class="section-title">왜 주린이 계산인가요?</h2>
         <div class="features-grid">
-            <div class="feature-item">
-                <div class="feature-item-icon">🔒</div>
-                <h4>100% 안전</h4>
-                <p>서버에 데이터를 저장하지 않습니다. 모든 계산은 브라우저에서만 처리됩니다.</p>
-            </div>
-            <div class="feature-item">
-                <div class="feature-item-icon">🎓</div>
-                <h4>초보자 친화적</h4>
-                <p>복잡한 금융 용어 없이, 누구나 쉽게 이해할 수 있는 설명을 제공합니다.</p>
-            </div>
-            <div class="feature-item">
-                <div class="feature-item-icon">⚡</div>
-                <h4>빠른 계산</h4>
-                <p>복잡한 계산을 1초 안에 완료하고, 즉시 결과를 확인할 수 있습니다.</p>
-            </div>
-            <div class="feature-item">
-                <div class="feature-item-icon">📱</div>
-                <h4>모바일 최적화</h4>
-                <p>PC, 태블릿, 스마트폰 어디서나 편리하게 사용할 수 있습니다.</p>
-            </div>
-            <div class="feature-item">
-                <div class="feature-item-icon">💯</div>
-                <h4>완전 무료</h4>
-                <p>회원가입 없이, 비용 부담 없이 모든 기능을 무제한으로 사용하세요.</p>
-            </div>
-            <div class="feature-item">
-                <div class="feature-item-icon">📊</div>
-                <h4>실전 중심</h4>
-                <p>이론이 아닌 실제 투자에 바로 활용할 수 있는 실용적인 도구를 제공합니다.</p>
-            </div>
+            <div class="feature-item"><div class="feature-item-icon">🔒</div><h4>100% 안전</h4><p>서버에 데이터를 저장하지 않습니다. 모든 계산은 브라우저에서만 처리됩니다.</p></div>
+            <div class="feature-item"><div class="feature-item-icon">🎓</div><h4>초보자 친화적</h4><p>복잡한 금융 용어 없이, 누구나 쉽게 이해할 수 있는 설명을 제공합니다.</p></div>
+            <div class="feature-item"><div class="feature-item-icon">⚡</div><h4>빠른 계산</h4><p>복잡한 계산을 1초 안에 완료하고, 즉시 결과를 확인할 수 있습니다.</p></div>
+            <div class="feature-item"><div class="feature-item-icon">📱</div><h4>모바일 최적화</h4><p>PC, 태블릿, 스마트폰 어디서나 편리하게 사용할 수 있습니다.</p></div>
+            <div class="feature-item"><div class="feature-item-icon">💯</div><h4>완전 무료</h4><p>회원가입 없이, 비용 부담 없이 모든 기능을 무제한으로 사용하세요.</p></div>
+            <div class="feature-item"><div class="feature-item-icon">📊</div><h4>실전 중심</h4><p>이론이 아닌 실제 투자에 바로 활용할 수 있는 실용적인 도구를 제공합니다.</p></div>
         </div>
     </section>
 
@@ -1118,6 +399,7 @@
                     <li><a href="dividend-calculator.html">배당금 계산기</a></li>
                     <li><a href="stock-dictionary.html">주식 용어 사전</a></li>
                     <li><a href="average-calculator.html">평단가 계산기</a></li>
+                    <li><a href="beginner-guide.html">주식 사관학교</a></li>
                 </ul>
             </div>
             <div class="footer-section">
@@ -1131,11 +413,7 @@
             </div>
             <div class="footer-section">
                 <h4>안내</h4>
-                <p style="color: #B2BEC3; font-size: 0.9rem;">
-                    본 서비스는 교육 목적의 계산 도구입니다.<br>
-                    투자 조언이나 종목 추천을 제공하지 않습니다.<br>
-                    투자의 최종 결정은 본인의 책임입니다.
-                </p>
+                <p style="color: #B2BEC3; font-size: 0.9rem;">본 서비스는 교육 목적의 계산 도구입니다.<br>투자 조언이나 종목 추천을 제공하지 않습니다.<br>투자의 최종 결정은 본인의 책임입니다.</p>
             </div>
         </div>
         <div class="footer-bottom">
@@ -1156,12 +434,10 @@
             initTheme();
             loadRecentSearches(); 
             fetchMarketIndices(); 
-
-            // 🚨 고래 & 뉴스 데이터 로딩
             updateIntelligenceCards();
             setInterval(updateIntelligenceCards, 60000);
-
-            // 🎓 [추가됨] 졸업자 배지 체크 로직 실행
+            
+            // 🎓 졸업 상태 체크 로직
             checkGraduationStatus();
 
             const stockSearchInput = document.getElementById('stock-search-input');
@@ -1190,20 +466,29 @@
             initScrollAnimations();
         });
 
-        // 🎓 [새로 추가된 함수] 로컬 스토리지 검사해서 배지 띄우기
+        // 🎓 졸업 상태에 따른 UI 변경
         function checkGraduationStatus() {
             const rank = localStorage.getItem('jurini_rank');
             const banner = document.getElementById('grad-banner');
-            
+            const academyCard = document.getElementById('academy-card');
+            const academyBtn = document.getElementById('academy-btn');
+            const academyBadge = document.getElementById('academy-badge');
+
             if (rank === 'Graduated') {
-                banner.style.display = 'inline-flex'; // 졸업생이면 배지 노출!
+                if(banner) banner.style.display = 'inline-flex';
+                if(academyBadge) academyBadge.style.display = 'block';
+                if(academyCard) academyCard.style.borderColor = 'var(--success)';
+                if(academyBtn) {
+                    academyBtn.innerText = "복습하러 가기 →";
+                    academyBtn.style.background = 'var(--success)';
+                    academyBtn.style.color = '#fff';
+                }
             }
         }
 
         async function updateIntelligenceCards() {
             const newsContainer = document.getElementById('news-container');
             const whaleContainer = document.getElementById('whale-container');
-            
             if (!newsContainer || !whaleContainer) return;
 
             try {
@@ -1211,9 +496,7 @@
                 const result = await response.json();
 
                 if (result.status === "success" && result.data && result.data.length > 0) {
-                    let newsHtml = '';
-                    let whaleHtml = '';
-                    
+                    let newsHtml = '', whaleHtml = '';
                     result.data.forEach(item => {
                         if (item.type === 'WHALE') {
                             whaleHtml += `
@@ -1221,10 +504,8 @@
                                     <span class="whale-tag">🐋 내부자 매수 포착</span>
                                     <h3>${item.title}</h3>
                                     <p><span>${item.source}</span> <span>⏰ ${item.timestamp || '방금 전'}</span></p>
-                                </div>
-                            `;
-                        } 
-                        else if (item.type === 'NEWS') {
+                                </div>`;
+                        } else if (item.type === 'NEWS') {
                             const sourceIcon = item.source === '해외경제' ? '🌐' : '📰';
                             newsHtml += `
                                 <div class="news-card" onclick="window.open('${item.link}', '_blank')">
@@ -1233,40 +514,19 @@
                                     </span>
                                     <h3>${item.title}</h3>
                                     <p><span>📌 주요 뉴스</span> <span>⏰ ${item.timestamp || '방금 전'}</span></p>
-                                </div>
-                            `;
+                                </div>`;
                         }
                     });
 
                     const moreCard = (text) => `
                         <div class="news-card" style="opacity: 0.6; display: flex; justify-content: center; align-items: center;" onclick="location.href='news-intelligence.html'">
                             <h3 style="text-align: center;">전체 ${text}<br>보러가기 →</h3>
-                        </div>
-                    `;
+                        </div>`;
 
-                    if (whaleHtml) {
-                        whaleContainer.innerHTML = whaleHtml + moreCard('고래 정보');
-                    } else {
-                        whaleContainer.innerHTML = `
-                            <div class="news-card" style="display: flex; justify-content: center; align-items: center;">
-                                <h3 style="text-align: center; color: var(--text-secondary);">현재 새로운 고래 매수<br>데이터가 없습니다.</h3>
-                            </div>
-                        `;
-                    }
-
-                    if (newsHtml) {
-                        newsContainer.innerHTML = newsHtml + moreCard('경제 뉴스');
-                    } else {
-                        newsContainer.innerHTML = `
-                            <div class="news-card" style="display: flex; justify-content: center; align-items: center;">
-                                <h3 style="text-align: center; color: var(--text-secondary);">현재 새로운 뉴스<br>데이터가 없습니다.</h3>
-                            </div>
-                        `;
-                    }
+                    whaleContainer.innerHTML = whaleHtml ? (whaleHtml + moreCard('고래 정보')) : `<div class="news-card" style="display:flex; justify-content:center; align-items:center;"><h3 style="text-align:center; color:var(--text-secondary);">새로운 데이터가 없습니다.</h3></div>`;
+                    newsContainer.innerHTML = newsHtml ? (newsHtml + moreCard('경제 뉴스')) : `<div class="news-card" style="display:flex; justify-content:center; align-items:center;"><h3 style="text-align:center; color:var(--text-secondary);">새로운 뉴스가 없습니다.</h3></div>`;
                 }
-            } catch (error) {
-                console.error("인텔리전스 로드 실패:", error);
-            }
+            } catch (error) { console.error("인텔리전스 로드 실패", error); }
         }
 
         async function fetchMarketIndices() {
@@ -1277,34 +537,19 @@
                 
                 if (result.status === "success") {
                     const targetNames = {
-                        "KS11": "KOSPI", "^KS11": "KOSPI",
-                        "KQ11": "KOSDAQ", "^KQ11": "KOSDAQ",
-                        "^GSPC": "S&P 500", "SPY": "S&P 500",
-                        "^IXIC": "NASDAQ", "QQQ": "NASDAQ"
+                        "KS11": "KOSPI", "^KS11": "KOSPI", "KQ11": "KOSDAQ", "^KQ11": "KOSDAQ",
+                        "^GSPC": "S&P 500", "SPY": "S&P 500", "^IXIC": "NASDAQ", "QQQ": "NASDAQ"
                     };
-
-                    let validIndices = result.data.map(idx => {
+                    const itemsHtml = result.data.map(idx => {
                         const displayName = targetNames[idx.symbol] || targetNames[idx.name] || idx.name;
-                        return { ...idx, displayName };
-                    });
-                    
-                    const itemsHtml = validIndices.map(idx => `
-                        <span class="index-item">
-                            ${idx.displayName}: ${idx.price.toLocaleString()} 
+                        return `<span class="index-item">${displayName}: ${idx.price.toLocaleString()} 
                             <span class="${idx.change >= 0 ? 'index-up' : 'index-down'}">
                                 ${idx.change >= 0 ? '▲' : '▼'} ${Math.abs(idx.pct)}%
-                            </span>
-                        </span>
-                    `).join('');
-                    
+                            </span></span>`;
+                    }).join('');
                     tickerContainer.innerHTML = itemsHtml;
-                } else {
-                    tickerContainer.innerHTML = "지수 데이터를 불러올 수 없습니다.";
-                }
-            } catch (e) {
-                console.error("지수 로드 실패", e);
-                tickerContainer.innerHTML = "서버 연결 대기 중...";
-            }
+                } else { tickerContainer.innerHTML = "지수 데이터를 불러올 수 없습니다."; }
+            } catch (e) { tickerContainer.innerHTML = "서버 연결 대기 중..."; }
         }
 
         function saveRecentSearch(symbol, name) {
@@ -1353,7 +598,6 @@
                         const usData = await usRes.json();
                         if (usData.result) combined = [...combined, ...usData.result.filter(i => !['BOND','FUTURE'].includes(i.type))];
                     }
-
                     displaySearchResults(combined);
                 } catch (e) { console.error("검색 실패", e); }
             }, 300);
@@ -1449,9 +693,17 @@
 
         function initScrollAnimations() {
             const observer = new IntersectionObserver((entries) => {
-                entries.forEach(e => { if(e.isIntersecting) e.target.style.animation = 'fadeInUp 0.8s ease forwards'; });
+                entries.forEach(e => { 
+                    if(e.isIntersecting) {
+                        e.target.style.opacity = '1';
+                        e.target.style.animation = 'fadeInUp 0.8s ease forwards'; 
+                    }
+                });
             }, { threshold: 0.1 });
-            document.querySelectorAll('.tool-card, .feature-item').forEach(el => { el.style.opacity = '0'; observer.observe(el); });
+            document.querySelectorAll('.tool-card, .feature-item').forEach(el => { 
+                el.style.opacity = '0'; 
+                observer.observe(el); 
+            });
         }
     </script>
 </body>
