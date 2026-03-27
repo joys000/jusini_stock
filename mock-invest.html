@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실시간 모의투자 | 주린이 인텔리전스</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFD600; --primary-dark: #FFC400; --primary-glow: rgba(255, 214, 0, 0.3);
+            --success: #00D9A3; --danger: #FF6B6B; --bg: #F8F9FA;
+            --card-bg: #FFFFFF; --text: #2D3436; --secondary: #636E72;
+            --border: #E8E8E8;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0A0B10; --card-bg: #1E202D; --text: #E8E8E8;
+            --secondary: #B0B0B0; --border: #333;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text);
+            transition: 0.3s; min-height: 100vh; padding: 20px;
+        }
+
+        header { max-width: 1200px; margin: 0 auto 30px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: 'Fredoka', cursive; font-size: 1.5rem; text-decoration: none; color: var(--text); display: flex; align-items: center; gap: 10px; }
+        
+        .dashboard-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 350px; gap: 25px; }
+
+        /* 자산 요약 카드 */
+        .card { background: var(--card-bg); border-radius: 30px; padding: 25px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        .asset-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .asset-label { font-size: 0.8rem; color: var(--secondary); font-weight: 700; margin-bottom: 5px; }
+        .asset-value { font-size: 1.6rem; font-weight: 800; font-family: 'Fredoka'; }
+
+        /* 📡 멘토 한마디 */
+        .mentor-msg { background: rgba(0,0,0,0.03); padding: 15px; border-radius: 20px; border-left: 5px solid var(--primary); margin-bottom: 20px; font-size: 0.9rem; font-weight: 600; line-height: 1.5; }
+
+        /* 거래 입력 */
+        .trade-box { display: flex; gap: 10px; margin-top: 20px; }
+        input { flex: 1; padding: 12px; border-radius: 12px; border: 2px solid var(--border); background: var(--bg); color: var(--text); font-weight: 700; outline: none; }
+        .btn-trade { padding: 0 20px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .btn-buy { background: var(--success); color: white; }
+        
+        /* 보유 주식 리스트 */
+        .holding-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--bg); border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--border); }
+        .holding-info h4 { font-family: 'Fredoka'; font-size: 1.1rem; }
+        .holding-stats { text-align: right; }
+        .profit-text { font-weight: 800; font-size: 0.9rem; }
+
+        .theme-toggle { background: var(--card-bg); border: 1px solid var(--border); width: 45px; height: 45px; border-radius: 15px; cursor: pointer; font-size: 1.2rem; }
+
+        @media (max-width: 900px) { .dashboard-grid { grid-template-columns: 1fr; } }
+
+        /* 애니메이션 */
+        .price-up { animation: glowGreen 1s ease; }
+        .price-down { animation: glowRed 1s ease; }
+        @keyframes glowGreen { 0% { background: rgba(0, 217, 163, 0.2); } 100% { background: transparent; } }
+        @keyframes glowRed { 0% { background: rgba(255, 107, 107, 0.2); } 100% { background: transparent; } }
+    </style>
+</head>
+<body data-theme="light">
+
+    <header>
+        <a href="index.html" class="logo">📊 <span>실전 모의투자</span></a>
+        <div style="display: flex; gap: 10px;">
+            <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙</button>
+            <button class="theme-toggle" onclick="location.href='index.html'">🏠</button>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        <div class="main-col">
+            <div class="card">
+                <div class="mentor-msg" id="mentor-advice">"시장에 공포가 가득할 때가 가장 좋은 기회지. 준비됐나?"</div>
+                <div class="asset-summary">
+                    <div>
+                        <div class="asset-label">총 평가 자산</div>
+                        <div class="asset-value" id="total-asset">₩10,000,000</div>
+                    </div>
+                    <div>
+                        <div class="asset-label">보유 현금 (Cash)</div>
+                        <div class="asset-value" id="cash-balance" style="color: var(--success);">₩10,000,000</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📈 종목 매수하기</h2>
+                <p style="font-size: 0.8rem; color: var(--secondary); margin-bottom: 15px;">* 현재 미국 주식 티커만 지원합니다 (예: AAPL, TSLA, NVDA)</p>
+                <div class="trade-box">
+                    <input type="text" id="symbol-input" placeholder="티커 입력 (예: TSLA)" style="text-transform: uppercase;">
+                    <input type="number" id="qty-input" placeholder="수량">
+                    <button class="btn-trade btn-buy" onclick="buyStock()">즉시 매수</button>
+                </div>
+                <div id="trade-status" style="margin-top: 10px; font-size: 0.8rem; font-weight: 700;"></div>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>💼 내 포트폴리오</h2>
+                    <button class="btn-trade" onclick="refreshPrices()" style="background: var(--bg); border: 1px solid var(--border); font-size: 0.8rem;">🔄 시세 업데이트</button>
+                </div>
+                <div id="holdings-list">
+                    </div>
+            </div>
+        </div>
+
+        <div class="side-col">
+            <div class="card" style="text-align: center;">
+                <h3>자산 비중</h3>
+                <div style="height: 250px; margin-top: 20px;">
+                    <canvas id="portfolioChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>최근 활동</h3>
+                <div id="history-list" style="font-size: 0.8rem; color: var(--secondary); margin-top: 15px;">
+                    매매 기록이 없습니다.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = 'd70u9vhr01ql6rg0mgr0d70u9vhr01ql6rg0mgrg'; // Finnhub
+        let userAsset = {
+            cash: 10000000,
+            holdings: {}, // { 'AAPL': { qty: 10, avgPrice: 150 } }
+            history: []
+        };
+        let chart = null;
+
+        function init() {
+            const saved = localStorage.getItem('mock_invest_data');
+            if(saved) userAsset = JSON.parse(saved);
+            
+            updateUI();
+            initTheme();
+            refreshPrices(); // 시작 시 시세 갱신
+        }
+
+        async function getPrice(symbol) {
+            try {
+                const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol.toUpperCase()}&token=${API_KEY}`);
+                const data = await res.json();
+                return data.c || 0;
+            } catch (e) { return 0; }
+        }
+
+        async function buyStock() {
+            const symbol = document.getElementById('symbol-input').value.toUpperCase();
+            const qty = parseInt(document.getElementById('qty-input').value);
+            const status = document.getElementById('trade-status');
+
+            if(!symbol || !qty || qty <= 0) return;
+            status.innerText = "🔍 시세 확인 중...";
+
+            const priceUSD = await getPrice(symbol);
+            if(priceUSD === 0) {
+                status.innerText = "❌ 존재하지 않는 티커이거나 API 오류입니다.";
+                return;
+            }
+
+            const exchangeRate = 1350; // 고정 환율 (나중에 API 연동 가능)
+            const priceKRW = Math.round(priceUSD * exchangeRate);
+            const totalCost = priceKRW * qty;
+
+            if(userAsset.cash < totalCost) {
+                status.innerText = "❌ 현금이 부족합니다!";
+                return;
+            }
+
+            // 매수 로직
+            userAsset.cash -= totalCost;
+            if(userAsset.holdings[symbol]) {
+                const h = userAsset.holdings[symbol];
+                h.avgPrice = ((h.avgPrice * h.qty) + (priceKRW * qty)) / (h.qty + qty);
+                h.qty += qty;
+            } else {
+                userAsset.holdings[symbol] = { qty: qty, avgPrice: priceKRW, currentPrice: priceKRW };
+            }
+
+            userAsset.history.unshift(`${symbol} ${qty}주 매수 완료 (₩${priceKRW.toLocaleString()})`);
+            saveData();
+            updateUI();
+            status.innerText = `✅ ${symbol} 매수 완료!`;
+            document.getElementById('symbol-input').value = '';
+            document.getElementById('qty-input').value = '';
+        }
+
+        async function refreshPrices() {
+            const btn = document.querySelector('button[onclick="refreshPrices()"]');
+            btn.innerText = "⌛ 갱신 중...";
+            
+            for(let symbol in userAsset.holdings) {
+                const pUSD = await getPrice(symbol);
+                if(pUSD > 0) {
+                    userAsset.holdings[symbol].currentPrice = Math.round(pUSD * 1350);
+                }
+            }
+            
+            updateUI();
+            btn.innerText = "🔄 시세 업데이트";
+        }
+
+        function sellStock(symbol) {
+            const h = userAsset.holdings[symbol];
+            const sellValue = h.currentPrice * h.qty;
+            userAsset.cash += sellValue;
+            userAsset.history.unshift(`${symbol} 전량 매도 완료 (₩${h.currentPrice.toLocaleString()})`);
+            delete userAsset.holdings[symbol];
+            saveData();
+            updateUI();
+        }
+
+        function updateUI() {
+            let totalStockValue = 0;
+            const list = document.getElementById('holdings-list');
+            list.innerHTML = '';
+
+            for(let symbol in userAsset.holdings) {
+                const h = userAsset.holdings[symbol];
+                const value = h.currentPrice * h.qty;
+                totalStockValue += value;
+                const profit = value - (h.avgPrice * h.qty);
+                const profitRate = (profit / (h.avgPrice * h.qty) * 100).toFixed(2);
+
+                list.innerHTML += `
+                    <div class="holding-item">
+                        <div class="holding-info">
+                            <h4>${symbol}</h4>
+                            <small>${h.qty}주 / 평단 ₩${Math.round(h.avgPrice).toLocaleString()}</small>
+                        </div>
+                        <div class="holding-stats">
+                            <div style="font-weight:800;">₩${value.toLocaleString()}</div>
+                            <div class="profit-text" style="color: ${profit >= 0 ? 'var(--success)' : 'var(--danger)'}">
+                                ${profit >= 0 ? '+' : ''}${profit.toLocaleString()} (${profitRate}%)
+                            </div>
+                        </div>
+                        <button onclick="sellStock('${symbol}')" style="margin-left:15px; color:var(--danger); border:none; background:none; cursor:pointer; font-weight:800;">매도</button>
+                    </div>
+                `;
+            }
+
+            document.getElementById('cash-balance').innerText = `₩${userAsset.cash.toLocaleString()}`;
+            document.getElementById('total-asset').innerText = `₩${(userAsset.cash + totalStockValue).toLocaleString()}`;
+            
+            // 기록 업데이트
+            document.getElementById('history-list').innerHTML = userAsset.history.slice(0, 5).map(h => `<div>• ${h}</div>`).join('') || "기록 없음";
+
+            updateChart(totalStockValue);
+        }
+
+        function updateChart(stockVal) {
+            const ctx = document.getElementById('portfolioChart').getContext('2d');
+            if(chart) chart.destroy();
+            
+            chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['현금', '주식'],
+                    datasets: [{
+                        data: [userAsset.cash, stockVal],
+                        backgroundColor: ['#FFD600', '#00D9A3'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+
+        function saveData() {
+            localStorage.setItem('mock_invest_data', JSON.stringify(userAsset));
+        }
+
+        function toggleTheme() {
+            const next = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            document.getElementById('theme-btn').innerText = next === 'dark' ? '☀️' : '🌙';
+        }
+
+        function initTheme() {
+            const saved = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', saved);
+            document.getElementById('theme-btn').innerText = saved === 'dark' ? '☀️' : '🌙';
+        }
+
+        init();
+    </script>
+</body>
+</html>
