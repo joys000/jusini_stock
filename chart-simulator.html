@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>차트 신내림 시뮬레이터 | 주린이 계산기</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFD600; --primary-dark: #FFC400; --primary-glow: rgba(255, 214, 0, 0.3);
+            --success: #00D9A3; --danger: #FF6B6B; --bg: #F8F9FA;
+            --card-bg: #FFFFFF; --text: #2D3436; --secondary: #636E72;
+            --border: #E8E8E8;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0A0B10; --card-bg: #1E202D; --text: #E8E8E8;
+            --secondary: #B0B0B0; --border: #333;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text);
+            transition: 0.3s; min-height: 100vh; display: flex; justify-content: center; align-items: center;
+            padding: 20px; overflow: hidden;
+        }
+
+        /* 🚨 시각적 강화: 결과에 따른 글로우 효과 */
+        body.success-mood { box-shadow: inset 0 0 100px rgba(0, 217, 163, 0.2); background: #f0fffb; }
+        body.danger-mood { box-shadow: inset 0 0 100px rgba(255, 107, 107, 0.2); background: #fff5f5; animation: shake 0.5s ease; }
+        [data-theme="dark"].success-mood { background: #051a14; }
+        [data-theme="dark"].danger-mood { background: #1a0505; }
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+        .app-container {
+            width: 100%; max-width: 600px; background: var(--card-bg); border-radius: 35px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15); padding: 35px; position: relative;
+            border: 1px solid var(--border); animation: fadeIn 0.6s ease; z-index: 10;
+        }
+
+        /* 🏠 작전 준비실 */
+        .setup-header h1 { font-family: 'Fredoka', cursive; font-size: 2.5rem; color: var(--primary-dark); text-align: center; margin-bottom: 10px; }
+        .setup-intro { text-align: center; color: var(--secondary); margin-bottom: 25px; font-size: 0.95rem; }
+        
+        .mission-box { background: var(--bg); border: 1.5px dashed var(--primary); padding: 20px; border-radius: 20px; font-size: 0.9rem; margin-bottom: 25px; }
+        .input-group label { display: block; font-size: 0.9rem; font-weight: 800; margin-bottom: 10px; color: var(--text); }
+        .input-field { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--border); background: var(--bg); color: var(--text); font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; }
+
+        .scenario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; }
+        .scenario-opt { padding: 15px; border-radius: 15px; border: 2px solid var(--border); cursor: pointer; transition: 0.3s; font-size: 0.9rem; font-weight: 700; text-align: center; background: var(--bg); }
+        .scenario-opt.active { border-color: var(--primary); background: var(--primary-glow); transform: scale(1.02); }
+
+        /* 📊 시뮬레이션 UI */
+        #sim-screen { display: none; }
+        .sim-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .capital-display { font-family: 'Fredoka', cursive; font-size: 1.4rem; font-weight: 700; color: var(--primary-dark); }
+
+        .mentor-bubble { background: rgba(0,0,0,0.03); padding: 20px; border-radius: 20px; margin-bottom: 20px; border-left: 5px solid var(--primary); min-height: 90px; }
+        .chart-wrapper { background: rgba(0,0,0,0.02); border-radius: 25px; padding: 15px; margin-bottom: 25px; border: 1px solid var(--border); height: 320px; }
+
+        .control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .btn-action { padding: 18px; border-radius: 18px; border: none; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.3s; font-family: 'Fredoka'; color: white; }
+        .btn-buy { background: var(--success); box-shadow: 0 5px 15px rgba(0, 217, 163, 0.3); }
+        .btn-hold { background: var(--secondary); }
+        .btn-main { background: var(--primary); color: #000; width: 100%; margin-top: 15px; padding: 18px; border-radius: 18px; font-weight: 800; border: none; cursor: pointer; font-size: 1.1rem; transition: 0.3s; }
+        .btn-main:hover { transform: translateY(-3px); background: var(--primary-dark); }
+        
+        .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--secondary); padding: 12px; border-radius: 15px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: 700; }
+
+        /* 🎓 결과 모달 & 정체 공개 */
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); display:none; justify-content:center; align-items:center; z-index:1000; padding:20px; backdrop-filter: blur(10px); }
+        .modal-content { background: var(--card-bg); padding: 40px; border-radius: 40px; width: 100%; max-width: 450px; text-align: center; border: 3px solid var(--primary); animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .result-profit { font-size: 3.8rem; font-weight: 800; font-family: 'Fredoka'; margin: 10px 0; }
+        .reveal-box { background: var(--bg); padding: 15px; border-radius: 15px; margin-bottom: 25px; border: 1px dashed var(--secondary); }
+        .reveal-box span { display: block; font-size: 0.8rem; color: var(--secondary); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .reveal-box strong { font-size: 1.1rem; color: var(--primary-dark); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div id="setup-screen">
+            <div class="setup-header">
+                <h1>작전 준비실</h1>
+                <p class="setup-intro">이론은 끝났다. 이제 당신의 감각을 증명하라.</p>
+            </div>
+
+            <div class="mission-box">
+                <p><strong>🎯 미션:</strong> 차트의 흐름을 보고 '매수' 혹은 '관망'을 결정하세요. 결과가 나오면 차트의 실제 주인공이 공개됩니다.</p>
+            </div>
+            
+            <div class="input-group">
+                <label>초기 자본금 설정 (원)</label>
+                <input type="number" id="init-capital-input" class="input-field" value="10000000" step="1000000">
+            </div>
+
+            <div class="scenario-grid" id="scenario-selector">
+                <div class="scenario-opt active" data-id="random">🎲 랜덤 작전</div>
+                <div class="scenario-opt" data-id="0">🚀 폭등의 전조</div>
+                <div class="scenario-opt" data-id="1">📉 하락의 함정</div>
+                <div class="scenario-opt" data-id="2">📈 돌파 시도</div>
+            </div>
+
+            <button class="btn-main" onclick="startOperation()">작전 개시 (Start)</button>
+            <button class="btn-outline" onclick="location.href='index.html'">메인 홈페이지로 돌아가기</button>
+        </div>
+
+        <div id="sim-screen">
+            <div class="sim-header">
+                <div class="capital-display" id="current-capital">10,000,000원</div>
+                <button class="btn-outline" style="width: auto; margin:0; padding: 8px 15px;" onclick="location.reload()">🔄 초기화</button>
+            </div>
+
+            <div class="mentor-bubble">
+                <span style="font-weight:900; color:var(--primary-dark); font-size:0.7rem; display:block; margin-bottom:8px; letter-spacing:1px;">📡 MENTOR JAEWOO</span>
+                <p id="mentor-msg" style="font-size: 0.95rem; font-weight: 600; line-height: 1.5;"></p>
+            </div>
+
+            <div class="chart-wrapper">
+                <canvas id="simChart"></canvas>
+            </div>
+
+            <div class="control-grid" id="controls">
+                <button class="btn-action btn-buy" onclick="makeDecision('BUY')">풀매수 진입</button>
+                <button class="btn-action btn-hold" onclick="makeDecision('HOLD')">관망하기</button>
+            </div>
+            <p style="text-align:center; font-size:0.8rem; color:var(--secondary); margin-top:20px; text-decoration:underline; cursor:pointer;" onclick="toggleMA()">💡 멘토의 이평선(MA5) 힌트 보기</p>
+        </div>
+    </div>
+
+    <div class="modal" id="result-modal">
+        <div class="modal-content">
+            <span id="result-icon" style="font-size:4.5rem;">🎯</span>
+            <h2 style="font-family:'Fredoka'; margin-top:10px;">작전 결과 보고서</h2>
+            <div id="result-profit" class="result-profit">+0.00%</div>
+            
+            <div class="reveal-box">
+                <span>데이터의 실제 정체</span>
+                <strong id="real-name">삼성전자 (2020년 코로나 저점)</strong>
+            </div>
+
+            <p id="result-msg" style="color:var(--secondary); margin-bottom:30px; font-size:0.95rem; line-height:1.6;"></p>
+            
+            <button class="btn-main" onclick="continueOperation()">다음 시나리오 이동 →</button>
+            <button class="btn-outline" onclick="location.href='index.html'">수익 챙겨서 퇴근하기 (Home)</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 📊 ③ 실제 데이터 정체 추가 ---
+        const scenarioDB = [
+            { name: "엔비디아의 탄생", data: [210, 215, 230, 225, 240, 260, 255, 280, 305, 300, 320, 350, 380, 420, 480, 520, 580, 610, 650, 700], visible: 12, msg: "누군가 강력하게 매집하는 흔적이 보여. 이 전고점을 뚫을 수 있을까?", real: "엔비디아 (2023년 AI 대폭등기)" },
+            { name: "테슬라의 공포", data: [310, 300, 290, 295, 280, 260, 250, 240, 220, 230, 210, 200, 180, 160, 140, 120, 110, 105, 101, 108], visible: 10, msg: "지지선이 계속 무너지고 있어. 개미들은 '물타기' 중인데 넌 어떡할래?", real: "테슬라 (2022년 금리 인상 폭락기)" },
+            { name: "코스피의 부활", data: [2100, 2050, 1900, 1700, 1500, 1450, 1600, 1800, 1950, 2000, 2100, 2200, 2350, 2500, 2600, 2800, 3000, 3100, 3200, 3300], visible: 9, msg: "세상이 망한다는 뉴스가 쏟아지고 있어. 하지만 차트는 바닥을 다지는 듯해.", real: "코스피 지수 (2020년 코로나 팬데믹과 V자 반등)" },
+            { name: "비트코인의 광기", data: [30000, 32000, 31000, 35000, 40000, 42000, 38000, 45000, 50000, 52000, 55000, 60000, 63000, 64000, 62000, 58000, 50000, 45000, 40000, 35000], visible: 13, msg: "전 국민이 환호하고 있어! 최고가 경신 직전인데, 여기서 더 쏠까?", real: "비트코인 (2021년 1차 불장 정점)" }
+        ];
+
+        let currentScenario, chart, capital = 0, showMA = false, selectedId = 'random';
+
+        // 준비실 로직
+        document.querySelectorAll('.scenario-opt').forEach(opt => {
+            opt.addEventListener('click', () => {
+                document.querySelectorAll('.scenario-opt').forEach(el => el.classList.remove('active'));
+                opt.classList.add('active');
+                selectedId = opt.dataset.id;
+            });
+        });
+
+        function typeWriter(text, elementId) {
+            const el = document.getElementById(elementId); el.innerHTML = '';
+            let i = 0;
+            const timer = setInterval(() => {
+                if (i < text.length) { el.innerHTML += text.charAt(i); i++; }
+                else clearInterval(timer);
+            }, 30);
+        }
+
+        function startOperation() {
+            capital = parseInt(document.getElementById('init-capital-input').value) || 10000000;
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('sim-screen').style.display = 'block';
+            loadScenario();
+            updateUI();
+        }
+
+        function loadScenario() {
+            document.body.classList.remove('success-mood', 'danger-mood'); // 분위기 초기화
+            currentScenario = selectedId === 'random' ? scenarioDB[Math.floor(Math.random()*scenarioDB.length)] : scenarioDB[parseInt(selectedId)];
+            typeWriter(currentScenario.msg, 'mentor-msg');
+            renderChart();
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('simChart').getContext('2d');
+            if(chart) chart.destroy();
+            const visibleData = currentScenario.data.slice(0, currentScenario.visible);
+            const ma5 = currentScenario.data.map((v, i, a) => i < 4 ? null : (a.slice(i-4, i+1).reduce((s,n)=>s+n)/5)).slice(0, currentScenario.visible);
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array(currentScenario.data.length).fill(''),
+                    datasets: [
+                        { label: 'Price', data: visibleData, borderColor: '#FFD600', borderWidth: 4, pointRadius: 0, tension: 0.2, fill: false },
+                        { label: 'MA5', data: showMA ? ma5 : [], borderColor: '#00D9A3', borderWidth: 2, pointRadius: 0, borderDash: [5, 5], fill: false }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: 'rgba(150,150,150,0.1)' }, ticks: { display: false } }, x: { display: false } }, plugins: { legend: { display: false } } }
+            });
+        }
+
+        function makeDecision(decision) {
+            document.getElementById('controls').querySelectorAll('button').forEach(b => b.disabled = true);
+            let i = currentScenario.visible;
+            const timer = setInterval(() => {
+                if (i >= currentScenario.data.length) {
+                    clearInterval(timer);
+                    showResult(decision);
+                    return;
+                }
+                chart.data.datasets[0].data.push(currentScenario.data[i]);
+                if (showMA) {
+                    const nextMA = currentScenario.data.slice(i-4, i+1).reduce((s,n)=>s+n)/5;
+                    chart.data.datasets[1].data.push(nextMA);
+                }
+                chart.update();
+                i++;
+            }, 80);
+        }
+
+        // --- 📊 ② 시각적 강화 로직 적용 ---
+        function showResult(decision) {
+            const startPrice = currentScenario.data[currentScenario.visible - 1];
+            const endPrice = currentScenario.data[currentScenario.data.length - 1];
+            const profitRate = (endPrice - startPrice) / startPrice;
+            const profitPct = (profitRate * 100).toFixed(2);
+            
+            const modal = document.getElementById('result-modal');
+            document.getElementById('real-name').innerText = currentScenario.real;
+
+            if (decision === 'BUY') {
+                const profitAmt = Math.floor(capital * profitRate);
+                capital += profitAmt;
+                document.getElementById('result-profit').innerText = (profitPct > 0 ? '+' : '') + profitPct + '%';
+                document.getElementById('result-profit').style.color = profitPct > 0 ? 'var(--success)' : 'var(--danger)';
+                
+                // 🚨 분위기 연출
+                if(profitPct > 0) document.body.classList.add('success-mood');
+                else document.body.classList.add('danger-mood');
+
+                document.getElementById('result-msg').innerText = profitPct > 0 ? `엄청나군! 약 ${profitAmt.toLocaleString()}원을 벌었어. 고래의 눈을 가졌구나.` : `피 같은 돈 ${Math.abs(profitAmt).toLocaleString()}원을 잃었어. 시장은 차갑다.`;
+            } else {
+                document.getElementById('result-profit').innerText = "관망 성공";
+                document.getElementById('result-profit').style.color = "var(--text)";
+                document.getElementById('result-msg').innerText = profitPct > 0 ? `안전하지만 아쉽네. 이 상승장은 사실 네 것이 될 수도 있었어.` : `완벽한 리스크 관리! 폭락의 구렁텅이를 잘 피했어.`;
+            }
+            updateUI();
+            modal.style.display = 'flex';
+        }
+
+        function continueOperation() {
+            document.getElementById('result-modal').style.display = 'none';
+            document.getElementById('controls').querySelectorAll('button').forEach(b => b.disabled = false);
+            showMA = false;
+            loadScenario();
+        }
+
+        function toggleMA() { showMA = !showMA; renderChart(); }
+        function updateUI() { document.getElementById('current-capital').innerText = capital.toLocaleString() + "원"; }
+        
+        // 테마 설정 (index 연동)
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+    </script>
+</body>
+</html>
