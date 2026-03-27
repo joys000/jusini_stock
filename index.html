@@ -852,6 +852,33 @@
             display: inline-block;
             box-shadow: 0 2px 5px rgba(255, 215, 0, 0.3);
         }
+
+        /* 🎓 수료생 전용 배지 스타일 (추가됨) */
+        .grad-welcome-banner {
+            display: none; /* 기본은 숨김 */
+            background: linear-gradient(90deg, #FFD700, #FFB300);
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            margin: 0 auto 20px auto; /* 중앙 정렬 */
+            width: fit-content;
+            animation: bounceIn 1s ease;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        .grad-icon { font-size: 1.3rem; }
     </style>
 </head>
 <body>
@@ -876,6 +903,11 @@
     </header>
 
     <section class="hero">
+        <div id="grad-banner" class="grad-welcome-banner">
+            <span class="grad-icon">🎓</span>
+            <span id="grad-text">사관학교 수료생 주린이님, 실전에 오신 것을 환영합니다!</span>
+        </div>
+
         <div class="index-ticker">
             <div id="ticker-content" class="ticker-wrapper">
                 <span class="index-item">데이터를 불러오는 중... ⏳</span>
@@ -968,22 +1000,32 @@
                     <li>월별/연간 배당금 자동 계산</li>
                     <li>배당 재투자 복리 효과 시뮬레이션</li>
                     <li>세금 자동 계산 (15.4% 포함)</li>
-                    <li>엑셀 다운로드 지원</li>
                 </ul>
                 <button class="tool-btn">배당금 계산하기 →</button>
             </div>
 
+            <div class="tool-card" style="border: 2px solid var(--primary);" onclick="location.href='beginner-guide.html'">
+                <div class="tool-icon">🏫</div>
+                <h3>주식 사관학교 (트레이닝)</h3>
+                <p>멘토 재우와 함께하는 스테이지형 실전 압축 훈련</p>
+                <ul class="tool-features">
+                    <li>양봉/음봉 차트 기초 마스터</li>
+                    <li>고래(내부자) 데이터 분석법</li>
+                    <li>전 스테이지 클리어 시 졸업장 수여</li>
+                </ul>
+                <button class="tool-btn" style="background: var(--primary-dark);">입학하기 (추천) →</button>
+            </div>
+
             <div class="tool-card" onclick="location.href='stock-dictionary.html'">
                 <div class="tool-icon">📚</div>
-                <h3>주식 용어 사전 + 퀴즈(준비중)</h3>
-                <p>초보자도 쉽게 이해하는 주식 용어와 재미있는 학습 퀴즈</p>
+                <h3>주식 용어 사전 + 퀴즈</h3>
+                <p>초보자도 쉽게 이해하는 주식 용어와 간단 학습 퀴즈</p>
                 <ul class="tool-features">
                     <li>200+ 필수 주식 용어 설명</li>
-                    <li>초보자 맞춤 쉬운 설명</li>
-                    <li>실전 예시 포함</li>
-                    <li>레벨별 퀴즈 게임</li>
+                    <li>초보자 맞춤 쉬운 사례 풀이</li>
+                    <li>레벨별 간단 퀴즈 포함</li>
                 </ul>
-                <button class="tool-btn">용어 공부하기 →</button>
+                <button class="tool-btn">단어 공부하기 →</button>
             </div>
 
             <div class="tool-card danger" onclick="location.href='average-calculator.html'">
@@ -992,9 +1034,8 @@
                 <p>물타기/불타기 시뮬레이션으로 전략적 매수 계획 수립</p>
                 <ul class="tool-features">
                     <li>평균 단가 자동 계산</li>
-                    <li>물타기/불타기 시뮬레이션</li>
-                    <li>손익 분기점 계산</li>
-                    <li>시각적 차트 제공</li>
+                    <li>물타기/불타기 손익 예측</li>
+                    <li>시각적 차트 제공 예정</li>
                 </ul>
                 <button class="tool-btn">평단가 계산하기 →</button>
             </div>
@@ -1116,9 +1157,12 @@
             loadRecentSearches(); 
             fetchMarketIndices(); 
 
-            // 🚨 고래 & 뉴스 데이터 로딩 로직 즉시 실행
+            // 🚨 고래 & 뉴스 데이터 로딩
             updateIntelligenceCards();
             setInterval(updateIntelligenceCards, 60000);
+
+            // 🎓 [추가됨] 졸업자 배지 체크 로직 실행
+            checkGraduationStatus();
 
             const stockSearchInput = document.getElementById('stock-search-input');
             const stockSearchResults = document.getElementById('stock-search-results');
@@ -1146,7 +1190,16 @@
             initScrollAnimations();
         });
 
-        // 🚨 [수정됨] 고래와 뉴스를 분리해서 각 컨테이너에 뿌려주는 함수
+        // 🎓 [새로 추가된 함수] 로컬 스토리지 검사해서 배지 띄우기
+        function checkGraduationStatus() {
+            const rank = localStorage.getItem('jurini_rank');
+            const banner = document.getElementById('grad-banner');
+            
+            if (rank === 'Graduated') {
+                banner.style.display = 'inline-flex'; // 졸업생이면 배지 노출!
+            }
+        }
+
         async function updateIntelligenceCards() {
             const newsContainer = document.getElementById('news-container');
             const whaleContainer = document.getElementById('whale-container');
@@ -1162,7 +1215,6 @@
                     let whaleHtml = '';
                     
                     result.data.forEach(item => {
-                        // 🐋 1. 고래 데이터일 때 (whaleContainer용)
                         if (item.type === 'WHALE') {
                             whaleHtml += `
                                 <div class="news-card whale-card" onclick="window.open('${item.link || `https://finviz.com/quote.ashx?t=${item.symbol}`}', '_blank')">
@@ -1172,7 +1224,6 @@
                                 </div>
                             `;
                         } 
-                        // 📰 2. 일반 뉴스일 때 (newsContainer용)
                         else if (item.type === 'NEWS') {
                             const sourceIcon = item.source === '해외경제' ? '🌐' : '📰';
                             newsHtml += `
@@ -1187,14 +1238,12 @@
                         }
                     });
 
-                    // 각 영역 끝에 붙을 "더보기" 카드 생성기
                     const moreCard = (text) => `
                         <div class="news-card" style="opacity: 0.6; display: flex; justify-content: center; align-items: center;" onclick="location.href='news-intelligence.html'">
                             <h3 style="text-align: center;">전체 ${text}<br>보러가기 →</h3>
                         </div>
                     `;
 
-                    // 고래 영역 채우기 (데이터 없으면 빈 메시지)
                     if (whaleHtml) {
                         whaleContainer.innerHTML = whaleHtml + moreCard('고래 정보');
                     } else {
@@ -1205,7 +1254,6 @@
                         `;
                     }
 
-                    // 뉴스 영역 채우기 (데이터 없으면 빈 메시지)
                     if (newsHtml) {
                         newsContainer.innerHTML = newsHtml + moreCard('경제 뉴스');
                     } else {
@@ -1221,7 +1269,6 @@
             }
         }
 
-        // ▼ 이 아래는 전부 기존에 민주가 완벽하게 짜둔 코드 그대로야! (터치 안 함)
         async function fetchMarketIndices() {
             const tickerContainer = document.getElementById('ticker-content');
             try {
