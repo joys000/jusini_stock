@@ -138,9 +138,15 @@
         .detail-label { color: var(--text-secondary); font-size: 0.9rem; }
         .detail-value { font-weight: 700; color: var(--text-primary); text-align: right; }
 
+        /* 🚨 UI 레이아웃 결함 완벽 수정: 플렉스 적용으로 버튼 높이 강제 통일 */
         .tools-section { position: relative; max-width: 1200px; margin: 0 auto 6rem; padding: 0 2rem; z-index: 1; }
         .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
-        .tool-card { background: var(--card-bg); border-radius: 24px; padding: 2.5rem; box-shadow: var(--shadow); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; cursor: pointer; border: 1px solid transparent; }
+        .tool-card { 
+            background: var(--card-bg); border-radius: 24px; padding: 2.5rem; box-shadow: var(--shadow); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; 
+            overflow: hidden; cursor: pointer; border: 1px solid transparent; 
+            display: flex; flex-direction: column; /* 추가됨 */
+        }
         .tool-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, var(--primary), var(--success)); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
         .tool-card:hover { transform: translateY(-10px) rotate(1deg); box-shadow: var(--shadow-hover); }
         .tool-card:hover::before { transform: scaleX(1); }
@@ -156,10 +162,15 @@
         .tool-features li { padding: 0.5rem 0; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem; }
         .tool-features li::before { content: '✓'; color: var(--success); font-weight: bold; font-size: 1.25rem; }
         
-        .tool-btn { background: var(--primary); color: #2D3436; border: none; padding: 1rem 2rem; border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; width: 100%; font-family: 'DM Sans', sans-serif; }
+        .tool-btn { 
+            background: var(--primary); color: #2D3436; border: none; padding: 1rem 2rem; 
+            border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer; 
+            transition: all 0.3s ease; width: 100%; font-family: 'DM Sans', sans-serif;
+            margin-top: auto; /* 버튼을 카드 맨 밑으로 강제 고정 */
+        }
         .tool-btn:hover { background: var(--primary-dark); transform: scale(1.05); }
 
-        /* 🚨 실시간 뉴스 & 고래 슬라이더 섹션 */
+        /* 실시간 뉴스 & 고래 슬라이더 섹션 */
         .news-section { max-width: 1200px; margin: 0 auto 6rem; padding: 0 2rem; position: relative; z-index: 1; }
         .news-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; }
         .news-header h2 { font-family: 'Fredoka', cursive; font-size: 2.5rem; color: var(--text-primary); margin: 0; }
@@ -175,6 +186,9 @@
         .news-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-color: var(--success); }
         .news-badge { align-self: flex-start; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 50px; margin-bottom: 1rem; }
         .badge-cnbc { background: #E3F2FD; color: #1565C0; }
+
+        .news-card.whale-card { border: 2px solid #FFD700 !important; background: linear-gradient(145deg, var(--card-bg), rgba(255, 215, 0, 0.05)); box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2); }
+        .whale-tag { background: linear-gradient(135deg, #FFD700, #FFB300); color: #000; padding: 4px 12px; border-radius: 50px; font-weight: 800; font-size: 0.8rem; margin-bottom: 1rem; display: inline-block; box-shadow: 0 2px 5px rgba(255, 215, 0, 0.3); }
 
         .news-card h3 { font-size: 1.1rem; margin-bottom: 0.75rem; color: var(--text-primary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .news-card p { font-size: 0.85rem; color: var(--text-secondary); margin-top: auto; padding-top: 1rem; display: flex; justify-content: space-between; }
@@ -206,11 +220,7 @@
             .news-card { min-width: 260px; }
         }
 
-        /* 👑 고래 카드 및 🎓 졸업자 프리미엄 스타일 */
-        .news-card.whale-card { border: 2px solid #FFD700 !important; background: linear-gradient(145deg, var(--card-bg), rgba(255, 215, 0, 0.05)); box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2); }
-        .whale-tag { background: linear-gradient(135deg, #FFD700, #FFB300); color: #000; padding: 4px 12px; border-radius: 50px; font-weight: 800; font-size: 0.8rem; margin-bottom: 1rem; display: inline-block; box-shadow: 0 2px 5px rgba(255, 215, 0, 0.3); }
-
-        /* 배너 수정: 이제 기본적으로 보이도록 inline-flex 적용 */
+        /* 배너 수정: 이제 기본적으로 보이도록 설정 */
         .grad-welcome-banner { display: inline-flex; background: linear-gradient(90deg, #FFD700, #FFB300); color: #000; padding: 10px 20px; border-radius: 50px; font-weight: 800; font-size: 0.95rem; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); margin: 0 auto 20px auto; width: fit-content; animation: bounceIn 1s ease; cursor: pointer; transition: 0.3s; }
         .grad-welcome-banner:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(255, 214, 0, 0.6); }
         .grad-icon { font-size: 1.3rem; }
@@ -337,6 +347,18 @@
                 <button class="tool-btn" style="background: var(--success); color: white;">작전 개시 →</button>
             </div>
 
+            <div class="tool-card" style="border: 2px solid var(--success);" onclick="location.href='mock-invest.html'">
+                <div class="tool-icon">💹</div>
+                <h3>실시간 모의투자 (New)</h3>
+                <p>실제 미국 주식 시세로 즐기는 가상의 포트폴리오 트레이딩</p>
+                <ul class="tool-features">
+                    <li>Finnhub API 실시간 연동</li>
+                    <li>도넛 차트 비중 분석</li>
+                    <li>가상 시드머니 투자 연습</li>
+                </ul>
+                <button class="tool-btn" style="background: var(--success); color: white;">거래소 입장 →</button>
+            </div>
+
             <div class="tool-card" onclick="location.href='stock-dictionary.html'">
                 <div class="tool-icon">📚</div>
                 <h3>주식 용어 사전 + 퀴즈</h3>
@@ -351,12 +373,12 @@
 
             <div class="tool-card danger" onclick="location.href='average-calculator.html'">
                 <div class="tool-icon">📊</div>
-                <h3>매수 평단가 계산기(준비중)</h3>
+                <h3>매수 평단가 계산기</h3>
                 <p>물타기/불타기 시뮬레이션으로 전략적 매수 계획 수립</p>
                 <ul class="tool-features">
                     <li>평균 단가 자동 계산</li>
                     <li>물타기/불타기 손익 예측</li>
-                    <li>시각적 차트 제공 예정</li>
+                    <li>탈출 목표가 시각적 차트 제공</li>
                 </ul>
                 <button class="tool-btn">평단가 계산하기 →</button>
             </div>
@@ -370,7 +392,7 @@
         </div>
         <div class="news-slider" id="whale-container">
             <div class="news-card">
-                <span class="news-badge badge-whale" style="background:#E8F5E9; color:#2E7D32;">시스템 대기중</span>
+                <span class="news-badge badge-whale" style="background:#E8F5E9; color:#2E7D32;">데이터 수신 대기중</span>
                 <h3 style="text-align: center;">고래 데이터를<br>불러오는 중... 🐋</h3>
             </div>
         </div>
@@ -383,7 +405,7 @@
         </div>
         <div class="news-slider" id="news-container">
             <div class="news-card">
-                <span class="news-badge badge-cnbc">시스템 대기중</span>
+                <span class="news-badge badge-cnbc">데이터 수신 대기중</span>
                 <h3 style="text-align: center;">시장 속보를<br>불러오는 중... 📡</h3>
             </div>
         </div>
@@ -413,6 +435,7 @@
                     <li><a href="dividend-calculator.html">배당금 계산기</a></li>
                     <li><a href="stock-dictionary.html">주식 용어 사전</a></li>
                     <li><a href="chart-simulator.html">차트 시뮬레이터</a></li>
+                    <li><a href="mock-invest.html">실시간 모의투자</a></li>
                     <li><a href="average-calculator.html">평단가 계산기</a></li>
                     <li><a href="beginner-guide.html">주식 사관학교</a></li>
                 </ul>
@@ -432,7 +455,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 주린이 계산기. All rights reserved.</p>
+            <p>&copy; 2024-2026 주린이 계산기. All rights reserved.</p>
         </div>
     </footer>
 
@@ -450,9 +473,8 @@
             loadRecentSearches(); 
             fetchMarketIndices(); 
             updateIntelligenceCards();
-            setInterval(updateIntelligenceCards, 60000);
+            setInterval(updateIntelligenceCards, 60000); // 1분마다 자동 갱신
             
-            // 🎓 졸업 상태 체크 로직 (기본 배너 표시 후 수정)
             checkGraduationStatus();
 
             const stockSearchInput = document.getElementById('stock-search-input');
@@ -481,7 +503,7 @@
             initScrollAnimations();
         });
 
-        // 🎓 졸업 상태에 따른 UI 변경
+        // 🎓 졸업 상태 체크
         function checkGraduationStatus() {
             const rank = localStorage.getItem('jurini_rank');
             const bannerText = document.getElementById('grad-text');
@@ -501,40 +523,59 @@
             }
         }
 
+        // 🚨 멘토의 강력한 시간 파싱 함수 (이거 하나로 정렬 버그 완벽 차단)
+        function parseTimeSafely(val) {
+            if (!val) return 0;
+            // 숫자로 된 타임스탬프인 경우 (초 단위 데이터 방어)
+            if (!isNaN(val) && val !== '') {
+                let n = Number(val);
+                return n < 100000000000 ? n * 1000 : n;
+            }
+            // Date 객체 변환 시도
+            let d = new Date(val);
+            if (!isNaN(d.getTime())) return d.getTime();
+            
+            // Safari 호환성 (YYYY-MM-DD 포맷 교정)
+            if (typeof val === 'string') {
+                d = new Date(val.replace(/-/g, '/').replace('T', ' '));
+                if (!isNaN(d.getTime())) return d.getTime();
+            }
+            return 0; 
+        }
+
+        // 🐋 뉴스 및 고래 정보 API 연동
         async function updateIntelligenceCards() {
             const newsContainer = document.getElementById('news-container');
             const whaleContainer = document.getElementById('whale-container');
-            if (!newsContainer || !whaleContainer) return;
+            if (!newsContainer || !whaleContainer) return; // 변수명 에러 방어
 
             try {
                 const response = await fetch(`${RENDER_SERVER_URL}/get_intel`);
                 const result = await response.json();
 
                 if (result.status === "success" && result.data && result.data.length > 0) {
-                    let newsHtml = '', whaleHtml = '';
-
-                    // 🚨 스크롤 방향 및 최신순 정렬 문제 해결 (내림차순 정렬)
+                    // 🚨 최신순 정렬 (내림차순)
                     const sortedData = result.data.sort((a, b) => {
-                        const timeA = new Date(a.pubDate || a.published_at || a.timestamp || 0).getTime();
-                        const timeB = new Date(b.pubDate || b.published_at || b.timestamp || 0).getTime();
-                        return timeB - timeA; // 최신 시간일수록 배열 앞쪽으로
+                        const timeA = parseTimeSafely(a.pubDate || a.published_at || a.timestamp || a.datetime || a.date);
+                        const timeB = parseTimeSafely(b.pubDate || b.published_at || b.timestamp || b.datetime || b.date);
+                        return timeB - timeA; 
                     });
 
+                    let whaleHtml = '', newsHtml = '';
+
                     sortedData.forEach(item => {
-                        // 🚨 기사 실제 시간 노출 (우선순위: pubDate > published_at > timestamp)
-                        let rawTime = item.pubDate || item.published_at || item.timestamp || '방금 전';
-                        let displayTime = rawTime;
+                        // 🚨 기사 실제 시간 노출 (MM.DD HH:mm 포맷)
+                        let rawTimeMs = parseTimeSafely(item.pubDate || item.published_at || item.timestamp || item.datetime || item.date);
+                        let displayTime = '방금 전';
                         
-                        try {
-                            const d = new Date(rawTime);
-                            if (!isNaN(d.getTime())) {
-                                const mm = String(d.getMonth() + 1).padStart(2, '0');
-                                const dd = String(d.getDate()).padStart(2, '0');
-                                const hh = String(d.getHours()).padStart(2, '0');
-                                const min = String(d.getMinutes()).padStart(2, '0');
-                                displayTime = `${mm}.${dd} ${hh}:${min}`; // MM.DD HH:mm 포맷
-                            }
-                        } catch(e) {}
+                        if (rawTimeMs > 0) {
+                            const d = new Date(rawTimeMs);
+                            const mm = String(d.getMonth() + 1).padStart(2, '0');
+                            const dd = String(d.getDate()).padStart(2, '0');
+                            const hh = String(d.getHours()).padStart(2, '0');
+                            const min = String(d.getMinutes()).padStart(2, '0');
+                            displayTime = `${mm}.${dd} ${hh}:${min}`; 
+                        }
 
                         if (item.type === 'WHALE') {
                             whaleHtml += `
@@ -561,12 +602,13 @@
                             <h3 style="text-align: center;">전체 ${text}<br>보러가기 →</h3>
                         </div>`;
 
-                    whaleContainer.innerHTML = whaleHtml ? (whaleHtml + moreCard('고래 정보')) : `<div class="news-card" style="display:flex; justify-content:center; align-items:center;"><h3 style="text-align:center; color:var(--text-secondary);">새로운 데이터가 없습니다.</h3></div>`;
-                    newsContainer.innerHTML = newsHtml ? (newsHtml + moreCard('경제 뉴스')) : `<div class="news-card" style="display:flex; justify-content:center; align-items:center;"><h3 style="text-align:center; color:var(--text-secondary);">새로운 뉴스가 없습니다.</h3></div>`;
+                    whaleContainer.innerHTML = whaleHtml ? (whaleHtml + moreCard('고래 정보')) : `<div class="news-card" style="display:flex; justify-content:center; align-items:center;"><h3 style="text-align:center; color:var(--text-secondary);">최신 데이터가 없습니다.</h3></div>`;
+                    newsContainer.innerHTML = newsHtml ? (newsHtml + moreCard('경제 뉴스')) : `<div class="news-card" style="display:flex; justify-content:center; align-items:center;"><h3 style="text-align:center; color:var(--text-secondary);">최신 뉴스가 없습니다.</h3></div>`;
                 }
             } catch (error) { console.error("인텔리전스 로드 실패", error); }
         }
 
+        // 📈 시장 지수 API 연동
         async function fetchMarketIndices() {
             const tickerContainer = document.getElementById('ticker-content');
             try {
@@ -615,6 +657,7 @@
 
         function loadRecentSearches() { renderRecentSearches(); }
 
+        // 🔍 주식 검색 연동 (Finnhub + 서버)
         async function searchStocks(query) {
             const resultsDiv = document.getElementById('stock-search-results');
             if (!query) { resultsDiv.style.display = 'none'; return; }
