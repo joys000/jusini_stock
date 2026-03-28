@@ -225,6 +225,24 @@
         .grad-welcome-banner:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(255, 214, 0, 0.6); }
         .grad-icon { font-size: 1.3rem; }
         .completed-badge { display: none; position: absolute; top: 15px; right: 15px; background: #000; color: #FFD600; padding: 5px 12px; border-radius: 10px; font-size: 0.8rem; font-weight: 900; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .btn-auth {
+    background: #FFD600;
+    color: #000;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.btn-logout-small {
+    background: none;
+    border: none;
+    color: #FF6B6B;
+    text-decoration: underline;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
     </style>
 </head>
 <body>
@@ -234,6 +252,15 @@
                 <div class="logo-icon">📊</div>
                 <span>주린이 계산기(베타)</span>
             </a>
+            <div class="nav-actions" style="display: flex; align-items: center; gap: 15px;">
+            
+            <div id="auth-ui" style="display: flex; align-items: center; gap: 10px;">
+                <button id="btn-login" class="auth-btn-minimal">🔑 로그인</button>
+                <div id="user-info" style="display: none; align-items: center; gap: 10px;">
+                    <span id="user-name" style="font-weight: 700; font-size: 0.85rem; color: var(--text);"></span>
+                    <button id="btn-logout" class="logout-link">로그아웃</button>
+                </div>
+            </div>
             <div style="display: flex; align-items: center; gap: 1rem;">
                 <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" title="다크모드 전환">
                     <span class="theme-icon">🌙</span>
@@ -247,6 +274,7 @@
             </div>
         </nav>
     </header>
+
 
     <section class="hero">
         <div id="grad-banner" class="grad-welcome-banner" onclick="location.href='beginner-guide.html'">
@@ -787,5 +815,81 @@
             });
         }
     </script>
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    // 🚨 여기에 네 Firebase 콘솔 설정값을 붙여넣어!
+    const firebaseConfig = {
+        apiKey: "AIzaSyALn9C2PHgMd95J41cNpceCojbp-c5Sfo0",
+        authDomain: "jurinicalc.firebaseapp.com",
+        projectId: "jurinicalc",
+        storageBucket: "jurinicalc.firebasestorage.app",
+        messagingSenderId: "935820034253",
+        appId: "1:935820034253:web:8ad46e0b4af866664aa984"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // 버튼 요소들 가져오기
+    const btnLogin = document.getElementById('btn-login');
+    const userInfo = document.getElementById('user-info');
+    const userName = document.getElementById('user-name');
+    const btnLogout = document.getElementById('btn-logout');
+
+    // 🔑 로그인 실행 함수
+    btnLogin.onclick = async () => {
+        try {
+            await signInWithPopup(auth, provider);
+        } catch (error) {
+            console.error("로그인 실패:", error);
+            alert("로그인 중 오류가 발생했어!");
+        }
+    };
+
+    // 🚪 로그아웃 실행 함수
+    btnLogout.onclick = () => signOut(auth);
+
+    // 🕵️ 유저 상태 실시간 감시 (상태에 따라 UI 자동 변경)
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            btnLogin.style.display = 'none';
+            userInfo.style.display = 'flex';
+            userName.innerText = user.displayName;
+            console.log("✅ 환영해, " + user.displayName + "!");
+        } else {
+            btnLogin.style.display = 'block';
+            userInfo.style.display = 'none';
+        }
+    });
+</script>
+
+<style>
+    /* 로그인 버튼 스타일 (테마 버튼과 잘 어울리게) */
+    .auth-btn-minimal {
+        background: var(--primary);
+        color: #000;
+        border: none;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-weight: 800;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .auth-btn-minimal:hover { transform: scale(1.05); }
+    
+    .logout-link {
+        background: none;
+        border: none;
+        color: var(--danger);
+        font-size: 0.75rem;
+        text-decoration: underline;
+        cursor: pointer;
+        font-weight: 600;
+    }
+</style>
 </body>
 </html>
