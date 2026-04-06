@@ -429,6 +429,105 @@
                 grid-template-columns: 1fr;
             }
         }
+        /* ── DARK THEME OVERRIDE ─────────────────────────── */
+        :root {
+            --primary: #FF5C00 !important;
+            --primary-dark: #FF7A30 !important;
+            --success: #00D9A3 !important;
+            --danger: #FF6B6B !important;
+            --bg-gradient-start: #000000 !important;
+            --bg-gradient-end: #000000 !important;
+            --card-bg: #111111 !important;
+            --text-primary: #ffffff !important;
+            --text-secondary: #888888 !important;
+            --border-color: #1e1e1e !important;
+            --neutral-light: #111111 !important;
+            --input-bg: #0a0a0a !important;
+            --shadow: 0 4px 24px rgba(0,0,0,0.6) !important;
+            --shadow-hover: 0 12px 40px rgba(0,0,0,0.8) !important;
+            --pattern-color: rgba(255,92,0,0.03) !important;
+        }
+        body {
+            background: #000 !important;
+            color: #fff !important;
+        }
+        body::before { display: none !important; }
+        header, nav { background: rgba(0,0,0,0.9) !important; backdrop-filter: blur(20px); border-bottom: 1px solid #1e1e1e !important; }
+        .logo { color: #fff !important; }
+        .logo-icon { background: #FF5C00 !important; }
+        .nav-links a { color: #888 !important; }
+        .nav-links a:hover { color: #fff !important; }
+        .nav-links a::after { background: #FF5C00 !important; }
+        .theme-toggle { display: none !important; }
+        footer { background: #000 !important; border-top: 1px solid #1e1e1e !important; }
+        .footer-links a { color: #444 !important; }
+        .footer-links a:hover { color: #FF5C00 !important; }
+        .footer-bottom { border-top-color: #111 !important; color: #333 !important; }
+        .card, .calc-card, .result-card, .info-card, .feature-item, .tool-card, .stat-card {
+            background: #111 !important;
+            border-color: #1e1e1e !important;
+            color: #fff !important;
+        }
+        input, select, textarea {
+            background: #0a0a0a !important;
+            border-color: #1e1e1e !important;
+            color: #fff !important;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #FF5C00 !important;
+            box-shadow: 0 0 0 3px rgba(255,92,0,0.1) !important;
+        }
+        input::placeholder { color: #444 !important; }
+        label, .label, .input-label { color: #888 !important; }
+        h1, h2, h3, h4, h5, h6 { color: #fff !important; }
+        p { color: #888 !important; }
+        .result-value, .calc-result, .price-display, .total { color: #fff !important; }
+        .btn, button[type="submit"], .primary-btn, .calc-btn {
+            background: #FF5C00 !important;
+            color: #fff !important;
+            border: none !important;
+        }
+        .btn:hover, button[type="submit"]:hover, .primary-btn:hover, .calc-btn:hover {
+            background: #FF7A30 !important;
+        }
+        .section-title, .page-title { color: #fff !important; font-weight: 800 !important; }
+        .highlight, .accent { color: #FF5C00 !important; }
+        .success-text, .positive { color: #00D9A3 !important; }
+        .danger-text, .negative { color: #FF6B6B !important; }
+        .auth-btn-minimal { background: transparent !important; border: 1px solid #2a2a2a !important; color: #888 !important; border-radius: 50px !important; }
+        .logout-link { color: #FF6B6B !important; background: none !important; border: none !important; }
+        table { border-color: #1e1e1e !important; }
+        th { background: #111 !important; color: #888 !important; border-color: #1e1e1e !important; }
+        td { color: #fff !important; border-color: #1e1e1e !important; }
+        tr:hover { background: rgba(255,92,0,0.05) !important; }
+        .badge, .tag { background: rgba(255,92,0,0.12) !important; color: #FF5C00 !important; border: 1px solid rgba(255,92,0,0.25) !important; }
+        a { color: #FF5C00 !important; }
+        a:hover { color: #FF7A30 !important; }
+        nav a { text-decoration: none !important; }
+        .range-slider, input[type="range"] { accent-color: #FF5C00 !important; }
+        .progress-bar, .progress-fill { background: #FF5C00 !important; }
+        .divider, hr { border-color: #1e1e1e !important; }
+        .tooltip { background: #111 !important; border: 1px solid #1e1e1e !important; color: #fff !important; }
+        .modal, .popup { background: #111 !important; border: 1px solid #1e1e1e !important; }
+        .overlay { background: rgba(0,0,0,0.8) !important; }
+        .breadcrumb a, .back-link { color: #888 !important; }
+        .breadcrumb a:hover, .back-link:hover { color: #FF5C00 !important; }
+        .quiz-option, .option-btn { background: #111 !important; border-color: #1e1e1e !important; color: #fff !important; }
+        .quiz-option:hover, .option-btn:hover { border-color: #FF5C00 !important; background: rgba(255,92,0,0.08) !important; }
+        .quiz-option.correct { background: rgba(0,217,163,0.12) !important; border-color: #00D9A3 !important; }
+        .quiz-option.wrong { background: rgba(255,107,107,0.12) !important; border-color: #FF6B6B !important; }
+        .stage-card, .level-card { background: #111 !important; border-color: #1e1e1e !important; }
+        .stage-card:hover, .level-card:hover { border-color: rgba(255,92,0,0.4) !important; }
+        .locked { opacity: 0.4 !important; }
+        .completed { border-color: rgba(0,217,163,0.4) !important; }
+        .chart-container canvas { filter: brightness(0.9) !important; }
+        .game-board, .simulator-board { background: #111 !important; border-color: #1e1e1e !important; }
+        .word-card, .term-card, .dict-item { background: #111 !important; border-color: #1e1e1e !important; }
+        .word-card:hover, .term-card:hover, .dict-item:hover { border-color: rgba(255,92,0,0.35) !important; }
+        .search-box input, .search-input { background: #0a0a0a !important; border-color: #1e1e1e !important; color: #fff !important; }
+        .portfolio-item, .holding-row { background: #111 !important; border-color: #1e1e1e !important; }
+        .section-label-orange { color: #FF5C00 !important; font-size: 0.72rem !important; font-weight: 700 !important; letter-spacing: 0.1em !important; text-transform: uppercase !important; }
+
     </style>
 </head>
 <body>

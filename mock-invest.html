@@ -30,18 +30,20 @@
         header { max-width: 1200px; margin: 0 auto 30px; display: flex; justify-content: space-between; align-items: center; }
         .logo { font-family: 'Fredoka', cursive; font-size: 1.5rem; text-decoration: none; color: var(--text); display: flex; align-items: center; gap: 10px; }
         
-        .dashboard-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 380px; gap: 25px; }
+        /* 🔑 인증 버튼 공통 스타일 */
+        .auth-btn-minimal { background: var(--primary); color: #000; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
+        .auth-btn-minimal:hover { transform: scale(1.05); }
+        .logout-link { background: none; border: none; color: var(--danger); font-size: 0.8rem; text-decoration: underline; cursor: pointer; font-weight: 600; }
 
+        .dashboard-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 380px; gap: 25px; }
         .card { background: var(--card-bg); border-radius: 30px; padding: 30px; border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0,0,0,0.05); position: relative; }
         .card h2 { font-family: 'Fredoka', cursive; font-size: 1.4rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
 
-        /* 📡 멘토 HUD */
         .mentor-hud { background: rgba(0,0,0,0.03); padding: 20px; border-radius: 20px; margin-bottom: 25px; border-left: 5px solid var(--primary); }
         .asset-main { display: flex; justify-content: space-between; align-items: flex-end; }
         .total-label { font-size: 0.8rem; color: var(--secondary); font-weight: 800; display: block; margin-bottom: 5px; }
         .total-value { font-size: 2.2rem; font-weight: 800; font-family: 'Fredoka'; color: var(--text); }
 
-        /* 🔍 검색 및 매수창 */
         .search-area { position: relative; margin-bottom: 20px; }
         input { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--border); background: var(--bg); color: var(--text); font-weight: 700; outline: none; transition: 0.3s; }
         input:focus { border-color: var(--primary); }
@@ -53,22 +55,128 @@
         .trade-controls { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-top: 15px; }
         .btn-buy { background: var(--success); color: white; border: none; padding: 0 25px; border-radius: 15px; font-weight: 800; cursor: pointer; }
 
-        /* 💼 포트폴리오 리스트 */
         .holding-card { background: var(--bg); padding: 20px; border-radius: 20px; margin-bottom: 15px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .stock-info h4 { font-family: 'Fredoka'; font-size: 1.2rem; }
         .profit-pill { padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 800; margin-top: 5px; display: inline-block; }
         .sell-input { width: 80px !important; padding: 8px !important; margin-right: 10px; text-align: center; }
 
-        .theme-toggle { background: var(--card-bg); border: 1px solid var(--border); width: 45px; height: 45px; border-radius: 15px; cursor: pointer; font-size: 1.2rem; }
+        .theme-toggle { background: var(--card-bg); border: 1px solid var(--border); width: 45px; height: 45px; border-radius: 15px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
 
         @media (max-width: 950px) { .dashboard-grid { grid-template-columns: 1fr; } }
+        /* ── DARK THEME OVERRIDE ─────────────────────────── */
+        :root {
+            --primary: #FF5C00 !important;
+            --primary-dark: #FF7A30 !important;
+            --success: #00D9A3 !important;
+            --danger: #FF6B6B !important;
+            --bg-gradient-start: #000000 !important;
+            --bg-gradient-end: #000000 !important;
+            --card-bg: #111111 !important;
+            --text-primary: #ffffff !important;
+            --text-secondary: #888888 !important;
+            --border-color: #1e1e1e !important;
+            --neutral-light: #111111 !important;
+            --input-bg: #0a0a0a !important;
+            --shadow: 0 4px 24px rgba(0,0,0,0.6) !important;
+            --shadow-hover: 0 12px 40px rgba(0,0,0,0.8) !important;
+            --pattern-color: rgba(255,92,0,0.03) !important;
+        }
+        body {
+            background: #000 !important;
+            color: #fff !important;
+        }
+        body::before { display: none !important; }
+        header, nav { background: rgba(0,0,0,0.9) !important; backdrop-filter: blur(20px); border-bottom: 1px solid #1e1e1e !important; }
+        .logo { color: #fff !important; }
+        .logo-icon { background: #FF5C00 !important; }
+        .nav-links a { color: #888 !important; }
+        .nav-links a:hover { color: #fff !important; }
+        .nav-links a::after { background: #FF5C00 !important; }
+        .theme-toggle { display: none !important; }
+        footer { background: #000 !important; border-top: 1px solid #1e1e1e !important; }
+        .footer-links a { color: #444 !important; }
+        .footer-links a:hover { color: #FF5C00 !important; }
+        .footer-bottom { border-top-color: #111 !important; color: #333 !important; }
+        .card, .calc-card, .result-card, .info-card, .feature-item, .tool-card, .stat-card {
+            background: #111 !important;
+            border-color: #1e1e1e !important;
+            color: #fff !important;
+        }
+        input, select, textarea {
+            background: #0a0a0a !important;
+            border-color: #1e1e1e !important;
+            color: #fff !important;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #FF5C00 !important;
+            box-shadow: 0 0 0 3px rgba(255,92,0,0.1) !important;
+        }
+        input::placeholder { color: #444 !important; }
+        label, .label, .input-label { color: #888 !important; }
+        h1, h2, h3, h4, h5, h6 { color: #fff !important; }
+        p { color: #888 !important; }
+        .result-value, .calc-result, .price-display, .total { color: #fff !important; }
+        .btn, button[type="submit"], .primary-btn, .calc-btn {
+            background: #FF5C00 !important;
+            color: #fff !important;
+            border: none !important;
+        }
+        .btn:hover, button[type="submit"]:hover, .primary-btn:hover, .calc-btn:hover {
+            background: #FF7A30 !important;
+        }
+        .section-title, .page-title { color: #fff !important; font-weight: 800 !important; }
+        .highlight, .accent { color: #FF5C00 !important; }
+        .success-text, .positive { color: #00D9A3 !important; }
+        .danger-text, .negative { color: #FF6B6B !important; }
+        .auth-btn-minimal { background: transparent !important; border: 1px solid #2a2a2a !important; color: #888 !important; border-radius: 50px !important; }
+        .logout-link { color: #FF6B6B !important; background: none !important; border: none !important; }
+        table { border-color: #1e1e1e !important; }
+        th { background: #111 !important; color: #888 !important; border-color: #1e1e1e !important; }
+        td { color: #fff !important; border-color: #1e1e1e !important; }
+        tr:hover { background: rgba(255,92,0,0.05) !important; }
+        .badge, .tag { background: rgba(255,92,0,0.12) !important; color: #FF5C00 !important; border: 1px solid rgba(255,92,0,0.25) !important; }
+        a { color: #FF5C00 !important; }
+        a:hover { color: #FF7A30 !important; }
+        nav a { text-decoration: none !important; }
+        .range-slider, input[type="range"] { accent-color: #FF5C00 !important; }
+        .progress-bar, .progress-fill { background: #FF5C00 !important; }
+        .divider, hr { border-color: #1e1e1e !important; }
+        .tooltip { background: #111 !important; border: 1px solid #1e1e1e !important; color: #fff !important; }
+        .modal, .popup { background: #111 !important; border: 1px solid #1e1e1e !important; }
+        .overlay { background: rgba(0,0,0,0.8) !important; }
+        .breadcrumb a, .back-link { color: #888 !important; }
+        .breadcrumb a:hover, .back-link:hover { color: #FF5C00 !important; }
+        .quiz-option, .option-btn { background: #111 !important; border-color: #1e1e1e !important; color: #fff !important; }
+        .quiz-option:hover, .option-btn:hover { border-color: #FF5C00 !important; background: rgba(255,92,0,0.08) !important; }
+        .quiz-option.correct { background: rgba(0,217,163,0.12) !important; border-color: #00D9A3 !important; }
+        .quiz-option.wrong { background: rgba(255,107,107,0.12) !important; border-color: #FF6B6B !important; }
+        .stage-card, .level-card { background: #111 !important; border-color: #1e1e1e !important; }
+        .stage-card:hover, .level-card:hover { border-color: rgba(255,92,0,0.4) !important; }
+        .locked { opacity: 0.4 !important; }
+        .completed { border-color: rgba(0,217,163,0.4) !important; }
+        .chart-container canvas { filter: brightness(0.9) !important; }
+        .game-board, .simulator-board { background: #111 !important; border-color: #1e1e1e !important; }
+        .word-card, .term-card, .dict-item { background: #111 !important; border-color: #1e1e1e !important; }
+        .word-card:hover, .term-card:hover, .dict-item:hover { border-color: rgba(255,92,0,0.35) !important; }
+        .search-box input, .search-input { background: #0a0a0a !important; border-color: #1e1e1e !important; color: #fff !important; }
+        .portfolio-item, .holding-row { background: #111 !important; border-color: #1e1e1e !important; }
+        .section-label-orange { color: #FF5C00 !important; font-size: 0.72rem !important; font-weight: 700 !important; letter-spacing: 0.1em !important; text-transform: uppercase !important; }
+
     </style>
 </head>
 <body data-theme="light">
 
     <header>
         <a href="index.html" class="logo">📊 <span>실전 모의투자 HUD</span></a>
-        <div style="display: flex; gap: 10px;">
+        <div class="nav-actions" style="display: flex; align-items: center; gap: 15px;">
+            <div id="auth-ui" style="display: flex; align-items: center; gap: 10px;">
+                <button id="btn-login" class="auth-btn-minimal">🔑 로그인</button>
+                <div id="user-info" style="display: none; align-items: center; gap: 10px;">
+                    <span id="user-name" style="font-weight: 700; font-size: 0.85rem;"></span>
+                    <button id="btn-logout" class="logout-link">로그아웃</button>
+                </div>
+            </div>
+            
             <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙</button>
             <button class="theme-toggle" onclick="location.href='index.html'">🏠</button>
         </div>
@@ -138,9 +246,11 @@
         </div>
     </div>
 
+    <script type="module" src="auth-global.js"></script>
+
     <script>
         const API_KEY = 'd70u9vhr01ql6rg0mgr0d70u9vhr01ql6rg0mgrg';
-        const EX_RATE = 1350; // 실시간 API 연동 가능하나 일단 고정
+        const EX_RATE = 1350; 
         
         let db = { cash: 10000000, holdings: {}, history: [] };
         let selectedStock = null;
@@ -152,10 +262,9 @@
             initTheme();
             updateUI();
             setupSearch();
-            setInterval(refreshAllPrices, 60000); // 1분마다 자동 갱신
+            setInterval(refreshAllPrices, 60000); 
         }
 
-        // --- 🔍 검색 로직 (메인과 동일) ---
         function setupSearch() {
             const input = document.getElementById('search-input');
             const results = document.getElementById('search-results');
@@ -194,7 +303,6 @@
             }
         }
 
-        // --- 💹 매매 로직 ---
         function buyStock() {
             const qty = parseInt(document.getElementById('buy-qty').value);
             if(!selectedStock || !qty || qty <= 0) return alert("종목과 수량을 확인해라!");
@@ -232,7 +340,6 @@
             saveAndRefresh();
         }
 
-        // --- 📊 UI 및 차트 ---
         async function refreshAllPrices() {
             for(let sym in db.holdings) {
                 const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${sym}&token=${API_KEY}`);
