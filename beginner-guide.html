@@ -3,434 +3,571 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>주린이 사관학교 | 투자자 온보딩</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+KR:wght@300;500;800&display=swap" rel="stylesheet">
+    <title>주식 사관학교 | 주린이 계산기</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            /* Light Mode */
-            --primary: #FFD600; --primary-dark: #FFB300; --primary-glow: rgba(255, 214, 0, 0.3);
-            --bg: #F8F9FA; --card-bg: #FFFFFF;
-            --text: #2D3436; --secondary: #636E72;
-            --danger: #FF6B6B; --success: #00D9A3;
-            --border: rgba(0, 0, 0, 0.08);
-        }
-
-        [data-theme="dark"] {
-            /* Dark Mode */
-            --primary: #FFD600; --primary-glow: rgba(255, 214, 0, 0.4);
-            --bg: #0A0B10; --card-bg: #1E202D;
-            --text: #E0E0E0; --secondary: #94A3B8;
-            --border: rgba(255, 255, 255, 0.1);
-        }
-
-        body { 
-            font-family: 'Noto Sans KR', sans-serif; 
-            background: var(--bg); color: var(--text); margin: 0; 
-            min-height: 100vh; transition: 0.3s;
-        }
-
-        /* 🏠 공통 헤더 스타일 (index.html과 동일하게 유지) */
-        header {
-            background: var(--card-bg);
-            padding: 1rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .header-container { width: 100%; max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-        .logo { text-decoration: none; display: flex; align-items: center; gap: 10px; }
-        .logo-icon { font-size: 1.5rem; }
-        .logo-text { display: flex; flex-direction: column; }
-        .logo-main { font-weight: 900; color: var(--text); font-size: 1.1rem; }
-        .logo-sub { font-size: 0.7rem; color: var(--secondary); font-weight: 500; }
-
-        .nav-actions { display: flex; align-items: center; gap: 15px; }
-
-        /* 로그인/인증 버튼 스타일 */
-        .auth-btn-minimal {
-            background: var(--primary); color: #000; border: none;
-            padding: 6px 14px; border-radius: 20px; font-weight: 800;
-            font-size: 0.8rem; cursor: pointer; transition: 0.2s;
-        }
-        .logout-link { background: none; border: none; color: var(--danger); font-size: 0.75rem; text-decoration: underline; cursor: pointer; }
-
-        .theme-btn {
-            background: var(--bg); border: 1px solid var(--border);
-            width: 38px; height: 38px; border-radius: 12px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
-        }
-
-        /* 📺 사관학교 전용 컨테이너 */
-        .app-container { 
-            width: 95%; max-width: 500px; padding: 30px; position: relative;
-            background: var(--card-bg); border: 1px solid var(--border); 
-            border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            margin: 40px auto;
-        }
-
-        /* 🎖️ 계급장 전용 헤더 (컨테이너 내부) */
-        .academy-status-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border);
-        }
-
-        .rank-badge {
-            background: var(--primary); color: #000; padding: 6px 14px;
-            border-radius: 10px; font-weight: 800; font-size: 0.85rem;
-            box-shadow: 0 4px 10px var(--primary-glow);
-        }
-
-        /* 📋 로비 및 퀴즈 스타일 (기존 유지) */
-        .intro-section { background: rgba(0,0,0,0.03); padding: 20px; border-radius: 20px; margin-bottom: 30px; border-left: 4px solid var(--primary); }
-        .intro-section h2 { margin: 0 0 10px; font-size: 1.4rem; font-weight: 800; }
-        .intro-section p { margin: 0; font-size: 0.9rem; color: var(--secondary); line-height: 1.6; }
-        .stage-path { display: flex; flex-direction: column; align-items: center; gap: 40px; position: relative; padding: 20px 0; }
-        .stage-path::before { content: ''; position: absolute; top: 0; bottom: 0; width: 2px; background: repeating-linear-gradient(to bottom, transparent, transparent 10px, var(--border) 10px, var(--border) 20px); }
-        .stage-node { width: 70px; height: 70px; border-radius: 50%; background: var(--bg); border: 3px solid var(--border); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.4s; z-index: 2; position: relative; }
-        .stage-node.unlocked { border-color: var(--primary); background: var(--card-bg); }
-        .stage-node.unlocked:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--primary-glow); }
-        .stage-node.locked { opacity: 0.4; cursor: not-allowed; filter: grayscale(1); }
-        .stage-info { position: absolute; left: 90px; text-align: left; width: 180px; }
-        .stage-info h3 { margin: 0; font-size: 1rem; font-weight: 800; }
-        .stage-info p { margin: 2px 0 0; font-size: 0.8rem; color: var(--secondary); }
-        #quiz-screen { display: none; }
-        .quiz-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: 700; font-size: 0.8rem; }
-        .progress-bar { flex-grow: 1; height: 8px; background: var(--border); border-radius: 4px; margin: 0 15px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: 0.4s; }
-        .mentor-briefing { background: rgba(0,0,0,0.02); padding: 20px; border-radius: 20px; margin-bottom: 25px; border-left: 5px solid var(--primary); min-height: 100px; }
-        .visual-hud { background: rgba(0,0,0,0.02); height: 100px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 20px; border: 1px solid var(--border); }
-        .options-grid { display: flex; flex-direction: column; gap: 12px; }
-        .tactical-btn { background: var(--card-bg); border: 1.5px solid var(--border); padding: 18px; border-radius: 18px; font-weight: 600; cursor: pointer; transition: 0.2s; text-align: left; color: var(--text); font-size: 1rem; }
-        .tactical-btn:hover { border-color: var(--primary); transform: translateX(5px); }
-        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:1000; padding:20px; backdrop-filter: blur(8px); }
-        .modal-content { background: var(--card-bg); padding: 40px 30px; border-radius: 35px; width: 100%; max-width: 420px; text-align: center; border: 2px solid var(--primary); }
-        .btn-confirm { background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 15px; font-weight: 800; width: 100%; cursor: pointer; font-size: 1.1rem; }
-        /* ── DARK THEME OVERRIDE ─────────────────────────── */
         :root {
-            --primary: #FF5C00 !important;
-            --primary-dark: #FF7A30 !important;
-            --success: #00D9A3 !important;
-            --danger: #FF6B6B !important;
-            --bg-gradient-start: #000000 !important;
-            --bg-gradient-end: #000000 !important;
-            --card-bg: #111111 !important;
-            --text-primary: #ffffff !important;
-            --text-secondary: #888888 !important;
-            --border-color: #1e1e1e !important;
-            --neutral-light: #111111 !important;
-            --input-bg: #0a0a0a !important;
-            --shadow: 0 4px 24px rgba(0,0,0,0.6) !important;
-            --shadow-hover: 0 12px 40px rgba(0,0,0,0.8) !important;
-            --pattern-color: rgba(255,92,0,0.03) !important;
+            --primary: #FF5C00; --primary-hover: #FF7A30;
+            --success: #00D9A3; --danger: #FF6B6B; --gold: #FFD700;
+            --bg: #000; --card: #111; --card-hover: #161616;
+            --border: #1e1e1e; --text: #fff;
+            --secondary: #888; --muted: #444; --input-bg: #0a0a0a;
         }
-        body {
-            background: #000 !important;
-            color: #fff !important;
-        }
-        body::before { display: none !important; }
-        header, nav { background: rgba(0,0,0,0.9) !important; backdrop-filter: blur(20px); border-bottom: 1px solid #1e1e1e !important; }
-        .logo { color: #fff !important; }
-        .logo-icon { background: #FF5C00 !important; }
-        .nav-links a { color: #888 !important; }
-        .nav-links a:hover { color: #fff !important; }
-        .nav-links a::after { background: #FF5C00 !important; }
-        .theme-toggle { display: none !important; }
-        footer { background: #000 !important; border-top: 1px solid #1e1e1e !important; }
-        .footer-links a { color: #444 !important; }
-        .footer-links a:hover { color: #FF5C00 !important; }
-        .footer-bottom { border-top-color: #111 !important; color: #333 !important; }
-        .card, .calc-card, .result-card, .info-card, .feature-item, .tool-card, .stat-card {
-            background: #111 !important;
-            border-color: #1e1e1e !important;
-            color: #fff !important;
-        }
-        input, select, textarea {
-            background: #0a0a0a !important;
-            border-color: #1e1e1e !important;
-            color: #fff !important;
-        }
-        input:focus, select:focus, textarea:focus {
-            border-color: #FF5C00 !important;
-            box-shadow: 0 0 0 3px rgba(255,92,0,0.1) !important;
-        }
-        input::placeholder { color: #444 !important; }
-        label, .label, .input-label { color: #888 !important; }
-        h1, h2, h3, h4, h5, h6 { color: #fff !important; }
-        p { color: #888 !important; }
-        .result-value, .calc-result, .price-display, .total { color: #fff !important; }
-        .btn, button[type="submit"], .primary-btn, .calc-btn {
-            background: #FF5C00 !important;
-            color: #fff !important;
-            border: none !important;
-        }
-        .btn:hover, button[type="submit"]:hover, .primary-btn:hover, .calc-btn:hover {
-            background: #FF7A30 !important;
-        }
-        .section-title, .page-title { color: #fff !important; font-weight: 800 !important; }
-        .highlight, .accent { color: #FF5C00 !important; }
-        .success-text, .positive { color: #00D9A3 !important; }
-        .danger-text, .negative { color: #FF6B6B !important; }
-        .auth-btn-minimal { background: transparent !important; border: 1px solid #2a2a2a !important; color: #888 !important; border-radius: 50px !important; }
-        .logout-link { color: #FF6B6B !important; background: none !important; border: none !important; }
-        table { border-color: #1e1e1e !important; }
-        th { background: #111 !important; color: #888 !important; border-color: #1e1e1e !important; }
-        td { color: #fff !important; border-color: #1e1e1e !important; }
-        tr:hover { background: rgba(255,92,0,0.05) !important; }
-        .badge, .tag { background: rgba(255,92,0,0.12) !important; color: #FF5C00 !important; border: 1px solid rgba(255,92,0,0.25) !important; }
-        a { color: #FF5C00 !important; }
-        a:hover { color: #FF7A30 !important; }
-        nav a { text-decoration: none !important; }
-        .range-slider, input[type="range"] { accent-color: #FF5C00 !important; }
-        .progress-bar, .progress-fill { background: #FF5C00 !important; }
-        .divider, hr { border-color: #1e1e1e !important; }
-        .tooltip { background: #111 !important; border: 1px solid #1e1e1e !important; color: #fff !important; }
-        .modal, .popup { background: #111 !important; border: 1px solid #1e1e1e !important; }
-        .overlay { background: rgba(0,0,0,0.8) !important; }
-        .breadcrumb a, .back-link { color: #888 !important; }
-        .breadcrumb a:hover, .back-link:hover { color: #FF5C00 !important; }
-        .quiz-option, .option-btn { background: #111 !important; border-color: #1e1e1e !important; color: #fff !important; }
-        .quiz-option:hover, .option-btn:hover { border-color: #FF5C00 !important; background: rgba(255,92,0,0.08) !important; }
-        .quiz-option.correct { background: rgba(0,217,163,0.12) !important; border-color: #00D9A3 !important; }
-        .quiz-option.wrong { background: rgba(255,107,107,0.12) !important; border-color: #FF6B6B !important; }
-        .stage-card, .level-card { background: #111 !important; border-color: #1e1e1e !important; }
-        .stage-card:hover, .level-card:hover { border-color: rgba(255,92,0,0.4) !important; }
-        .locked { opacity: 0.4 !important; }
-        .completed { border-color: rgba(0,217,163,0.4) !important; }
-        .chart-container canvas { filter: brightness(0.9) !important; }
-        .game-board, .simulator-board { background: #111 !important; border-color: #1e1e1e !important; }
-        .word-card, .term-card, .dict-item { background: #111 !important; border-color: #1e1e1e !important; }
-        .word-card:hover, .term-card:hover, .dict-item:hover { border-color: rgba(255,92,0,0.35) !important; }
-        .search-box input, .search-input { background: #0a0a0a !important; border-color: #1e1e1e !important; color: #fff !important; }
-        .portfolio-item, .holding-row { background: #111 !important; border-color: #1e1e1e !important; }
-        .section-label-orange { color: #FF5C00 !important; font-size: 0.72rem !important; font-weight: 700 !important; letter-spacing: 0.1em !important; text-transform: uppercase !important; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
+        /* ── HEADER ── */
+        header { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: rgba(0,0,0,0.88); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0.85rem 0; }
+        nav { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 0.55rem; text-decoration: none; color: var(--text); font-weight: 800; font-size: 0.95rem; letter-spacing: 0.04em; text-transform: uppercase; }
+        .logo-icon { background: var(--primary); width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+        .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+        .nav-links a { color: var(--secondary); text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: color 0.2s; position: relative; }
+        .nav-links a:hover, .nav-links a.active { color: var(--text); }
+        .nav-links a.active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: var(--primary); border-radius: 2px; }
+        .auth-btn { background: transparent; border: 1px solid #2a2a2a; color: var(--secondary); padding: 0.42rem 1rem; border-radius: 50px; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+        .auth-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .logout-link { background: none; border: none; color: var(--danger); font-size: 0.78rem; text-decoration: underline; cursor: pointer; font-weight: 600; }
+
+        /* ── MAIN ── */
+        main { max-width: 1100px; margin: 0 auto; padding: 90px 2rem 60px; }
+
+        /* ── PAGE HERO ── */
+        .page-hero { margin-bottom: 2.2rem; }
+        .page-badge { display: inline-flex; align-items: center; gap: 0.45rem; background: rgba(255,92,0,0.1); border: 1px solid rgba(255,92,0,0.28); color: var(--primary); padding: 0.35rem 0.9rem; border-radius: 50px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.9rem; }
+        .badge-dot { width: 5px; height: 5px; background: var(--primary); border-radius: 50%; display: inline-block; animation: blink 1.8s ease-in-out infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+        .page-hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
+        .page-hero p { color: var(--secondary); font-size: 0.95rem; }
+
+        /* ── RANK CARD ── */
+        .rank-row { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px 22px; margin-bottom: 1.8rem; }
+        .rank-left { display: flex; align-items: center; gap: 12px; }
+        .rank-avatar { width: 44px; height: 44px; background: rgba(255,92,0,0.12); border: 1.5px solid rgba(255,92,0,0.3); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+        .rank-info-label { font-size: 0.68rem; color: var(--secondary); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 3px; }
+        .rank-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.3); color: var(--gold); padding: 4px 12px; border-radius: 20px; font-size: 0.82rem; font-weight: 800; }
+        .rank-progress-wrap { flex: 1; max-width: 300px; }
+        .rank-progress-label { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--secondary); margin-bottom: 6px; font-weight: 600; }
+        .progress-bar-bg { height: 6px; background: var(--border); border-radius: 10px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 10px; transition: width 0.5s ease; }
+        .rank-stats { display: flex; gap: 20px; }
+        .rank-stat { text-align: center; }
+        .rank-stat-value { font-size: 1.2rem; font-weight: 800; color: var(--text); display: block; }
+        .rank-stat-label { font-size: 0.65rem; color: var(--secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        /* ── STAGE GRID ── */
+        .stage-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; margin-bottom: 2rem; }
+        @media (max-width: 700px) { .stage-grid { grid-template-columns: 1fr; } .nav-links { display: none; } }
+        .stage-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; position: relative; transition: all 0.22s; overflow: hidden; }
+        .stage-card.unlocked { cursor: pointer; }
+        .stage-card.unlocked:hover { border-color: rgba(255,92,0,0.4); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+        .stage-card.locked { opacity: 0.45; cursor: not-allowed; }
+        .stage-card.completed { border-color: rgba(0,217,163,0.3); }
+        .stage-card.completed::before { content: '✓'; position: absolute; top: 18px; right: 18px; width: 26px; height: 26px; background: rgba(0,217,163,0.12); border: 1px solid rgba(0,217,163,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; color: var(--success); }
+        .stage-num-big { font-size: 4rem; font-weight: 900; color: var(--primary); opacity: 0.18; line-height: 1; margin-bottom: 0.6rem; font-variant-numeric: tabular-nums; }
+        .stage-num-big.locked-num { color: var(--muted); }
+        .stage-title-text { font-size: 1.1rem; font-weight: 800; margin-bottom: 0.3rem; }
+        .stage-desc-text { font-size: 0.8rem; color: var(--secondary); line-height: 1.5; margin-bottom: 1rem; }
+        .stage-topics { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 1rem; }
+        .topic-tag { background: rgba(255,92,0,0.08); border: 1px solid rgba(255,92,0,0.18); color: var(--primary); padding: 3px 9px; border-radius: 6px; font-size: 0.68rem; font-weight: 700; }
+        .topic-tag.locked-tag { background: rgba(255,255,255,0.04); border-color: var(--border); color: var(--muted); }
+        .stage-btn { width: 100%; padding: 11px; border-radius: 11px; font-weight: 700; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; border: none; }
+        .stage-btn.active { background: var(--primary); color: #fff; }
+        .stage-btn.active:hover { background: var(--primary-hover); }
+        .stage-btn.done { background: rgba(0,217,163,0.12); color: var(--success); border: 1px solid rgba(0,217,163,0.25); }
+        .stage-btn.disabled { background: var(--input-bg); color: var(--muted); cursor: not-allowed; }
+        .lock-icon { position: absolute; top: 20px; right: 20px; font-size: 1.2rem; opacity: 0.4; }
+
+        /* ── QUIZ LAYOUT ── */
+        #quiz-screen { display: none; }
+        .quiz-layout { display: grid; grid-template-columns: 1fr 270px; gap: 1.4rem; }
+        @media (max-width: 800px) { .quiz-layout { grid-template-columns: 1fr; } }
+
+        /* Quiz left panel */
+        .quiz-meta-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; }
+        .quiz-stage-label { font-size: 0.7rem; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; }
+        .quiz-qcount { font-size: 0.8rem; font-weight: 700; color: var(--secondary); }
+        .quiz-progress-track { height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 1.2rem; }
+        .quiz-progress-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.4s ease; }
+        .visual-hud { background: var(--card); border: 1px solid var(--border); border-radius: 16px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 2.8rem; margin-bottom: 1rem; }
+        .mentor-card { background: var(--input-bg); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 14px; padding: 16px 18px; margin-bottom: 1.2rem; }
+        .mentor-by { font-size: 0.65rem; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 7px; display: block; }
+        .question-text { font-size: 1.05rem; font-weight: 700; line-height: 1.6; color: var(--text); min-height: 52px; }
+        .options-grid { display: flex; flex-direction: column; gap: 0.7rem; }
+        .option-btn { background: var(--card); border: 1.5px solid var(--border); padding: 15px 18px; border-radius: 13px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.18s; text-align: left; color: var(--text); font-family: 'DM Sans', sans-serif; }
+        .option-btn:hover:not(:disabled) { border-color: rgba(255,92,0,0.4); background: rgba(255,92,0,0.05); color: var(--text); }
+        .option-btn:disabled { cursor: default; }
+        .option-btn.correct { background: rgba(0,217,163,0.1) !important; border-color: var(--success) !important; color: var(--success) !important; }
+        .option-btn.wrong { background: rgba(255,107,107,0.1) !important; border-color: var(--danger) !important; color: var(--danger) !important; }
+        .quiz-actions { display: flex; gap: 0.7rem; margin-top: 1rem; }
+        .btn-hint { flex: 1; padding: 11px; border-radius: 11px; background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2); color: var(--gold); font-weight: 700; font-size: 0.85rem; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+        .btn-hint:hover { background: rgba(255,215,0,0.14); }
+        .btn-quit { flex: 1; padding: 11px; border-radius: 11px; background: transparent; border: 1px solid var(--border); color: var(--secondary); font-weight: 700; font-size: 0.85rem; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+        .btn-quit:hover { color: var(--danger); border-color: rgba(255,107,107,0.3); }
+
+        /* Quiz right panel */
+        .quiz-side { display: flex; flex-direction: column; gap: 1rem; }
+        .side-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+        .side-label { font-size: 0.68rem; font-weight: 700; color: var(--secondary); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px; display: block; }
+        .score-display { font-size: 2.5rem; font-weight: 900; color: var(--text); line-height: 1; margin-bottom: 4px; }
+        .score-sub { font-size: 0.78rem; color: var(--secondary); }
+        .streak-display { display: flex; align-items: center; gap: 6px; }
+        .streak-num { font-size: 1.8rem; font-weight: 900; color: var(--primary); }
+        .streak-fire { font-size: 1.4rem; }
+        .answer-log { max-height: 200px; overflow-y: auto; }
+        .log-item { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 0.78rem; }
+        .log-item:last-child { border-bottom: none; }
+        .log-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .log-dot.ok { background: var(--success); }
+        .log-dot.fail { background: var(--danger); }
+        .log-text { color: var(--secondary); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* ── MODALS ── */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 500; display: none; justify-content: center; align-items: center; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 32px; max-width: 420px; width: 100%; text-align: center; animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+        @keyframes popIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-icon { font-size: 3.5rem; display: block; margin-bottom: 0.8rem; }
+        .modal-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 0.4rem; }
+        .modal-explanation { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: left; font-size: 0.88rem; line-height: 1.65; margin: 1rem 0; color: var(--secondary); }
+        .modal-btn { background: var(--primary); color: #fff; border: none; padding: 13px; border-radius: 12px; font-weight: 700; font-size: 0.92rem; cursor: pointer; width: 100%; font-family: 'DM Sans', sans-serif; transition: background 0.2s; margin-top: 0.5rem; }
+        .modal-btn:hover { background: var(--primary-hover); }
+        .modal-btn-outline { background: transparent; color: var(--secondary); border: 1px solid var(--border); padding: 12px; border-radius: 12px; font-weight: 600; font-size: 0.88rem; cursor: pointer; width: 100%; font-family: 'DM Sans', sans-serif; transition: all 0.2s; margin-top: 0.5rem; }
+        .modal-btn-outline:hover { color: var(--text); border-color: #444; }
+        .stage-result-score { font-size: 1.5rem; font-weight: 900; color: var(--primary); margin: 0.5rem 0; }
+        .hint-text { background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.2); border-radius: 12px; padding: 16px; font-size: 1rem; font-weight: 700; color: var(--gold); font-style: italic; margin: 1rem 0; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-container">
-            <a href="index.html" class="logo">
-                <div class="logo-icon">📊</div>
-                <div class="logo-text">
-                    <span class="logo-main">주린이 계산기</span>
-                    <span class="logo-sub">사관학교 모드</span>
+<header>
+    <nav>
+        <a href="index.html" class="logo">
+            <span class="logo-icon">📊</span>
+            주린이 계산기
+        </a>
+        <ul class="nav-links">
+            <li><a href="average-calculator.html">평단가</a></li>
+            <li><a href="mock-invest.html">모의투자</a></li>
+            <li><a href="beginner-guide.html" class="active">사관학교</a></li>
+            <li><a href="chart-simulator.html">차트 신내림</a></li>
+        </ul>
+        <div style="display:flex;align-items:center;gap:0.7rem;">
+            <div id="auth-ui" style="display:flex;align-items:center;gap:0.7rem;">
+                <button id="btn-login" class="auth-btn">🔑 로그인</button>
+                <div id="user-info" style="display:none;align-items:center;gap:0.7rem;">
+                    <span id="user-name" style="font-size:0.82rem;font-weight:700;color:var(--secondary);"></span>
+                    <button id="btn-logout" class="logout-link">로그아웃</button>
                 </div>
-            </a>
+            </div>
+        </div>
+    </nav>
+</header>
 
-            <div class="nav-actions">
-                <div id="auth-ui" style="display: flex; align-items: center; gap: 10px;">
-                    <button id="btn-login" class="auth-btn-minimal">🔑 로그인</button>
-                    <div id="user-info" style="display: none; align-items: center; gap: 10px;">
-                        <span id="user-name" style="font-weight: 700; font-size: 0.85rem; color: var(--text);"></span>
-                        <button id="btn-logout" class="logout-link">로그아웃</button>
+<main>
+    <!-- LOBBY SCREEN -->
+    <div id="lobby-screen">
+        <div class="page-hero">
+            <div class="page-badge"><span class="badge-dot"></span> Academy Mode</div>
+            <h1>주식 사관학교</h1>
+            <p>4개의 훈련 단계를 완수하고 진정한 투자자로 거듭나세요</p>
+        </div>
+
+        <!-- Rank Card -->
+        <div class="rank-row">
+            <div class="rank-left">
+                <div class="rank-avatar" id="rank-avatar">🎖️</div>
+                <div>
+                    <div class="rank-info-label">나의 투자 등급</div>
+                    <div class="rank-badge" id="rank-badge">⭐ 입문자</div>
+                </div>
+            </div>
+            <div class="rank-progress-wrap">
+                <div class="rank-progress-label">
+                    <span>단계 진행도</span>
+                    <span id="rank-progress-text">0 / 4 단계</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="rank-prog-fill" style="width:0%"></div>
+                </div>
+            </div>
+            <div class="rank-stats">
+                <div class="rank-stat">
+                    <span class="rank-stat-value" id="stat-unlocked">1</span>
+                    <span class="rank-stat-label">해금 단계</span>
+                </div>
+                <div class="rank-stat">
+                    <span class="rank-stat-value" id="stat-total-q">0</span>
+                    <span class="rank-stat-label">푼 문제</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stage Grid -->
+        <div class="stage-grid" id="stage-grid"></div>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quiz-screen">
+        <div class="quiz-layout">
+            <!-- Left: Question area -->
+            <div>
+                <div class="quiz-meta-bar">
+                    <span class="quiz-stage-label" id="qs-stage-label">훈련 구역 01</span>
+                    <span class="quiz-qcount" id="qs-q-count">01 / 08</span>
+                </div>
+                <div class="quiz-progress-track">
+                    <div class="quiz-progress-fill" id="qs-progress" style="width:0%"></div>
+                </div>
+                <div class="visual-hud" id="qs-visual">💰</div>
+                <div class="mentor-card">
+                    <span class="mentor-by">📡 멘토 재우</span>
+                    <div class="question-text" id="qs-question"></div>
+                </div>
+                <div class="options-grid" id="qs-options"></div>
+                <div class="quiz-actions">
+                    <button class="btn-hint" onclick="openHintModal()">💡 힌트</button>
+                    <button class="btn-quit" onclick="openConfirmModal()">🚪 중단</button>
+                </div>
+            </div>
+            <!-- Right: Stats panel -->
+            <div class="quiz-side">
+                <div class="side-card">
+                    <span class="side-label">현재 점수</span>
+                    <div class="score-display" id="qs-score">0</div>
+                    <div class="score-sub" id="qs-score-sub">맞은 문제 / 총 문제</div>
+                </div>
+                <div class="side-card">
+                    <span class="side-label">🔥 연속 정답</span>
+                    <div class="streak-display">
+                        <span class="streak-num" id="qs-streak">0</span>
+                        <span class="streak-fire" id="qs-streak-fire"></span>
                     </div>
                 </div>
-
-                <button class="theme-btn" onclick="toggleTheme()">
-                    <span id="theme-icon">🌙</span>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <div class="app-container">
-        <div class="academy-status-header">
-            <div id="rank-container">
-                <span style="font-size: 0.7rem; color: var(--secondary); display: block; margin-bottom: 4px;">나의 투자 등급</span>
-                <span id="rank-display" class="rank-badge">입문자</span>
-            </div>
-        </div>
-
-        <div id="lobby-screen">
-            <div class="intro-section">
-                <h2>📈 주린이 사관학교</h2>
-                <p>
-                    여기는 실전 투자 전, 기초 체력을 기르는 훈련소입니다.<br>
-                    <strong>4개의 스테이지</strong>를 통과하여 진정한 <b>자산가</b>로 거듭나세요.
-                </p>
-            </div>
-            <div class="stage-path" id="stage-path-list"></div>
-        </div>
-
-        <div id="quiz-screen">
-            <div class="quiz-meta">
-                <span id="current-stage-title" style="color:var(--primary-dark)">훈련 구역 01</span>
-                <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
-                <span id="question-count">01/08</span>
-            </div>
-            <div class="visual-hud" id="visual-element">💰</div>
-            <div class="mentor-briefing">
-                <span style="font-weight:800; color:var(--primary-dark); font-size:0.75rem; display:block; margin-bottom:8px;">멘토 재우의 실시간 지시</span>
-                <p id="question-text" style="font-size: 1.1rem; line-height: 1.6; margin: 0; font-weight: 600;"></p>
-            </div>
-            <div class="options-grid" id="options-container"></div>
-            <div style="display:flex; gap:10px; margin-top:25px;">
-                <button class="tactical-btn" style="flex:1; text-align:center; padding:12px;" onclick="openHintModal()">💡 힌트 보기</button>
-                <button class="tactical-btn" style="flex:1; text-align:center; padding:12px; color:var(--danger);" onclick="openConfirmModal()">🚪 훈련 중단</button>
+                <div class="side-card">
+                    <span class="side-label">답변 기록</span>
+                    <div class="answer-log" id="qs-log"></div>
+                </div>
             </div>
         </div>
     </div>
+</main>
 
-    <div class="modal" id="result-modal"><div class="modal-content"><span id="modal-icon" style="font-size:4rem;">🎯</span><h2 id="modal-title" style="margin:10px 0; font-weight: 800;">정답이다!</h2><div id="modal-explanation" style="background: rgba(0,0,0,0.05); padding: 20px; border-radius: 15px; text-align: left; font-size: 0.95rem; line-height: 1.6; margin: 20px 0;"></div><button class="btn-confirm" id="modal-next-btn" onclick="handleModalNext()">다음 문제로 →</button></div></div>
-    <div class="modal" id="stage-result-modal"><div class="modal-content"><span id="stage-result-icon" style="font-size:5rem;">🎖️</span><h2 id="stage-result-title" style="margin-bottom:10px; font-weight:800; font-size:1.8rem;">임무 완료!</h2><p id="stage-result-score" style="font-size:1.3rem; font-weight:800; color:var(--primary-dark);">맞은 개수: 0 / 8</p><div id="stage-result-msg" style="margin-bottom:25px; color:var(--secondary); font-size:0.95rem; line-height:1.6;"></div><div id="stage-result-btns" style="display:flex; flex-direction:column; gap:10px;"></div></div></div>
-    <div class="modal" id="confirm-modal"><div class="modal-content"><span style="font-size:4rem;">⚠️</span><h2 style="font-weight: 800;">훈련을 중단할까?</h2><p style="margin-bottom:25px; color:var(--secondary);">지금 나가면 이 스테이지의 성적은<br>저장되지 않아!</p><button class="btn-confirm" onclick="closeConfirmModal()">계속하기</button><button class="tactical-btn" style="text-align:center; margin-top:10px;" onclick="goLobbyActual()">훈련 중단</button></div></div>
-    <div class="modal" id="hint-modal"><div class="modal-content"><span style="font-size:3.5rem;">💡</span><h2 style="font-weight: 800; color:var(--primary-dark);">재우의 힌트</h2><div id="hint-text" style="padding: 20px; font-size: 1rem; line-height: 1.5; font-weight: 600;"></div><button class="btn-confirm" onclick="closeHintModal()">알겠습니다!</button></div></div>
+<!-- Modals -->
+<div class="modal-overlay" id="answer-modal">
+    <div class="modal-box">
+        <span class="modal-icon" id="am-icon">🎯</span>
+        <div class="modal-title" id="am-title">정답!</div>
+        <div class="modal-explanation" id="am-explanation"></div>
+        <button class="modal-btn" id="am-next-btn" onclick="handleModalNext()">다음 문제 →</button>
+    </div>
+</div>
 
-    <script type="module" src="auth-global.js"></script>
+<div class="modal-overlay" id="stage-result-modal">
+    <div class="modal-box">
+        <span class="modal-icon" id="srm-icon">🎖️</span>
+        <div class="modal-title" id="srm-title">임무 완료!</div>
+        <div class="stage-result-score" id="srm-score">8 / 8</div>
+        <div style="color:var(--secondary);font-size:0.88rem;margin-bottom:1.2rem;" id="srm-msg"></div>
+        <div id="srm-btns"></div>
+    </div>
+</div>
 
-    <script>
-        const quizDB = [
-            { stage: 1, title: "기초 체력 훈련", questions: [ { q: "주식은 회사의 주인이 되는 티켓이야. 회사가 번 돈을 주인에게 나눠주는 걸 뭐라고 할까?", a: "배당금", options: ["배당금", "이자"], h: "은행이 주는 건 이자, 회사가 주는 건...", e: "배당금은 동업의 대가야. 주식을 산다는 건 그 회사의 성장 과실을 나눌 권리를 갖는 거지." }, { q: "회사의 가치를 나타내는 지표로 '주가 x 발행 주식수'를 한 것을 무엇이라 할까?", a: "시가총액", options: ["시가총액", "자본금"], h: "이 회사를 통째로 사려면 필요한 총액이야.", e: "시가총액은 시장이 평가하는 기업의 진짜 몸값이야. 몸집이 큰 종목일수록 주가가 무거워지는 경향이지." }, { q: "수익이 다시 원금이 되어 이자에 이자가 붙는 마법 같은 현상은?", a: "복리", options: ["복리", "단리"], h: "시간이 너의 편이 되게 만드는 방법이야.", e: "복리는 눈덩이(Snowball) 효과와 같아. 주린이가 부자가 되는 유일하고 확실한 방법이지." }, { q: "주가가 계속 오르는 강세장을 상징하는 동물은?", a: "황소", options: ["황소", "곰"], h: "뿔로 적을 아래에서 위로 치받는 모습을 상상해봐.", e: "황소(Bull)는 상승장, 곰(Bear)은 하락장을 상징해. 뿔은 위로, 발톱은 아래로 내리찍으니까!" }, { q: "기업이 이익을 내지 못하고 손해를 보는 상태를 일컫는 말은?", a: "적자", options: ["적자", "흑자"], h: "가계부 쓸 때 빨간 글씨가 많으면?", e: "적자는 지출이 수입보다 많은 위험한 상태야. 고래들은 보통 적자 기업을 피한단다." }, { q: "주식 시장에 처음으로 기업의 주식을 공개하고 상장하는 절차는?", a: "IPO", options: ["IPO", "M&A"], h: "공모주 청약 전 단계라고 보면 돼.", e: "기업공개(IPO)를 통해 기업은 투명해지고, 우리는 그 회사의 주인이 될 기회를 얻지." }, { q: "물가가 상승하여 돈의 가치가 떨어지는 현상은?", a: "인플레이션", options: ["인플레이션", "디플레이션"], h: "자장면 값이 예전보다 비싸진 이유!", e: "인플레이션 시기에는 현금을 들고 있으면 가난해져. 주식 같은 자산으로 돈의 가치를 지켜야 해." }, { q: "주가가 떨어졌을 때 추가로 사서 평균 단가를 낮추는 행위는?", a: "물타기", options: ["물타기", "불타기"], h: "농도를 연하게 만드는 과정과 비슷해.", e: "물타기는 양날의 검이야. 확신 없는 물타기는 파산의 지름길이니 주의해라!" } ] },
-            { stage: 2, title: "차트 해독 작전", questions: [ { q: "시작 가격보다 마감 가격이 낮을 때 생기는 파란색 막대기는?", a: "음봉", options: ["양봉", "음봉"], h: "차가운 파랑... 하락의 신호야.", e: "음봉은 매도세가 매수세를 이겼다는 증거야. 누군가 필사적으로 팔고 도망갔다는 뜻이지." }, { q: "최근 20일 동안의 주가 평균을 선으로 이은 것은?", a: "20일 이동평균선", options: ["20일 이동평균선", "볼린저밴드"], h: "가장 대중적인 '심리선'이야.", e: "이동평균선(MA)은 추세를 보여줘. 20일선은 보통 개미와 고래들의 심리가 격돌하는 생명선이지." }, { q: "캔들 몸통 위아래로 삐져나온 선들을 뭐라고 부를까?", a: "꼬리", options: ["꼬리", "수염"], h: "장중에 가격이 잠깐 다녀간 흔적이야.", e: "꼬리는 치열한 전투의 흔적이야. 윗꼬리가 길면 높은 가격에서 저항을 받았다는 뜻이란다." }, { q: "주가가 떨어지다가 더 이상 안 떨어지게 받쳐주는 구간은?", a: "지지선", options: ["지지선", "저항선"], h: "바닥에서 튼튼하게 버텨주는 힘!", e: "지지선이 무너지면 공포 매물이 쏟아져. 반대로 여기서 반등하면 좋은 매수 타점이 되지." }, { q: "단기 선이 장기 선을 아래에서 위로 뚫고 올라가는 신호는?", a: "골든크로스", options: ["골든크로스", "데드크로스"], h: "이름만 들어도 기분 좋은 황금빛 교차!", e: "골든크로스는 강력한 상승 추세 전환 신호야. 고래들이 진입하기 시작했다는 증거일 수 있어." }, { q: "거래량이 갑자기 폭발하며 주가가 오르는 것은?", a: "진짜 상승", options: ["진짜 상승", "허수 주문"], h: "돈의 에너지가 실린 움직임을 봐.", e: "거래량은 속일 수 없는 지표야. 거래량 없는 상승은 모래성처럼 금방 무너지기 마련이지." }, { q: "주가가 특정 범위 안에서만 오르내리는 지루한 장세는?", a: "횡보", options: ["횡보", "폭등"], h: "옆으로 기어가는 모양을 생각해보렴.", e: "횡보는 에너지를 응축하는 기간이야. 이 박스권을 뚫는 방향이 향후 운명을 결정한단다." }, { q: "캔들 몸통이 거의 없고 십자가 모양인 형태(도지)의 의미는?", a: "매수/매도 팽팽함", options: ["매수/매도 팽팽함", "무조건 하락"], h: "싸움이 비겼다는 뜻이야.", e: "도지 캔들은 추세의 변곡점에서 자주 나타나. 다음 날 방향성이 결정될 확률이 아주 높지." } ] },
-            { stage: 3, title: "고래 추적 임무", questions: [ { q: "기업의 사장이나 임원이 자기 회사 주식을 사는 것을 무엇이라 할까?", a: "내부자 매수", options: ["내부자 매수", "공매도"], h: "회사를 가장 잘 아는 사람들이 사는 거야.", e: "내부자 매수는 강력한 호재야. 그들이 '자기 돈'을 쓴다는 건 성장에 확신이 있다는 뜻이지." }, { q: "우리 사이트에서 '금색 테두리'로 표시되는 정보는?", a: "고래 정보", options: ["고래 정보", "일반 뉴스"], h: "우리가 열심히 만든 그 기능!", e: "금색 테두리는 포식자의 발자국이야. 정보의 불균형을 이기는 가장 스마트한 도구지." }, { q: "미국 SEC에 보고되는 내부자 거래 공시 보고서 이름은?", a: "Form 4", options: ["Form 4", "Form 10"], h: "숫자 4가 포인트야.", e: "내부자가 매매하면 2일 안에 Form 4를 제출해야 해. 우리는 이걸 실시간으로 추적한단다." }, { q: "개미는 모르고 큰손만 아는 상황을 뜻하는 용어는?", a: "정보 비대칭", options: ["정보 비대칭", "정보 공정"], h: "누구는 알고 누구는 모르는 불공평함.", e: "주식 시장은 정보 전쟁터야. 내부자의 움직임을 읽는 건 그 불리함을 극복하는 기술이지." }, { q: "고래가 샀다고 해서 무조건 오를까?", a: "함정일 수 있다", options: ["무조건 오른다", "함정일 수 있다"], h: "시장에는 100%가 없단다.", e: "고래도 실수할 수 있고, 시장 폭락에는 장사 없어. 그래서 항상 분산 투자가 필요해." }, { q: "큰손들이 티 안 나게 물량을 조금씩 모으는 행위는?", a: "매집", options: ["매집", "투매"], h: "바구니에 야금야금 담는 중.", e: "진짜 고래들은 주가를 올리지 않으면서 조용히 매집해. 거래량의 미세한 변화로 찾아내야 하지." }, { q: "고래가 탈출할 때 흔히 나타나는 차트 징후는?", a: "거래량 터진 음봉", options: ["거래량 터진 음봉", "거래량 없는 횡보"], h: "누군가 거대하게 팔고 나간 흔적!", e: "대량 거래를 동반한 음봉은 큰 세력이 이탈했다는 강력한 신호야. 일단 도망치는 게 상책이지." }, { q: "우리가 고래 데이터를 보는 궁극적인 목적은?", a: "수익 확률 향상", options: ["수익 확률 향상", "시간 때우기"], h: "돈을 벌 확률을 높이는 거야.", e: "고래는 정보와 자금력에서 앞서 있어. 그들의 등에 타는 것이 가장 효율적인 생존법이지." } ] },
-            { stage: 4, title: "생존 전략 수립", questions: [ { q: "주가가 떨어질 때 원금을 지키기 위해 파는 원칙은?", a: "손절매", options: ["손절매", "익절"], h: "상처가 깊어지기 전에 잘라내는 것.", e: "손절은 패배가 아니라 생존이야. -10% 손절은 다음을 기약하지만, -50%는 복구가 거의 불가능해." }, { q: "나만 돈을 못 벌까 봐 불안해서 고점에서 사는 심리는?", a: "FOMO", options: ["FOMO", "COOL"], h: "소외되는 것에 대한 공포.", e: "포모(FOMO)는 주린이를 파멸시키는 가장 큰 감정이야. 남들이 환호할 때가 가장 위험할 때란다." }, { q: "모든 자금을 한 종목에 거는 위험한 행위는?", a: "몰빵", options: ["몰빵", "자산 배분"], h: "계란을 한 바구니에 담으면?", e: "몰빵은 투자가 아니라 도박이야. 아무리 좋아 보여도 악재 하나에 모든 걸 잃을 수 있어." }, { q: "자산 중 일부를 늘 현금으로 보유해야 하는 이유는?", a: "기회 확보", options: ["기회 확보", "은행 이자가 좋아서"], h: "폭락장이 오면 '세일'이 시작되거든.", e: "현금도 종목이야. 하락장에서 현금이 있는 사냥꾼만이 남들이 버린 진주를 헐값에 주울 수 있지." }, { q: "손실 범위를 미리 정하고 대응하는 행위는?", a: "리스크 관리", options: ["리스크 관리", "운명 맡기기"], h: "방패를 먼저 준비하는 습관.", e: "공격보다 수비가 먼저야. 잃지 않는 매매를 반복하면 수익은 시장이 알아서 가져다준단다." }, { q: "수익이 났을 때 계획대로 팔아 수익을 확정 짓는 것은?", a: "익절", options: ["익절", "손절"], h: "줄 때 먹는 실력!", e: "목표가에 도달하면 욕심 없이 수익을 챙겨야 해. 내 주머니에 들어오기 전까진 내 돈이 아니야." }, { q: "투자를 방해하는 가장 무서운 적은 무엇인가?", a: "탐욕과 공포", options: ["탐욕과 공포", "낮은 지능"], h: "인간의 본능과 싸워야 해.", e: "남들이 겁낼 때 욕심내고, 남들이 욕심낼 때 겁을 내라. 워런 버핏이 매일 되새기는 말이지." }, { q: "사관학교 졸업생이 갖춰야 할 최고의 덕목은?", a: "원칙 준수", options: ["원칙 준수", "화려한 기술"], h: "멘토 재우가 100번 강조한 것!", e: "축하한다! 기술은 다 배웠어. 이제 네가 세운 원칙을 얼마나 차갑게 지키느냐가 승부를 가를 거다." } ] }
-        ];
+<div class="modal-overlay" id="hint-modal">
+    <div class="modal-box">
+        <span class="modal-icon">💡</span>
+        <div class="modal-title" style="color:var(--gold);">멘토의 힌트</div>
+        <div class="hint-text" id="hint-content"></div>
+        <button class="modal-btn" onclick="closeModal('hint-modal')">알겠습니다!</button>
+    </div>
+</div>
 
-        let currentStageIdx = 0, currentQuestionIdx = 0, score = 0;
-        let unlockedStages = parseInt(localStorage.getItem('unlockedStages')) || 1;
-        let isAnswered = false;
+<div class="modal-overlay" id="confirm-modal">
+    <div class="modal-box">
+        <span class="modal-icon">⚠️</span>
+        <div class="modal-title">훈련을 중단할까요?</div>
+        <p style="color:var(--secondary);font-size:0.88rem;margin:0.8rem 0 1.2rem;">지금 나가면 이번 스테이지 성적은 저장되지 않습니다.</p>
+        <button class="modal-btn" onclick="closeModal('confirm-modal')">계속하기</button>
+        <button class="modal-btn-outline" onclick="goLobby()">훈련 중단</button>
+    </div>
+</div>
 
-        function init() { 
-            initTheme(); 
-            updateRankDisplay(); 
-            renderLobbyPath(); 
-        }
+<script type="module" src="auth-global.js"></script>
 
-        function initTheme() {
-            const saved = localStorage.getItem('theme') || 'light';
-            document.body.setAttribute('data-theme', saved);
-            document.getElementById('theme-icon').innerText = saved === 'dark' ? '☀️' : '🌙';
-        }
+<script>
+// ──────────────────────────────────────────
+//  QUIZ DATA (original 4 stages, all questions)
+// ──────────────────────────────────────────
+const STAGES = [
+    {
+        stage: 1, title: "기초 체력 훈련", icon: "💰",
+        desc: "주식 시장의 기초 용어와 개념을 익힙니다",
+        topics: ["배당금", "시가총액", "복리", "IPO"],
+        questions: [
+            { q: "주식은 회사의 주인이 되는 티켓이야. 회사가 번 돈을 주인에게 나눠주는 걸 뭐라고 할까?", a: "배당금", options: ["배당금", "이자"], h: "은행이 주는 건 이자, 회사가 주는 건...", e: "배당금은 동업의 대가야. 주식을 산다는 건 그 회사의 성장 과실을 나눌 권리를 갖는 거지." },
+            { q: "회사의 가치를 나타내는 지표로 '주가 × 발행 주식수'를 한 것을 무엇이라 할까?", a: "시가총액", options: ["시가총액", "자본금"], h: "이 회사를 통째로 사려면 필요한 총액이야.", e: "시가총액은 시장이 평가하는 기업의 진짜 몸값이야. 몸집이 큰 종목일수록 주가가 무거워지는 경향이지." },
+            { q: "수익이 다시 원금이 되어 이자에 이자가 붙는 마법 같은 현상은?", a: "복리", options: ["복리", "단리"], h: "시간이 너의 편이 되게 만드는 방법이야.", e: "복리는 눈덩이(Snowball) 효과와 같아. 주린이가 부자가 되는 유일하고 확실한 방법이지." },
+            { q: "주가가 계속 오르는 강세장을 상징하는 동물은?", a: "황소", options: ["황소", "곰"], h: "뿔로 적을 아래에서 위로 치받는 모습을 상상해봐.", e: "황소(Bull)는 상승장, 곰(Bear)은 하락장을 상징해. 뿔은 위로, 발톱은 아래로 내리찍으니까!" },
+            { q: "기업이 이익을 내지 못하고 손해를 보는 상태를 일컫는 말은?", a: "적자", options: ["적자", "흑자"], h: "가계부 쓸 때 빨간 글씨가 많으면?", e: "적자는 지출이 수입보다 많은 위험한 상태야. 고래들은 보통 적자 기업을 피한단다." },
+            { q: "주식 시장에 처음으로 기업의 주식을 공개하고 상장하는 절차는?", a: "IPO", options: ["IPO", "M&A"], h: "공모주 청약 전 단계라고 보면 돼.", e: "기업공개(IPO)를 통해 기업은 투명해지고, 우리는 그 회사의 주인이 될 기회를 얻지." },
+            { q: "물가가 상승하여 돈의 가치가 떨어지는 현상은?", a: "인플레이션", options: ["인플레이션", "디플레이션"], h: "자장면 값이 예전보다 비싸진 이유!", e: "인플레이션 시기에는 현금을 들고 있으면 가난해져. 주식 같은 자산으로 돈의 가치를 지켜야 해." },
+            { q: "주가가 떨어졌을 때 추가로 사서 평균 단가를 낮추는 행위는?", a: "물타기", options: ["물타기", "불타기"], h: "농도를 연하게 만드는 과정과 비슷해.", e: "물타기는 양날의 검이야. 확신 없는 물타기는 파산의 지름길이니 주의해라!" }
+        ]
+    },
+    {
+        stage: 2, title: "차트 해독 작전", icon: "📊",
+        desc: "캔들차트와 이동평균선의 원리를 파악합니다",
+        topics: ["음봉/양봉", "이동평균선", "지지/저항", "골든크로스"],
+        questions: [
+            { q: "시작 가격보다 마감 가격이 낮을 때 생기는 파란색 막대기는?", a: "음봉", options: ["양봉", "음봉"], h: "차가운 파랑... 하락의 신호야.", e: "음봉은 매도세가 매수세를 이겼다는 증거야. 누군가 필사적으로 팔고 도망갔다는 뜻이지." },
+            { q: "최근 20일 동안의 주가 평균을 선으로 이은 것은?", a: "20일 이동평균선", options: ["20일 이동평균선", "볼린저밴드"], h: "가장 대중적인 '심리선'이야.", e: "이동평균선(MA)은 추세를 보여줘. 20일선은 보통 개미와 고래들의 심리가 격돌하는 생명선이지." },
+            { q: "캔들 몸통 위아래로 삐져나온 선들을 뭐라고 부를까?", a: "꼬리", options: ["꼬리", "수염"], h: "장중에 가격이 잠깐 다녀간 흔적이야.", e: "꼬리는 치열한 전투의 흔적이야. 윗꼬리가 길면 높은 가격에서 저항을 받았다는 뜻이란다." },
+            { q: "주가가 떨어지다가 더 이상 안 떨어지게 받쳐주는 구간은?", a: "지지선", options: ["지지선", "저항선"], h: "바닥에서 튼튼하게 버텨주는 힘!", e: "지지선이 무너지면 공포 매물이 쏟아져. 반대로 여기서 반등하면 좋은 매수 타점이 되지." },
+            { q: "단기 선이 장기 선을 아래에서 위로 뚫고 올라가는 신호는?", a: "골든크로스", options: ["골든크로스", "데드크로스"], h: "이름만 들어도 기분 좋은 황금빛 교차!", e: "골든크로스는 강력한 상승 추세 전환 신호야. 고래들이 진입하기 시작했다는 증거일 수 있어." },
+            { q: "거래량이 갑자기 폭발하며 주가가 오르는 것은?", a: "진짜 상승", options: ["진짜 상승", "허수 주문"], h: "돈의 에너지가 실린 움직임을 봐.", e: "거래량은 속일 수 없는 지표야. 거래량 없는 상승은 모래성처럼 금방 무너지기 마련이지." },
+            { q: "주가가 특정 범위 안에서만 오르내리는 지루한 장세는?", a: "횡보", options: ["횡보", "폭등"], h: "옆으로 기어가는 모양을 생각해보렴.", e: "횡보는 에너지를 응축하는 기간이야. 이 박스권을 뚫는 방향이 향후 운명을 결정한단다." },
+            { q: "캔들 몸통이 거의 없고 십자가 모양인 형태(도지)의 의미는?", a: "매수/매도 팽팽함", options: ["매수/매도 팽팽함", "무조건 하락"], h: "싸움이 비겼다는 뜻이야.", e: "도지 캔들은 추세의 변곡점에서 자주 나타나. 다음 날 방향성이 결정될 확률이 아주 높지." }
+        ]
+    },
+    {
+        stage: 3, title: "고래 추적 임무", icon: "🐋",
+        desc: "기관과 외국인 큰손들의 움직임을 읽습니다",
+        topics: ["내부자 매수", "정보 비대칭", "매집", "Form 4"],
+        questions: [
+            { q: "기업의 사장이나 임원이 자기 회사 주식을 사는 것을 무엇이라 할까?", a: "내부자 매수", options: ["내부자 매수", "공매도"], h: "회사를 가장 잘 아는 사람들이 사는 거야.", e: "내부자 매수는 강력한 호재야. 그들이 '자기 돈'을 쓴다는 건 성장에 확신이 있다는 뜻이지." },
+            { q: "미국 SEC에 보고되는 내부자 거래 공시 보고서 이름은?", a: "Form 4", options: ["Form 4", "Form 10"], h: "숫자 4가 포인트야.", e: "내부자가 매매하면 2일 안에 Form 4를 제출해야 해. 우리는 이걸 실시간으로 추적한단다." },
+            { q: "개미는 모르고 큰손만 아는 상황을 뜻하는 용어는?", a: "정보 비대칭", options: ["정보 비대칭", "정보 공정"], h: "누구는 알고 누구는 모르는 불공평함.", e: "주식 시장은 정보 전쟁터야. 내부자의 움직임을 읽는 건 그 불리함을 극복하는 기술이지." },
+            { q: "고래가 샀다고 해서 무조건 오를까?", a: "함정일 수 있다", options: ["무조건 오른다", "함정일 수 있다"], h: "시장에는 100%가 없단다.", e: "고래도 실수할 수 있고, 시장 폭락에는 장사 없어. 그래서 항상 분산 투자가 필요해." },
+            { q: "큰손들이 티 안 나게 물량을 조금씩 모으는 행위는?", a: "매집", options: ["매집", "투매"], h: "바구니에 야금야금 담는 중.", e: "진짜 고래들은 주가를 올리지 않으면서 조용히 매집해. 거래량의 미세한 변화로 찾아내야 하지." },
+            { q: "고래가 탈출할 때 흔히 나타나는 차트 징후는?", a: "거래량 터진 음봉", options: ["거래량 터진 음봉", "거래량 없는 횡보"], h: "누군가 거대하게 팔고 나간 흔적!", e: "대량 거래를 동반한 음봉은 큰 세력이 이탈했다는 강력한 신호야. 일단 도망치는 게 상책이지." },
+            { q: "우리가 고래 데이터를 보는 궁극적인 목적은?", a: "수익 확률 향상", options: ["수익 확률 향상", "시간 때우기"], h: "돈을 벌 확률을 높이는 거야.", e: "고래는 정보와 자금력에서 앞서 있어. 그들의 등에 타는 것이 가장 효율적인 생존법이지." },
+            { q: "외국인 투자자가 대규모로 특정 주식을 사들일 때 주가는 보통?", a: "오른다", options: ["오른다", "변화 없다"], h: "대형 수요가 들어오면?", e: "외국인의 순매수는 개인 투자자보다 훨씬 규모가 크기 때문에 주가에 큰 영향을 주지. 추적이 필수야." }
+        ]
+    },
+    {
+        stage: 4, title: "생존 전략 수립", icon: "🛡️",
+        desc: "실전 매매 원칙과 심리 관리를 마스터합니다",
+        topics: ["손절매", "FOMO", "리스크 관리", "익절"],
+        questions: [
+            { q: "주가가 떨어질 때 원금을 지키기 위해 파는 원칙은?", a: "손절매", options: ["손절매", "익절"], h: "상처가 깊어지기 전에 잘라내는 것.", e: "손절은 패배가 아니라 생존이야. -10% 손절은 다음을 기약하지만, -50%는 복구가 거의 불가능해." },
+            { q: "나만 돈을 못 벌까 봐 불안해서 고점에서 사는 심리는?", a: "FOMO", options: ["FOMO", "COOL"], h: "소외되는 것에 대한 공포.", e: "포모(FOMO)는 주린이를 파멸시키는 가장 큰 감정이야. 남들이 환호할 때가 가장 위험할 때란다." },
+            { q: "모든 자금을 한 종목에 거는 위험한 행위는?", a: "몰빵", options: ["몰빵", "자산 배분"], h: "계란을 한 바구니에 담으면?", e: "몰빵은 투자가 아니라 도박이야. 아무리 좋아 보여도 악재 하나에 모든 걸 잃을 수 있어." },
+            { q: "자산 중 일부를 늘 현금으로 보유해야 하는 이유는?", a: "기회 확보", options: ["기회 확보", "은행 이자가 좋아서"], h: "폭락장이 오면 '세일'이 시작되거든.", e: "현금도 종목이야. 하락장에서 현금이 있는 사냥꾼만이 남들이 버린 진주를 헐값에 주울 수 있지." },
+            { q: "손실 범위를 미리 정하고 대응하는 행위는?", a: "리스크 관리", options: ["리스크 관리", "운명 맡기기"], h: "방패를 먼저 준비하는 습관.", e: "공격보다 수비가 먼저야. 잃지 않는 매매를 반복하면 수익은 시장이 알아서 가져다준단다." },
+            { q: "수익이 났을 때 계획대로 팔아 수익을 확정 짓는 것은?", a: "익절", options: ["익절", "손절"], h: "줄 때 먹는 실력!", e: "목표가에 도달하면 욕심 없이 수익을 챙겨야 해. 내 주머니에 들어오기 전까진 내 돈이 아니야." },
+            { q: "투자를 방해하는 가장 무서운 적은 무엇인가?", a: "탐욕과 공포", options: ["탐욕과 공포", "낮은 지능"], h: "인간의 본능과 싸워야 해.", e: "남들이 겁낼 때 욕심내고, 남들이 욕심낼 때 겁을 내라. 워런 버핏이 매일 되새기는 말이지." },
+            { q: "사관학교 졸업생이 갖춰야 할 최고의 덕목은?", a: "원칙 준수", options: ["원칙 준수", "화려한 기술"], h: "멘토 재우가 100번 강조한 것!", e: "축하해! 기술은 다 배웠어. 이제 네가 세운 원칙을 얼마나 차갑게 지키느냐가 승부를 가를 거다." }
+        ]
+    }
+];
 
-        function toggleTheme() {
-            const current = document.body.getAttribute('data-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            document.body.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-            document.getElementById('theme-icon').innerText = next === 'dark' ? '☀️' : '🌙';
-        }
+const RANKS = [
+    { name: "입문자",       icon: "🌱", min: 0 },
+    { name: "분석가",       icon: "📊", min: 1 },
+    { name: "고래 사냥꾼",  icon: "🐋", min: 2 },
+    { name: "프로 트레이더", icon: "⚡", min: 3 },
+    { name: "현명한 자산가", icon: "🏆", min: 4 },
+];
 
-        function updateRankDisplay() {
-            const ranks = ["입문자", "분석가", "고래 사냥꾼", "프로 트레이더", "현명한 자산가"];
-            const idx = Math.min(unlockedStages - 1, ranks.length - 1);
-            document.getElementById('rank-display').innerText = ranks[idx];
-        }
+let unlockedStages  = parseInt(localStorage.getItem('jurini_stages')) || 1;
+let totalSolved     = parseInt(localStorage.getItem('jurini_total_q')) || 0;
+let currentStageIdx = 0, currentQIdx = 0, score = 0, streak = 0;
+let isAnswered = false, answerLog = [];
 
-        function renderLobbyPath() {
-            const list = document.getElementById('stage-path-list');
-            list.innerHTML = '';
-            quizDB.forEach((s, idx) => {
-                const isUnlocked = (idx + 1) <= unlockedStages;
-                const node = document.createElement('div');
-                node.className = `stage-node ${isUnlocked ? 'unlocked' : 'locked'}`;
-                node.innerHTML = `<span style="font-weight:900;">${idx + 1}</span><div class="stage-info"><h3>단계 0${s.stage}</h3><p>${s.title}</p></div>`;
-                if(isUnlocked) node.onclick = () => startStage(idx);
-                list.appendChild(node);
-            });
-        }
+// ──── LOBBY ────
+function init() {
+    renderLobby();
+}
 
-        function startStage(idx) {
-            currentStageIdx = idx; currentQuestionIdx = 0; score = 0;
-            document.getElementById('lobby-screen').style.display = 'none';
-            document.getElementById('quiz-screen').style.display = 'block';
-            renderQuestion();
-        }
+function renderLobby() {
+    // Rank display
+    const completedStages = Math.max(0, unlockedStages - 1);
+    const rankObj = RANKS[Math.min(completedStages, RANKS.length - 1)];
+    document.getElementById('rank-badge').innerText = rankObj.icon + ' ' + rankObj.name;
+    document.getElementById('rank-avatar').innerText = rankObj.icon;
+    document.getElementById('rank-progress-text').innerText = `${completedStages} / 4 단계`;
+    document.getElementById('rank-prog-fill').style.width = (completedStages / 4 * 100) + '%';
+    document.getElementById('stat-unlocked').innerText = unlockedStages;
+    document.getElementById('stat-total-q').innerText = totalSolved;
 
-        function typeWriter(text, elementId, speed = 40) {
-            const element = document.getElementById(elementId);
-            element.innerHTML = ''; let i = 0;
-            function type() { if (i < text.length) { element.innerHTML += text.charAt(i); i++; setTimeout(type, speed); } }
-            type();
-        }
+    // Stage cards
+    const grid = document.getElementById('stage-grid');
+    grid.innerHTML = '';
+    STAGES.forEach((s, idx) => {
+        const unlocked  = (idx + 1) <= unlockedStages;
+        const completed = (idx + 1) < unlockedStages;
+        const div = document.createElement('div');
+        div.className = 'stage-card ' + (unlocked ? 'unlocked' : 'locked') + (completed ? ' completed' : '');
+        div.innerHTML = `
+            ${!unlocked ? '<span class="lock-icon">🔒</span>' : ''}
+            <div class="stage-num-big ${!unlocked ? 'locked-num' : ''}">0${s.stage}</div>
+            <div class="stage-title-text">${s.icon} ${s.title}</div>
+            <div class="stage-desc-text">${s.desc}</div>
+            <div class="stage-topics">
+                ${s.topics.map(t => `<span class="topic-tag ${!unlocked ? 'locked-tag' : ''}">${t}</span>`).join('')}
+            </div>
+            <button class="stage-btn ${unlocked ? (completed ? 'done' : 'active') : 'disabled'}" ${!unlocked ? 'disabled' : ''}>
+                ${completed ? '✓ 다시 도전' : (unlocked ? '훈련 시작 →' : '🔒 잠금')}
+            </button>
+        `;
+        if (unlocked) div.onclick = () => startStage(idx);
+        grid.appendChild(div);
+    });
+}
 
-        function renderQuestion() {
-            isAnswered = false;
-            const data = quizDB[currentStageIdx].questions[currentQuestionIdx];
-            document.getElementById('current-stage-title').innerText = `훈련 구역 0${currentStageIdx + 1}`;
-            document.getElementById('question-count').innerText = `0${currentQuestionIdx + 1}/08`;
-            document.getElementById('progress-fill').style.width = `${((currentQuestionIdx + 1) / 8) * 100}%`;
-            typeWriter(data.q, 'question-text');
-            document.getElementById('visual-element').innerText = ["💰", "📉", "📈", "🛡️", "🔱", "📊", "🧭", "🏆"][currentQuestionIdx % 8];
-            const container = document.getElementById('options-container');
-            container.innerHTML = '';
-            data.options.sort(() => Math.random() - 0.5).forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'tactical-btn'; btn.innerText = opt;
-                btn.onclick = () => checkAnswer(opt);
-                container.appendChild(btn);
-            });
-        }
+// ──── QUIZ ────
+function startStage(idx) {
+    currentStageIdx = idx; currentQIdx = 0; score = 0; streak = 0; answerLog = [];
+    document.getElementById('lobby-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+    renderQuestion();
+}
 
-        function checkAnswer(selected) {
-            if(isAnswered) return; isAnswered = true;
-            const data = quizDB[currentStageIdx].questions[currentQuestionIdx];
-            const isCorrect = selected === data.a; if(isCorrect) score++;
-            const modal = document.getElementById('result-modal');
-            document.getElementById('modal-icon').innerText = isCorrect ? "🎯" : "🤔";
-            document.getElementById('modal-title').innerText = isCorrect ? "정답이다!" : "분석 실패!";
-            document.getElementById('modal-title').style.color = isCorrect ? "var(--success)" : "var(--danger)";
-            document.getElementById('modal-explanation').innerHTML = `<b>정답: ${data.a}</b><br><br>${data.e}`;
-            document.getElementById('modal-next-btn').innerText = (currentQuestionIdx === 7) ? "훈련 결과 확인" : "다음 문제로 →";
-            modal.style.display = 'flex';
-        }
+function renderQuestion() {
+    isAnswered = false;
+    const stage = STAGES[currentStageIdx];
+    const q     = stage.questions[currentQIdx];
 
-        function handleModalNext() {
-            document.getElementById('result-modal').style.display = 'none';
-            if(currentQuestionIdx < 7) { currentQuestionIdx++; renderQuestion(); } else { showStageResult(); }
-        }
+    document.getElementById('qs-stage-label').innerText = `훈련 구역 0${currentStageIdx + 1} · ${stage.title}`;
+    document.getElementById('qs-q-count').innerText     = `${String(currentQIdx + 1).padStart(2, '0')} / 08`;
+    document.getElementById('qs-progress').style.width  = `${(currentQIdx + 1) / 8 * 100}%`;
+    document.getElementById('qs-visual').innerText      = ["💰", "📉", "📈", "🛡️", "🔱", "📊", "🧭", "🏆"][currentQIdx % 8];
 
-        function showStageResult() {
-            const passed = score >= 6;
-            const modal = document.getElementById('stage-result-modal');
-            document.getElementById('stage-result-score').innerText = `점수: ${score} / 08`;
-            const btnArea = document.getElementById('stage-result-btns'); btnArea.innerHTML = '';
-            if (passed) {
-                document.getElementById('stage-result-icon').innerText = "🎖️";
-                document.getElementById('stage-result-title').innerText = "임무 완료!";
-                document.getElementById('stage-result-msg').innerText = "훌륭해. 다음 작전 구역으로 이동해도 좋아.";
-                if(unlockedStages === (currentStageIdx + 1)) {
-                    unlockedStages++; localStorage.setItem('unlockedStages', unlockedStages);
-                    updateRankDisplay();
-                }
-                if (currentStageIdx < 3) {
-                    const nextBtn = document.createElement('button');
-                    nextBtn.className = "btn-confirm"; nextBtn.innerText = "다음 단계로 이동 →";
-                    nextBtn.onclick = () => { modal.style.display = 'none'; startStage(currentStageIdx + 1); };
-                    btnArea.appendChild(nextBtn);
-                }
-            } else {
-                document.getElementById('stage-result-icon').innerText = "😫";
-                document.getElementById('stage-result-title').innerText = "훈련 실패...";
-                document.getElementById('stage-result-msg').innerText = "최소 6개 이상의 데이터를 맞춰야 통과할 수 있어.";
-                const retryBtn = document.createElement('button');
-                retryBtn.className = "btn-confirm"; retryBtn.innerText = "다시 도전하기";
-                retryBtn.onclick = () => { modal.style.display = 'none'; startStage(currentStageIdx); };
-                btnArea.appendChild(retryBtn);
-            }
-            const lobbyBtn = document.createElement('button');
-            lobbyBtn.className = "tactical-btn"; lobbyBtn.style.textAlign = "center"; lobbyBtn.innerText = "스테이지 선택으로";
-            lobbyBtn.onclick = () => { modal.style.display = 'none'; document.getElementById('quiz-screen').style.display = 'none'; document.getElementById('lobby-screen').style.display = 'block'; renderLobbyPath(); };
-            btnArea.appendChild(lobbyBtn);
-            modal.style.display = 'flex';
-        }
+    // Typewriter effect
+    const el = document.getElementById('qs-question');
+    el.innerText = '';
+    let i = 0;
+    const timer = setInterval(() => {
+        if (i < q.q.length) { el.innerText += q.q[i]; i++; }
+        else clearInterval(timer);
+    }, 22);
 
-        function openConfirmModal() { document.getElementById('confirm-modal').style.display = 'flex'; }
-        function closeConfirmModal() { document.getElementById('confirm-modal').style.display = 'none'; }
-        function goLobbyActual() { document.getElementById('confirm-modal').style.display = 'none'; document.getElementById('quiz-screen').style.display = 'none'; document.getElementById('lobby-screen').style.display = 'block'; renderLobbyPath(); }
-        function openHintModal() {
-            const data = quizDB[currentStageIdx].questions[currentQuestionIdx];
-            document.getElementById('hint-text').innerText = `"${data.h}"`;
-            document.getElementById('hint-modal').style.display = 'flex';
-        }
-        function closeHintModal() { document.getElementById('hint-modal').style.display = 'none'; }
+    // Shuffle options
+    const opts = [...q.options].sort(() => Math.random() - 0.5);
+    const container = document.getElementById('qs-options');
+    container.innerHTML = '';
+    opts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(opt);
+        container.appendChild(btn);
+    });
 
-        init();
-    </script>
-    <script type="module" src="auth-global.js"></script>
+    updateQuizSide();
+}
+
+function checkAnswer(selected) {
+    if (isAnswered) return;
+    isAnswered = true;
+    const q = STAGES[currentStageIdx].questions[currentQIdx];
+    const correct = selected === q.a;
+    if (correct) { score++; streak++; totalSolved++; localStorage.setItem('jurini_total_q', totalSolved); }
+    else { streak = 0; }
+
+    // Mark buttons
+    document.querySelectorAll('.option-btn').forEach(btn => {
+        btn.disabled = true;
+        if (btn.innerText === q.a) btn.classList.add('correct');
+        else if (btn.innerText === selected && !correct) btn.classList.add('wrong');
+    });
+
+    // Log
+    answerLog.unshift({ ok: correct, text: q.q.slice(0, 30) + '...' });
+    updateQuizSide();
+
+    // Modal
+    const modal = document.getElementById('answer-modal');
+    document.getElementById('am-icon').innerText   = correct ? '🎯' : '🤔';
+    document.getElementById('am-title').innerText  = correct ? '정답!' : '틀렸어!';
+    document.getElementById('am-title').style.color = correct ? 'var(--success)' : 'var(--danger)';
+    document.getElementById('am-explanation').innerHTML = `<strong>정답: ${q.a}</strong><br><br>${q.e}`;
+    document.getElementById('am-next-btn').innerText = (currentQIdx === 7) ? '결과 보기' : '다음 문제 →';
+    openModal('answer-modal');
+}
+
+function handleModalNext() {
+    closeModal('answer-modal');
+    if (currentQIdx < 7) { currentQIdx++; renderQuestion(); }
+    else showStageResult();
+}
+
+function updateQuizSide() {
+    document.getElementById('qs-score').innerText    = score;
+    document.getElementById('qs-score-sub').innerText = `${score} 맞음 / ${currentQIdx + (isAnswered ? 1 : 0)} 문제`;
+    document.getElementById('qs-streak').innerText   = streak;
+    document.getElementById('qs-streak-fire').innerText = streak >= 3 ? '🔥' : streak >= 2 ? '✨' : '';
+    const log = document.getElementById('qs-log');
+    log.innerHTML = answerLog.slice(0, 8).map(l =>
+        `<div class="log-item"><span class="log-dot ${l.ok ? 'ok' : 'fail'}"></span><span class="log-text">${l.text}</span></div>`
+    ).join('') || '<span style="color:var(--muted);font-size:0.8rem;">아직 답변이 없습니다</span>';
+}
+
+function showStageResult() {
+    const passed = score >= 6;
+    document.getElementById('srm-icon').innerText  = passed ? '🎖️' : '😤';
+    document.getElementById('srm-title').innerText = passed ? '임무 완료!' : '훈련 실패...';
+    document.getElementById('srm-score').innerText = `${score} / 8 정답`;
+    document.getElementById('srm-msg').innerText   = passed
+        ? (score === 8 ? '완벽한 성적이야! 모든 문제를 맞췄어.' : '훌륭해! 다음 작전 구역으로 이동해도 좋아.')
+        : '최소 6개 이상 맞춰야 통과야. 다시 도전해보자!';
+
+    if (passed && unlockedStages === currentStageIdx + 1) {
+        unlockedStages++;
+        localStorage.setItem('jurini_stages', unlockedStages);
+    }
+
+    const btns = document.getElementById('srm-btns');
+    btns.innerHTML = '';
+    if (passed && currentStageIdx < 3) {
+        const next = document.createElement('button');
+        next.className = 'modal-btn';
+        next.innerText = '다음 단계로 →';
+        next.onclick   = () => { closeModal('stage-result-modal'); startStage(currentStageIdx + 1); };
+        btns.appendChild(next);
+    } else if (!passed) {
+        const retry = document.createElement('button');
+        retry.className = 'modal-btn';
+        retry.innerText = '다시 도전';
+        retry.onclick   = () => { closeModal('stage-result-modal'); startStage(currentStageIdx); };
+        btns.appendChild(retry);
+    }
+    const back = document.createElement('button');
+    back.className = 'modal-btn-outline';
+    back.innerText = '스테이지 선택으로';
+    back.onclick   = () => { closeModal('stage-result-modal'); goLobby(); };
+    btns.appendChild(back);
+    openModal('stage-result-modal');
+}
+
+function goLobby() {
+    closeModal('confirm-modal');
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('lobby-screen').style.display = 'block';
+    renderLobby();
+}
+
+function openHintModal() {
+    const q = STAGES[currentStageIdx].questions[currentQIdx];
+    document.getElementById('hint-content').innerText = `"${q.h}"`;
+    openModal('hint-modal');
+}
+
+function openConfirmModal() { openModal('confirm-modal'); }
+
+function openModal(id)  { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(el => {
+    el.addEventListener('click', e => { if (e.target === el) el.classList.remove('active'); });
+});
+
+init();
+</script>
 </body>
 </html>
