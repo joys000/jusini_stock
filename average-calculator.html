@@ -3,344 +3,710 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>전략 평단가 계산기 (Cloud) | 주린이 인텔리전스</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>전략 평단가 계산기 | 주린이 계산기</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #FFD600; --primary-dark: #FFC400;
-            --success: #00D9A3; --danger: #FF6B6B; --bg: #F8F9FA;
-            --card-bg: #FFFFFF; --text: #2D3436; --secondary: #636E72;
-            --border: #E8E8E8;
+            --primary: #FF5C00;
+            --primary-hover: #FF7A30;
+            --primary-glow: rgba(255,92,0,0.25);
+            --success: #00D9A3;
+            --danger: #FF6B6B;
+            --bg: #000;
+            --card: #111;
+            --card-hover: #161616;
+            --border: #1e1e1e;
+            --text: #fff;
+            --secondary: #888;
+            --muted: #444;
+            --input-bg: #0a0a0a;
         }
-        [data-theme="dark"] {
-            --bg: #0A0B10; --card-bg: #1E202D; --text: #E8E8E8;
-            --secondary: #B0B0B0; --border: #333;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); transition: 0.3s; min-height: 100vh; padding: 20px; }
-        header { max-width: 1200px; margin: 0 auto 30px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-family: 'Fredoka', cursive; font-size: 1.5rem; text-decoration: none; color: var(--text); display: flex; align-items: center; gap: 10px; }
-        
-        /* 🔑 로그인 UI */
-        .auth-status { display: flex; align-items: center; gap: 12px; }
-        .btn-auth { background: var(--card-bg); border: 2px solid var(--primary); padding: 8px 16px; border-radius: 12px; cursor: pointer; font-weight: 800; transition: 0.3s; }
-        .btn-auth:hover { background: var(--primary); transform: translateY(-2px); }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-        .app-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.2fr; gap: 25px; }
-        .card { background: var(--card-bg); border-radius: 30px; padding: 30px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        
-        .mentor-msg { background: rgba(255, 214, 0, 0.05); padding: 15px; border-radius: 15px; border-left: 5px solid var(--primary); margin-bottom: 25px; font-size: 0.9rem; font-weight: 600; }
-        input { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--border); background: var(--bg); color: var(--text); font-weight: 700; outline: none; margin-top: 8px; }
-        .btn-add { background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 15px; }
-        
-        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg); border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--border); }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .stat-box { background: var(--bg); padding: 15px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
-        .profit-banner { text-align: center; padding: 25px; border-radius: 25px; background: var(--bg); border: 2px solid var(--border); margin: 20px 0; }
-        
-        @media (max-width: 900px) { .app-container { grid-template-columns: 1fr; } }
-        .auth-btn-minimal {
-    background: var(--primary);
-    color: #000;
-    border: none;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-weight: 800;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: 0.2s;
-}
-.logout-link {
-    background: none;
-    border: none;
-    color: var(--danger);
-    font-size: 0.75rem;
-    text-decoration: underline;
-    cursor: pointer;
-}
-        /* ── DARK THEME OVERRIDE ─────────────────────────── */
-        :root {
-            --primary: #FF5C00 !important;
-            --primary-dark: #FF7A30 !important;
-            --success: #00D9A3 !important;
-            --danger: #FF6B6B !important;
-            --bg-gradient-start: #000000 !important;
-            --bg-gradient-end: #000000 !important;
-            --card-bg: #111111 !important;
-            --text-primary: #ffffff !important;
-            --text-secondary: #888888 !important;
-            --border-color: #1e1e1e !important;
-            --neutral-light: #111111 !important;
-            --input-bg: #0a0a0a !important;
-            --shadow: 0 4px 24px rgba(0,0,0,0.6) !important;
-            --shadow-hover: 0 12px 40px rgba(0,0,0,0.8) !important;
-            --pattern-color: rgba(255,92,0,0.03) !important;
-        }
-        body {
-            background: #000 !important;
-            color: #fff !important;
-        }
-        body::before { display: none !important; }
-        header, nav { background: rgba(0,0,0,0.9) !important; backdrop-filter: blur(20px); border-bottom: 1px solid #1e1e1e !important; }
-        .logo { color: #fff !important; }
-        .logo-icon { background: #FF5C00 !important; }
-        .nav-links a { color: #888 !important; }
-        .nav-links a:hover { color: #fff !important; }
-        .nav-links a::after { background: #FF5C00 !important; }
-        .theme-toggle { display: none !important; }
-        footer { background: #000 !important; border-top: 1px solid #1e1e1e !important; }
-        .footer-links a { color: #444 !important; }
-        .footer-links a:hover { color: #FF5C00 !important; }
-        .footer-bottom { border-top-color: #111 !important; color: #333 !important; }
-        .card, .calc-card, .result-card, .info-card, .feature-item, .tool-card, .stat-card {
-            background: #111 !important;
-            border-color: #1e1e1e !important;
-            color: #fff !important;
-        }
-        input, select, textarea {
-            background: #0a0a0a !important;
-            border-color: #1e1e1e !important;
-            color: #fff !important;
-        }
-        input:focus, select:focus, textarea:focus {
-            border-color: #FF5C00 !important;
-            box-shadow: 0 0 0 3px rgba(255,92,0,0.1) !important;
-        }
-        input::placeholder { color: #444 !important; }
-        label, .label, .input-label { color: #888 !important; }
-        h1, h2, h3, h4, h5, h6 { color: #fff !important; }
-        p { color: #888 !important; }
-        .result-value, .calc-result, .price-display, .total { color: #fff !important; }
-        .btn, button[type="submit"], .primary-btn, .calc-btn {
-            background: #FF5C00 !important;
-            color: #fff !important;
-            border: none !important;
-        }
-        .btn:hover, button[type="submit"]:hover, .primary-btn:hover, .calc-btn:hover {
-            background: #FF7A30 !important;
-        }
-        .section-title, .page-title { color: #fff !important; font-weight: 800 !important; }
-        .highlight, .accent { color: #FF5C00 !important; }
-        .success-text, .positive { color: #00D9A3 !important; }
-        .danger-text, .negative { color: #FF6B6B !important; }
-        .auth-btn-minimal { background: transparent !important; border: 1px solid #2a2a2a !important; color: #888 !important; border-radius: 50px !important; }
-        .logout-link { color: #FF6B6B !important; background: none !important; border: none !important; }
-        table { border-color: #1e1e1e !important; }
-        th { background: #111 !important; color: #888 !important; border-color: #1e1e1e !important; }
-        td { color: #fff !important; border-color: #1e1e1e !important; }
-        tr:hover { background: rgba(255,92,0,0.05) !important; }
-        .badge, .tag { background: rgba(255,92,0,0.12) !important; color: #FF5C00 !important; border: 1px solid rgba(255,92,0,0.25) !important; }
-        a { color: #FF5C00 !important; }
-        a:hover { color: #FF7A30 !important; }
-        nav a { text-decoration: none !important; }
-        .range-slider, input[type="range"] { accent-color: #FF5C00 !important; }
-        .progress-bar, .progress-fill { background: #FF5C00 !important; }
-        .divider, hr { border-color: #1e1e1e !important; }
-        .tooltip { background: #111 !important; border: 1px solid #1e1e1e !important; color: #fff !important; }
-        .modal, .popup { background: #111 !important; border: 1px solid #1e1e1e !important; }
-        .overlay { background: rgba(0,0,0,0.8) !important; }
-        .breadcrumb a, .back-link { color: #888 !important; }
-        .breadcrumb a:hover, .back-link:hover { color: #FF5C00 !important; }
-        .quiz-option, .option-btn { background: #111 !important; border-color: #1e1e1e !important; color: #fff !important; }
-        .quiz-option:hover, .option-btn:hover { border-color: #FF5C00 !important; background: rgba(255,92,0,0.08) !important; }
-        .quiz-option.correct { background: rgba(0,217,163,0.12) !important; border-color: #00D9A3 !important; }
-        .quiz-option.wrong { background: rgba(255,107,107,0.12) !important; border-color: #FF6B6B !important; }
-        .stage-card, .level-card { background: #111 !important; border-color: #1e1e1e !important; }
-        .stage-card:hover, .level-card:hover { border-color: rgba(255,92,0,0.4) !important; }
-        .locked { opacity: 0.4 !important; }
-        .completed { border-color: rgba(0,217,163,0.4) !important; }
-        .chart-container canvas { filter: brightness(0.9) !important; }
-        .game-board, .simulator-board { background: #111 !important; border-color: #1e1e1e !important; }
-        .word-card, .term-card, .dict-item { background: #111 !important; border-color: #1e1e1e !important; }
-        .word-card:hover, .term-card:hover, .dict-item:hover { border-color: rgba(255,92,0,0.35) !important; }
-        .search-box input, .search-input { background: #0a0a0a !important; border-color: #1e1e1e !important; color: #fff !important; }
-        .portfolio-item, .holding-row { background: #111 !important; border-color: #1e1e1e !important; }
-        .section-label-orange { color: #FF5C00 !important; font-size: 0.72rem !important; font-weight: 700 !important; letter-spacing: 0.1em !important; text-transform: uppercase !important; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
+        /* ── HEADER ── */
+        header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+            background: rgba(0,0,0,0.88); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); padding: 0.85rem 0;
+        }
+        nav { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 0.55rem; text-decoration: none; color: var(--text); font-weight: 800; font-size: 0.95rem; letter-spacing: 0.04em; text-transform: uppercase; }
+        .logo-icon { background: var(--primary); width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; }
+        .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+        .nav-links a { color: var(--secondary); text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: color 0.2s; position: relative; }
+        .nav-links a:hover, .nav-links a.active { color: var(--text); }
+        .nav-links a.active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: var(--primary); border-radius: 2px; }
+        .nav-actions { display: flex; align-items: center; gap: 0.7rem; }
+        .auth-btn { background: transparent; border: 1px solid #2a2a2a; color: var(--secondary); padding: 0.42rem 1rem; border-radius: 50px; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+        .auth-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .logout-link { background: none; border: none; color: var(--danger); font-size: 0.78rem; text-decoration: underline; cursor: pointer; font-weight: 600; }
+
+        /* ── MAIN ── */
+        main { max-width: 1200px; margin: 0 auto; padding: 90px 2rem 60px; }
+
+        /* ── PAGE HERO ── */
+        .page-hero { margin-bottom: 2rem; }
+        .page-badge {
+            display: inline-flex; align-items: center; gap: 0.45rem;
+            background: rgba(255,92,0,0.1); border: 1px solid rgba(255,92,0,0.28);
+            color: var(--primary); padding: 0.35rem 0.9rem; border-radius: 50px;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.9rem;
+        }
+        .badge-dot { width: 5px; height: 5px; background: var(--primary); border-radius: 50%; animation: blink 1.8s ease-in-out infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+        .page-hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
+        .page-hero p { color: var(--secondary); font-size: 0.95rem; }
+
+        /* ── TABS ── */
+        .tabs { display: flex; gap: 4px; margin-bottom: 1.8rem; background: var(--card); padding: 5px; border-radius: 14px; border: 1px solid var(--border); width: fit-content; }
+        .tab { padding: 0.55rem 1.4rem; border-radius: 10px; border: none; background: transparent; color: var(--secondary); font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+        .tab.active { background: var(--primary); color: #fff; }
+        .tab:hover:not(.active) { color: var(--text); background: rgba(255,255,255,0.04); }
+
+        /* ── GRID LAYOUTS ── */
+        .two-col { display: grid; grid-template-columns: 1fr 1.35fr; gap: 1.4rem; }
+        @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } .nav-links { display: none; } }
+
+        /* ── CARDS ── */
+        .card { background: var(--card); border-radius: 18px; padding: 22px; border: 1px solid var(--border); }
+        .card + .card { margin-top: 1.2rem; }
+        .card-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 1.1rem; display: flex; align-items: center; gap: 0.45rem; }
+        .card-subtitle { font-size: 0.78rem; color: var(--secondary); margin-bottom: 1rem; line-height: 1.5; }
+
+        /* ── INPUTS ── */
+        .input-group { margin-bottom: 0.9rem; }
+        .input-label { display: block; font-size: 0.7rem; font-weight: 700; color: var(--secondary); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 5px; }
+        input[type="number"], input[type="text"] { width: 100%; padding: 11px 13px; background: var(--input-bg); border: 1.5px solid var(--border); border-radius: 10px; color: var(--text); font-size: 0.92rem; font-weight: 600; font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,92,0,0.08); }
+        input::placeholder { color: #333; }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+
+        /* ── SIM STEP ── */
+        .sim-step { background: var(--input-bg); border: 1.5px solid var(--border); border-radius: 12px; padding: 13px; margin-bottom: 0.7rem; }
+        .sim-step-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 9px; }
+        .step-label { font-size: 0.68rem; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; }
+        .btn-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.85rem; padding: 2px 6px; transition: color 0.2s; }
+        .btn-remove:hover { color: var(--danger); }
+
+        /* ── BUTTONS ── */
+        .btn-add-step { width: 100%; padding: 11px; border-radius: 11px; background: rgba(255,92,0,0.06); border: 1.5px dashed rgba(255,92,0,0.3); color: var(--primary); font-weight: 700; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; margin-top: 0.6rem; font-family: 'DM Sans', sans-serif; }
+        .btn-add-step:hover { background: rgba(255,92,0,0.12); }
+        .btn-primary { background: var(--primary); color: #fff; border: none; padding: 13px; border-radius: 11px; font-weight: 700; font-size: 0.92rem; cursor: pointer; width: 100%; transition: background 0.2s; font-family: 'DM Sans', sans-serif; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-danger { background: none; border: none; color: var(--danger); font-size: 0.78rem; text-decoration: underline; cursor: pointer; width: 100%; margin-top: 0.5rem; font-family: 'DM Sans', sans-serif; }
+
+        /* ── STATS GRID ── */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; margin-bottom: 1rem; }
+        .stat-card { background: var(--input-bg); border: 1px solid var(--border); border-radius: 13px; padding: 15px; text-align: center; }
+        .stat-label { font-size: 0.68rem; color: var(--secondary); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+        .stat-value { font-size: 1.3rem; font-weight: 800; color: var(--text); }
+
+        /* ── PROFIT BANNER ── */
+        .profit-banner { background: var(--input-bg); border: 1px solid var(--border); border-radius: 13px; padding: 18px; text-align: center; margin-bottom: 1rem; }
+        .profit-main { font-size: 1.9rem; font-weight: 900; margin-bottom: 3px; }
+        .profit-rate { font-size: 1rem; font-weight: 700; }
+        .profit-note { font-size: 0.7rem; color: var(--secondary); margin-top: 4px; }
+
+        /* ── INSIGHT ── */
+        .insight-card { background: rgba(255,92,0,0.04); border: 1px solid rgba(255,92,0,0.18); border-left: 3px solid var(--primary); border-radius: 12px; padding: 13px 15px; margin-bottom: 1rem; font-size: 0.88rem; font-weight: 600; color: var(--secondary); line-height: 1.65; }
+
+        /* ── CHART ── */
+        .chart-wrap { height: 210px; }
+        .chart-wrap canvas { width: 100% !important; height: 100% !important; }
+
+        /* ── TARGET CALC ── */
+        .divider { height: 1px; background: var(--border); margin: 1.1rem 0; }
+        .target-result { margin-top: 0.7rem; padding: 11px 13px; border-radius: 10px; font-size: 0.88rem; font-weight: 700; display: none; }
+
+        /* ── HISTORY ITEMS ── */
+        .pos-item { display: flex; justify-content: space-between; align-items: center; padding: 11px 13px; background: var(--input-bg); border-radius: 10px; border: 1px solid var(--border); margin-bottom: 0.5rem; }
+        .pos-price { color: var(--primary); font-weight: 700; }
+        .btn-delete { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.8rem; transition: color 0.2s; }
+        .btn-delete:hover { color: var(--danger); }
+        .auth-note { background: rgba(255,92,0,0.04); border: 1px solid rgba(255,92,0,0.15); border-radius: 11px; padding: 11px 14px; margin-bottom: 1rem; font-size: 0.82rem; font-weight: 600; color: var(--secondary); }
+        .empty-state { text-align: center; padding: 24px 0; color: var(--muted); font-size: 0.88rem; }
+
+        /* ── HISTORY PANEL HIDDEN BY DEFAULT ── */
+        #history-panel { display: none; }
     </style>
 </head>
 <body>
 
-    <header>
-        <a href="index.html" class="logo">📊 <span>평단가 계산기</span></a>
-        <div class="auth-status">
-            <button id="btn-login" class="btn-auth">🔑 구글 로그인</button>
-            <div id="user-info" style="display: none; align-items: center; gap: 10px;">
-                <span id="user-name" style="font-weight: 800;"></span>
-                <button id="btn-logout" style="border:none; background:none; color:var(--danger); cursor:pointer; text-decoration:underline; font-size:0.8rem;">로그아웃</button>
-            </div>
-            <button class="btn-auth" style="border-radius: 50%; width: 40px; padding: 0;" onclick="toggleTheme()">🌙</button>
-        </div>
-    </header>
-
-    <div class="app-container">
-        <div class="left-col">
-            <div class="card">
-                <div class="mentor-msg" id="mentor-status">데이터베이스 연결 대기 중...</div>
-                
-                <h2>➕ 매수 내역 추가</h2>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div><label style="font-size:0.7rem; font-weight:800;">매수가</label><input type="number" id="p-in" placeholder="0"></div>
-                    <div><label style="font-size:0.7rem; font-weight:800;">수량</label><input type="number" id="s-in" placeholder="0"></div>
+<header>
+    <nav>
+        <a href="index.html" class="logo">
+            <span class="logo-icon">📊</span>
+            주린이 계산기
+        </a>
+        <ul class="nav-links">
+            <li><a href="average-calculator.html" class="active">평단가</a></li>
+            <li><a href="mock-invest.html">모의투자</a></li>
+            <li><a href="dividend-calculator.html">배당금</a></li>
+            <li><a href="stock-dictionary.html">용어사전</a></li>
+        </ul>
+        <div class="nav-actions">
+            <div id="auth-ui" style="display:flex;align-items:center;gap:0.7rem;">
+                <button id="btn-login" class="auth-btn">🔑 로그인</button>
+                <div id="user-info" style="display:none;align-items:center;gap:0.7rem;">
+                    <span id="user-name" style="font-size:0.82rem;font-weight:700;color:var(--secondary);"></span>
+                    <button id="btn-logout" class="logout-link">로그아웃</button>
                 </div>
-                <button class="btn-add" onclick="addPosition()">데이터베이스에 저장 💾</button>
-
-                <div id="pos-list" style="margin-top: 25px; max-height: 250px; overflow-y: auto;"></div>
             </div>
         </div>
+    </nav>
+</header>
 
-        <div class="right-col">
-            <div class="card">
-                <h2>📈 클라우드 분석 리포트</h2>
-                <div class="stat-grid">
-                    <div class="stat-box">평균단가<div id="res-avg" style="font-weight: 800; font-size: 1.3rem;">0원</div></div>
-                    <div class="stat-box">총 보유량<div id="res-total" style="font-weight: 800; font-size: 1.3rem;">0주</div></div>
+<main>
+    <div class="page-hero">
+        <div class="page-badge"><span class="badge-dot"></span> Strategy Simulator</div>
+        <h1>전략 평단가 계산기</h1>
+        <p>물타기 / 불타기 시뮬레이션으로 전략적 매수 계획을 수립하세요</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('mul', this)">🔽 물타기</button>
+        <button class="tab" onclick="switchTab('bul', this)">🔼 불타기</button>
+        <button class="tab" onclick="switchTab('history', this)">☁️ 내역 관리</button>
+    </div>
+
+    <!-- Simulation Panel -->
+    <div id="sim-panel">
+        <div class="two-col">
+            <!-- LEFT: Inputs -->
+            <div>
+                <div class="card">
+                    <div class="card-title">📌 현재 보유 현황</div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label class="input-label">현재 평단가 (원)</label>
+                            <input type="number" id="current-avg" placeholder="10,000" oninput="calculateAll()">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">보유 수량 (주)</label>
+                            <input type="number" id="current-qty" placeholder="100" oninput="calculateAll()">
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-bottom:0;">
+                        <label class="input-label">현재 주가 (원) <span style="font-weight:400;text-transform:none;letter-spacing:0;">— 선택사항</span></label>
+                        <input type="number" id="current-price" placeholder="입력 시 손익 자동 계산" oninput="calculateAll()">
+                    </div>
                 </div>
 
-                <label style="font-size:0.7rem; font-weight:800;">현재 주가 (실시간 손익 확인)</label>
-                <input type="number" id="cur-p" oninput="updateAnalysis()" placeholder="현재 시장가 입력">
-
-                <div class="profit-banner" id="profit-card">
-                    <div id="res-profit" style="font-size: 2.2rem; font-weight: 900;">0원</div>
-                    <div id="res-rate" style="font-weight: 800; font-size: 1.2rem;">0.00%</div>
+                <div class="card">
+                    <div class="card-title" id="sim-card-title">🔽 추가 매수 시뮬레이션 <small id="sim-subtitle" style="font-size:0.7rem;color:var(--secondary);font-weight:500;"> — 물타기</small></div>
+                    <div id="sim-steps-container"></div>
+                    <button class="btn-add-step" onclick="addStep()">+ 매수 단계 추가</button>
                 </div>
 
-                <div style="height: 200px;"><canvas id="avgChart"></canvas></div>
+                <div class="card">
+                    <div class="card-title">🎯 목표 평단 역산</div>
+                    <div class="card-subtitle">목표 평단가와 추가 매수 예정가를 입력하면 필요한 수량을 계산합니다</div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label class="input-label">목표 평단가 (원)</label>
+                            <input type="number" id="target-avg" placeholder="8,000" oninput="calcTargetQty()">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">매수 예정가 (원)</label>
+                            <input type="number" id="target-buy-price" placeholder="7,000" oninput="calcTargetQty()">
+                        </div>
+                    </div>
+                    <div class="target-result" id="target-result"></div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Results -->
+            <div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">새 평단가</div>
+                        <div class="stat-value" id="new-avg">— 원</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">평단 변화</div>
+                        <div class="stat-value" id="avg-change">— %</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">총 투자금</div>
+                        <div class="stat-value" id="total-invest">— 원</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">총 수량</div>
+                        <div class="stat-value" id="total-qty">— 주</div>
+                    </div>
+                </div>
+
+                <div class="profit-banner" id="profit-banner" style="display:none;">
+                    <div class="profit-main" id="pnl-value">-</div>
+                    <div class="profit-rate" id="pnl-rate">-</div>
+                    <div class="profit-note">새 평단 기준 현재 손익</div>
+                </div>
+
+                <div class="insight-card" id="insight-msg">
+                    현재 평단가와 보유 수량을 입력하면 전략 분석을 시작합니다 💡
+                </div>
+
+                <div class="card chart-wrap">
+                    <canvas id="avgChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <!-- History Panel -->
+    <div id="history-panel">
+        <div class="two-col">
+            <div>
+                <div class="card">
+                    <div class="card-title">➕ 매수 내역 추가</div>
+                    <div class="auth-note" id="cloud-status">⚠️ 로그인하면 클라우드에 자동 저장됩니다</div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label class="input-label">매수가 (원)</label>
+                            <input type="number" id="h-price" placeholder="10,000">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">수량 (주)</label>
+                            <input type="number" id="h-qty" placeholder="100">
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="addHistoryPosition()">💾 기록 저장</button>
+                    <div id="history-list" style="margin-top:1.1rem;max-height:320px;overflow-y:auto;"></div>
+                </div>
+            </div>
 
-        // 🚨 민주야, 여기에 네 콘솔 설정값을 복사해 넣어라!
-        const firebaseConfig = {
-            apiKey: "AIzaSyALn9C2PHgMd95J41cNpceCojbp-c5Sfo0",
-            authDomain: "jurinicalc.firebaseapp.com",
-            projectId: "jurinicalc",
-            storageBucket: "jurinicalc.appspot.com",
-            messagingSenderId: "935820034253",
-            appId: "1:935820034253:web:8ad46e0b4af866664aa984"
-        };
+            <div>
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-label">평균 단가</div><div class="stat-value" id="h-avg">—</div></div>
+                    <div class="stat-card"><div class="stat-label">총 보유량</div><div class="stat-value" id="h-total-qty">—</div></div>
+                    <div class="stat-card"><div class="stat-label">총 투자금</div><div class="stat-value" id="h-total-invest">—</div></div>
+                    <div class="stat-card"><div class="stat-label">매수 횟수</div><div class="stat-value" id="h-count">—</div></div>
+                </div>
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const provider = new GoogleAuthProvider();
+                <div class="card">
+                    <div class="input-group">
+                        <label class="input-label">현재 주가 (손익 확인)</label>
+                        <input type="number" id="h-cur-price" placeholder="현재 주가 입력" oninput="updateHistoryAnalysis()">
+                    </div>
+                    <div class="profit-banner" id="h-profit-banner" style="display:none;">
+                        <div class="profit-main" id="h-pnl-value">-</div>
+                        <div class="profit-rate" id="h-pnl-rate">-</div>
+                    </div>
+                    <div class="chart-wrap" style="height:190px;margin-top:1rem;">
+                        <canvas id="historyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 
-        let positions = [];
-        let currentUser = null;
-        let chart = null;
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-        // 로그인/로그아웃 버튼 연결
-        document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
-        document.getElementById('btn-logout').onclick = () => signOut(auth);
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+        from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc }
+        from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // 🕵️ 유저 상태 감시 (심장부)
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                document.getElementById('btn-login').style.display = 'none';
-                document.getElementById('user-info').style.display = 'flex';
-                document.getElementById('user-name').innerText = user.displayName + " 수료생";
-                document.getElementById('mentor-status').innerText = "✅ 클라우드 데이터 동기화 완료. 안전하게 보호 중이다.";
-                
-                // Firestore에서 데이터 불러오기
-                const docSnap = await getDoc(doc(db, "users", user.uid));
-                if (docSnap.exists()) {
-                    positions = docSnap.data().saved_positions || [];
-                    renderUI();
-                }
-            } else {
-                currentUser = null;
-                document.getElementById('btn-login').style.display = 'block';
-                document.getElementById('user-info').style.display = 'none';
-                document.getElementById('mentor-status').innerText = "⚠️ 로그인하지 않으면 데이터가 저장되지 않는다.";
-                positions = [];
-                renderUI();
+    const firebaseConfig = {
+        apiKey: "AIzaSyALn9C2PHgMd95J41cNpceCojbp-c5Sfo0",
+        authDomain: "jurinicalc.firebaseapp.com",
+        projectId: "jurinicalc",
+        storageBucket: "jurinicalc.appspot.com",
+        messagingSenderId: "935820034253",
+        appId: "1:935820034253:web:8ad46e0b4af866664aa984"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const fsdb = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    let currentUser = null;
+    window._historyPositions = [];
+
+    document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
+    document.getElementById('btn-logout').onclick = () => signOut(auth);
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            currentUser = user;
+            document.getElementById('btn-login').style.display = 'none';
+            document.getElementById('user-info').style.display = 'flex';
+            document.getElementById('user-name').innerText = user.displayName;
+            const note = document.getElementById('cloud-status');
+            note.innerText = `✅ ${user.displayName}님 — 클라우드 자동 저장 활성화`;
+            note.style.cssText = 'background:rgba(0,217,163,0.04);border:1px solid rgba(0,217,163,0.2);border-radius:11px;padding:11px 14px;margin-bottom:1rem;font-size:0.82rem;font-weight:600;color:var(--secondary);';
+            const snap = await getDoc(doc(fsdb, "users", user.uid));
+            if (snap.exists()) {
+                window._historyPositions = snap.data().saved_positions || [];
+                renderHistoryList();
+                updateHistoryAnalysis();
             }
+        } else {
+            currentUser = null;
+            document.getElementById('btn-login').style.display = 'block';
+            document.getElementById('user-info').style.display = 'none';
+        }
+    });
+
+    window._syncCloud = async () => {
+        if (currentUser) {
+            await setDoc(doc(fsdb, "users", currentUser.uid), { saved_positions: window._historyPositions });
+        }
+    };
+</script>
+
+<script>
+    // ──── Tab switching ────
+    let currentMode = 'mul';
+    function switchTab(tab, el) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        if (tab === 'history') {
+            document.getElementById('sim-panel').style.display = 'none';
+            document.getElementById('history-panel').style.display = 'block';
+        } else {
+            document.getElementById('sim-panel').style.display = 'block';
+            document.getElementById('history-panel').style.display = 'none';
+            currentMode = tab;
+            const sub = document.getElementById('sim-subtitle');
+            sub.textContent = tab === 'mul' ? ' — 물타기 (낮은 가격에 추가)' : ' — 불타기 (상승 중 추가)';
+            document.getElementById('sim-card-title').firstChild.textContent = tab === 'mul' ? '🔽 추가 매수 시뮬레이션 ' : '🔼 추가 매수 시뮬레이션 ';
+            calculateAll();
+        }
+    }
+
+    // ──── Simulation Steps ────
+    let stepCount = 0;
+    const simSteps = [];
+    let avgChart = null;
+
+    function addStep() {
+        stepCount++;
+        const id = 'step' + stepCount;
+        simSteps.push({ id, price: 0, qty: 0 });
+        const label = currentMode === 'mul' ? '물타기' : '불타기';
+        document.getElementById('sim-steps-container').insertAdjacentHTML('beforeend', `
+            <div class="sim-step" id="${id}">
+                <div class="sim-step-header">
+                    <span class="step-label">${label} ${stepCount}단계</span>
+                    <button class="btn-remove" onclick="removeStep('${id}')">✕ 삭제</button>
+                </div>
+                <div class="input-row">
+                    <div>
+                        <label class="input-label">매수가 (원)</label>
+                        <input type="number" id="${id}-p" placeholder="0" oninput="updateStep('${id}')">
+                    </div>
+                    <div>
+                        <label class="input-label">수량 (주)</label>
+                        <input type="number" id="${id}-q" placeholder="0" oninput="updateStep('${id}')">
+                    </div>
+                </div>
+            </div>
+        `);
+    }
+
+    function removeStep(id) {
+        document.getElementById(id).remove();
+        const i = simSteps.findIndex(s => s.id === id);
+        if (i > -1) simSteps.splice(i, 1);
+        calculateAll();
+    }
+
+    function updateStep(id) {
+        const s = simSteps.find(x => x.id === id);
+        if (s) {
+            s.price = parseFloat(document.getElementById(id + '-p').value) || 0;
+            s.qty   = parseFloat(document.getElementById(id + '-q').value) || 0;
+        }
+        calculateAll();
+    }
+
+    // ──── Core Calc ────
+    function calculateAll() {
+        const origAvg  = parseFloat(document.getElementById('current-avg').value) || 0;
+        const origQty  = parseFloat(document.getElementById('current-qty').value) || 0;
+        const curPrice = parseFloat(document.getElementById('current-price').value) || 0;
+
+        if (!origAvg || !origQty) {
+            document.getElementById('new-avg').innerText = '— 원';
+            document.getElementById('avg-change').innerText = '— %';
+            document.getElementById('total-invest').innerText = '— 원';
+            document.getElementById('total-qty').innerText = '— 주';
+            document.getElementById('profit-banner').style.display = 'none';
+            document.getElementById('insight-msg').innerText = '현재 평단가와 보유 수량을 입력하면 전략 분석을 시작합니다 💡';
+            return;
+        }
+
+        let cost = origAvg * origQty;
+        let qty  = origQty;
+
+        const avgHistory = [origAvg];
+        const labels     = ['현재'];
+        const barPrices  = [origAvg];
+
+        simSteps.forEach((s, i) => {
+            if (s.price > 0 && s.qty > 0) { cost += s.price * s.qty; qty += s.qty; }
+            avgHistory.push(qty > 0 ? cost / qty : origAvg);
+            labels.push(`${i + 1}차 추가`);
+            barPrices.push(s.price > 0 ? s.price : null);
         });
 
-        // 💾 데이터베이스 저장 함수
-        async function syncToCloud() {
-            if (currentUser) {
-                await setDoc(doc(db, "users", currentUser.uid), { saved_positions: positions });
-                console.log("Cloud Synced!");
-            }
+        const newAvg   = cost / qty;
+        const avgChg   = ((newAvg - origAvg) / origAvg) * 100;
+
+        // Display
+        document.getElementById('new-avg').innerText    = Math.round(newAvg).toLocaleString() + '원';
+        document.getElementById('total-invest').innerText = Math.round(cost).toLocaleString() + '원';
+        document.getElementById('total-qty').innerText    = qty.toLocaleString() + '주';
+
+        const chgEl = document.getElementById('avg-change');
+        chgEl.innerText = (avgChg > 0 ? '+' : '') + avgChg.toFixed(2) + '%';
+        const isMul = currentMode === 'mul';
+        chgEl.style.color = isMul
+            ? (avgChg <= 0 ? 'var(--success)' : 'var(--danger)')
+            : (avgChg >= 0 ? 'var(--success)' : 'var(--danger)');
+
+        // P&L
+        if (curPrice > 0) {
+            const profit = (curPrice - newAvg) * qty;
+            const rate   = (curPrice - newAvg) / newAvg * 100;
+            const banner = document.getElementById('profit-banner');
+            banner.style.display = 'block';
+            document.getElementById('pnl-value').innerText = (profit >= 0 ? '+' : '') + Math.round(profit).toLocaleString() + '원';
+            document.getElementById('pnl-rate').innerText  = (rate >= 0 ? '+' : '') + rate.toFixed(2) + '%';
+            document.getElementById('pnl-value').style.color = profit >= 0 ? 'var(--success)' : 'var(--danger)';
+            document.getElementById('pnl-rate').style.color  = profit >= 0 ? 'var(--success)' : 'var(--danger)';
+        } else {
+            document.getElementById('profit-banner').style.display = 'none';
         }
 
-        // 전역 함수 등록
-        window.addPosition = () => {
-            const p = parseFloat(document.getElementById('p-in').value);
-            const s = parseFloat(document.getElementById('s-in').value);
-            if (!p || !s) return alert("데이터를 정확히 입력해라!");
+        generateInsight(origAvg, newAvg, qty, cost, curPrice);
+        drawAvgChart(labels, barPrices, avgHistory, curPrice);
+    }
 
-            positions.push({ price: p, shares: s, id: Date.now() });
-            document.getElementById('p-in').value = '';
-            document.getElementById('s-in').value = '';
-            
-            renderUI();
-            syncToCloud();
-        };
+    function generateInsight(orig, newAvg, qty, cost, cur) {
+        const el    = document.getElementById('insight-msg');
+        const delta = ((newAvg - orig) / orig * 100);
 
-        window.deletePosition = (id) => {
-            positions = positions.filter(item => item.id !== id);
-            renderUI();
-            syncToCloud();
-        };
-
-        function renderUI() {
-            const list = document.getElementById('pos-list');
-            list.innerHTML = positions.map(pos => `
-                <div class="list-item">
-                    <span><strong>${pos.price.toLocaleString()}원</strong> / ${pos.shares}주</span>
-                    <button style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:800;" onclick="deletePosition(${pos.id})">삭제</button>
-                </div>
-            `).join('') || '<p style="text-align:center; color:var(--secondary);">기록이 없습니다.</p>';
-            updateAnalysis();
+        if (simSteps.length === 0) {
+            el.innerText = '아래 "+ 매수 단계 추가"를 눌러 시뮬레이션을 시작하세요 📈';
+            return;
         }
 
-        window.updateAnalysis = () => {
-            if (positions.length === 0) return;
-            const totalS = positions.reduce((sum, p) => sum + p.shares, 0);
-            const totalC = positions.reduce((sum, p) => sum + (p.price * p.shares), 0);
-            const avgP = Math.round(totalC / totalS);
-            const curP = parseFloat(document.getElementById('cur-p').value) || 0;
-
-            document.getElementById('res-avg').innerText = avgP.toLocaleString() + "원";
-            document.getElementById('res-total').innerText = totalS.toLocaleString() + "주";
-
-            if (curP > 0) {
-                const profit = (curP * totalS) - totalC;
-                const rate = (profit / totalC) * 100;
-                document.getElementById('res-profit').innerText = (profit >= 0 ? '+' : '') + profit.toLocaleString() + "원";
-                document.getElementById('res-rate').innerText = (profit >= 0 ? '+' : '') + rate.toFixed(2) + "%";
-                document.getElementById('profit-card').style.color = profit >= 0 ? 'var(--success)' : 'var(--danger)';
+        let msg = '';
+        if (currentMode === 'mul') {
+            if (delta > 0) { el.innerText = '⚠️ 현재보다 높은 가격 입력 시 물타기가 아닌 불타기가 됩니다.'; return; }
+            msg = `✅ 물타기 후 평단이 ${Math.abs(delta).toFixed(2)}% 하락합니다. `;
+            if (cur > 0) {
+                if (cur >= newAvg) msg += `현재가 기준 이미 흑자 구간입니다 🎉`;
+                else { const gap = ((newAvg / cur) - 1) * 100; msg += `손익분기까지 +${gap.toFixed(1)}% 반등이 필요합니다.`; }
+            } else msg += `목표가를 입력하면 손익분기 분석도 가능합니다.`;
+        } else {
+            if (delta < 0) { el.innerText = '⚠️ 현재보다 낮은 가격 입력 시 불타기가 아닌 물타기가 됩니다.'; return; }
+            msg = `🔥 불타기 후 평단이 ${Math.abs(delta).toFixed(2)}% 상승합니다. `;
+            if (cur > 0) {
+                const profitRate = (cur - newAvg) / newAvg * 100;
+                msg += `현재가 기준 수익률: ${profitRate >= 0 ? '+' : ''}${profitRate.toFixed(2)}%`;
             }
-            drawChart(avgP, curP);
-        };
+        }
+        el.innerText = msg;
+    }
 
-        function drawChart(avg, cur) {
-            const ctx = document.getElementById('avgChart').getContext('2d');
-            if(chart) chart.destroy();
-            chart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['내 평단', '현재가'],
-                    datasets: [{ data: [avg, cur], backgroundColor: ['#FFD600', cur >= avg ? '#00D9A3' : '#FF6B6B'], borderRadius: 8 }]
+    function drawAvgChart(labels, barPrices, avgs, cur) {
+        const ctx = document.getElementById('avgChart').getContext('2d');
+        if (avgChart) avgChart.destroy();
+        avgChart = new Chart(ctx, {
+            data: {
+                labels,
+                datasets: [
+                    {
+                        type: 'bar', label: '각 단계 매수가', data: barPrices,
+                        backgroundColor: 'rgba(255,92,0,0.18)', borderColor: '#FF5C00',
+                        borderWidth: 1.5, borderRadius: 5
+                    },
+                    {
+                        type: 'line', label: '누적 평단가', data: avgs,
+                        borderColor: '#FF5C00', borderWidth: 2.5,
+                        pointRadius: 5, pointBackgroundColor: '#FF5C00',
+                        tension: 0.25, fill: false
+                    },
+                    ...(cur > 0 ? [{
+                        type: 'line', label: '현재가',
+                        data: new Array(labels.length).fill(cur),
+                        borderColor: cur >= avgs[avgs.length - 1] ? '#00D9A3' : '#FF6B6B',
+                        borderDash: [6, 4], borderWidth: 2, pointRadius: 0, fill: false
+                    }] : [])
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    x: { grid: { color: '#1a1a1a' }, ticks: { color: '#666' } },
+                    y: { grid: { color: '#1a1a1a' }, ticks: { color: '#666', callback: v => v ? v.toLocaleString() : 0 } }
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false } } }
-            });
+                plugins: {
+                    legend: { labels: { color: '#666', boxWidth: 10, padding: 14 } },
+                    tooltip: { callbacks: { label: c => `${c.dataset.label}: ${Math.round(c.raw || 0).toLocaleString()}원` } }
+                }
+            }
+        });
+    }
+
+    // ──── Target Reverse Calc ────
+    function calcTargetQty() {
+        const origAvg  = parseFloat(document.getElementById('current-avg').value) || 0;
+        const origQty  = parseFloat(document.getElementById('current-qty').value) || 0;
+        const targetAvg = parseFloat(document.getElementById('target-avg').value) || 0;
+        const buyPrice  = parseFloat(document.getElementById('target-buy-price').value) || 0;
+        const el = document.getElementById('target-result');
+
+        if (!origAvg || !origQty || !targetAvg || !buyPrice) { el.style.display = 'none'; return; }
+
+        // x = origQty * (origAvg - targetAvg) / (targetAvg - buyPrice)
+        const den = targetAvg - buyPrice;
+        el.style.display = 'block';
+
+        if (den === 0) {
+            el.innerText = '목표 평단 = 매수 예정가입니다 (계산 불필요)';
+            el.style.cssText = 'display:block;margin-top:0.7rem;padding:11px 13px;border-radius:10px;font-size:0.88rem;font-weight:700;background:rgba(255,214,0,0.06);border:1px solid rgba(255,214,0,0.2);color:#FFD700;';
+            return;
         }
 
-        window.toggleTheme = () => {
-            const next = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-            document.body.setAttribute('data-theme', next);
-        };
-    </script>
-    <script type="module" src="auth-global.js"></script>
+        const needed = Math.ceil(origQty * (origAvg - targetAvg) / den);
+
+        if (needed <= 0) {
+            el.innerHTML = '⚠️ 해당 매수가로는 목표 평단 달성 불가 (매수가 ≥ 목표 평단)';
+            el.style.cssText = 'display:block;margin-top:0.7rem;padding:11px 13px;border-radius:10px;font-size:0.88rem;font-weight:700;background:rgba(255,107,107,0.06);border:1px solid rgba(255,107,107,0.2);color:var(--danger);';
+        } else {
+            const totalCost = (needed * buyPrice).toLocaleString();
+            el.innerHTML = `✅ <strong>${needed.toLocaleString()}주</strong> 추가 매수 필요 <span style="color:var(--secondary);font-weight:500;">— 필요 금액 약 ${totalCost}원</span>`;
+            el.style.cssText = 'display:block;margin-top:0.7rem;padding:11px 13px;border-radius:10px;font-size:0.88rem;font-weight:700;background:rgba(0,217,163,0.06);border:1px solid rgba(0,217,163,0.2);color:var(--success);';
+        }
+    }
+
+    // ──── History (Firebase-backed) ────
+    let histChart = null;
+
+    function addHistoryPosition() {
+        const price = parseFloat(document.getElementById('h-price').value);
+        const qty   = parseFloat(document.getElementById('h-qty').value);
+        if (!price || !qty) return alert('매수가와 수량을 입력해주세요');
+        window._historyPositions.push({ price, qty, id: Date.now() });
+        document.getElementById('h-price').value = '';
+        document.getElementById('h-qty').value   = '';
+        renderHistoryList();
+        updateHistoryAnalysis();
+        if (window._syncCloud) window._syncCloud();
+    }
+
+    function deleteHistoryPos(id) {
+        window._historyPositions = window._historyPositions.filter(p => p.id !== id);
+        renderHistoryList();
+        updateHistoryAnalysis();
+        if (window._syncCloud) window._syncCloud();
+    }
+
+    function renderHistoryList() {
+        const el = document.getElementById('history-list');
+        if (!window._historyPositions.length) {
+            el.innerHTML = '<div class="empty-state">기록이 없습니다. 위에서 추가해보세요!</div>';
+            return;
+        }
+        el.innerHTML = window._historyPositions.map((p, i) => `
+            <div class="pos-item">
+                <div>
+                    <span style="font-size:0.7rem;color:var(--muted);font-weight:700;">${i + 1}차 매수</span>
+                    <div><span class="pos-price">${p.price.toLocaleString()}원</span><span style="color:var(--secondary);"> / ${p.qty.toLocaleString()}주</span></div>
+                </div>
+                <button class="btn-delete" onclick="deleteHistoryPos(${p.id})">✕</button>
+            </div>
+        `).join('');
+    }
+
+    function updateHistoryAnalysis() {
+        const pos = window._historyPositions;
+        if (!pos.length) return;
+        const totQ = pos.reduce((s, p) => s + p.qty, 0);
+        const totC = pos.reduce((s, p) => s + p.price * p.qty, 0);
+        const avg  = totC / totQ;
+
+        document.getElementById('h-avg').innerText          = Math.round(avg).toLocaleString() + '원';
+        document.getElementById('h-total-qty').innerText    = totQ.toLocaleString() + '주';
+        document.getElementById('h-total-invest').innerText = Math.round(totC).toLocaleString() + '원';
+        document.getElementById('h-count').innerText        = pos.length + '회';
+
+        const cur = parseFloat(document.getElementById('h-cur-price').value) || 0;
+        if (cur > 0) {
+            const profit = (cur - avg) * totQ;
+            const rate   = (cur - avg) / avg * 100;
+            const banner = document.getElementById('h-profit-banner');
+            banner.style.display = 'block';
+            document.getElementById('h-pnl-value').innerText = (profit >= 0 ? '+' : '') + Math.round(profit).toLocaleString() + '원';
+            document.getElementById('h-pnl-rate').innerText  = (rate >= 0 ? '+' : '') + rate.toFixed(2) + '%';
+            document.getElementById('h-pnl-value').style.color = profit >= 0 ? 'var(--success)' : 'var(--danger)';
+            document.getElementById('h-pnl-rate').style.color  = profit >= 0 ? 'var(--success)' : 'var(--danger)';
+        }
+
+        drawHistoryChart(pos, avg, cur);
+    }
+
+    function drawHistoryChart(positions, avg, cur) {
+        const ctx = document.getElementById('historyChart').getContext('2d');
+        if (histChart) histChart.destroy();
+        const labels = positions.map((_, i) => `${i + 1}차`);
+        const prices = positions.map(p => p.price);
+        const cumulativeAvgs = positions.map((_, i) => {
+            const sl = positions.slice(0, i + 1);
+            const tc = sl.reduce((s, p) => s + p.price * p.qty, 0);
+            const tq = sl.reduce((s, p) => s + p.qty, 0);
+            return tc / tq;
+        });
+
+        histChart = new Chart(ctx, {
+            data: {
+                labels,
+                datasets: [
+                    { type: 'bar', label: '매수가', data: prices, backgroundColor: 'rgba(255,92,0,0.2)', borderColor: '#FF5C00', borderWidth: 1.5, borderRadius: 4 },
+                    { type: 'line', label: '누적 평단', data: cumulativeAvgs, borderColor: '#FF5C00', borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#FF5C00', tension: 0.2, fill: false },
+                    ...(cur > 0 ? [{ type: 'line', label: '현재가', data: new Array(positions.length).fill(cur), borderColor: cur >= avg ? '#00D9A3' : '#FF6B6B', borderDash: [5, 4], borderWidth: 2, pointRadius: 0, fill: false }] : [])
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    x: { grid: { color: '#1a1a1a' }, ticks: { color: '#666' } },
+                    y: { grid: { color: '#1a1a1a' }, ticks: { color: '#666', callback: v => v.toLocaleString() } }
+                },
+                plugins: {
+                    legend: { labels: { color: '#666', boxWidth: 10, padding: 12 } },
+                    tooltip: { callbacks: { label: c => `${c.dataset.label}: ${Math.round(c.raw || 0).toLocaleString()}원` } }
+                }
+            }
+        });
+    }
+
+    // Expose to global
+    window.calculateAll = calculateAll;
+    window.calcTargetQty = calcTargetQty;
+    window.addStep = addStep;
+    window.removeStep = removeStep;
+    window.updateStep = updateStep;
+    window.switchTab = switchTab;
+    window.addHistoryPosition = addHistoryPosition;
+    window.deleteHistoryPos = deleteHistoryPos;
+    window.updateHistoryAnalysis = updateHistoryAnalysis;
+</script>
+
 </body>
 </html>
