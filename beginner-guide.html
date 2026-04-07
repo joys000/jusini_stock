@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1935946936708495"
+     crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>주식 사관학교 | 주린이 계산기</title>
@@ -60,7 +62,8 @@
         .rank-stat-label { font-size: 0.65rem; color: var(--secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
 
         /* ── STAGE GRID ── */
-        .stage-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; margin-bottom: 2rem; }
+        .stage-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin-bottom: 2rem; }
+        @media (max-width: 900px) { .stage-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 700px) { .stage-grid { grid-template-columns: 1fr; } .nav-links { display: none; } }
         .stage-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; position: relative; transition: all 0.22s; overflow: hidden; }
         .stage-card.unlocked { cursor: pointer; }
@@ -315,7 +318,9 @@ const STAGES = [
             { q: "기업이 이익을 내지 못하고 손해를 보는 상태를 일컫는 말은?", a: "적자", options: ["적자", "흑자"], h: "가계부 쓸 때 빨간 글씨가 많으면?", e: "적자는 지출이 수입보다 많은 위험한 상태야. 고래들은 보통 적자 기업을 피한단다." },
             { q: "주식 시장에 처음으로 기업의 주식을 공개하고 상장하는 절차는?", a: "IPO", options: ["IPO", "M&A"], h: "공모주 청약 전 단계라고 보면 돼.", e: "기업공개(IPO)를 통해 기업은 투명해지고, 우리는 그 회사의 주인이 될 기회를 얻지." },
             { q: "물가가 상승하여 돈의 가치가 떨어지는 현상은?", a: "인플레이션", options: ["인플레이션", "디플레이션"], h: "자장면 값이 예전보다 비싸진 이유!", e: "인플레이션 시기에는 현금을 들고 있으면 가난해져. 주식 같은 자산으로 돈의 가치를 지켜야 해." },
-            { q: "주가가 떨어졌을 때 추가로 사서 평균 단가를 낮추는 행위는?", a: "물타기", options: ["물타기", "불타기"], h: "농도를 연하게 만드는 과정과 비슷해.", e: "물타기는 양날의 검이야. 확신 없는 물타기는 파산의 지름길이니 주의해라!" }
+            { q: "주가가 떨어졌을 때 추가로 사서 평균 단가를 낮추는 행위는?", a: "물타기", options: ["물타기", "불타기"], h: "농도를 연하게 만드는 과정과 비슷해.", e: "물타기는 양날의 검이야. 확신 없는 물타기는 파산의 지름길이니 주의해라!" },
+            { q: "주가 ÷ 주당순이익(EPS)으로 계산해 '수익 대비 주가가 얼마나 비싼지' 나타내는 지표는?", a: "PER", options: ["PER", "PBR", "ROE", "EPS"], h: "현재 이익으로 몇 년이면 투자금을 회수할 수 있는지 보여줘.", e: "PER 10배 = 현재 수익 속도로 10년 후 본전. 낮을수록 저평가 가능성이 있지만 산업별 비교가 중요해." },
+            { q: "기업이 벌어들인 이익을 주주에게 주지 않고 회사 성장에 재투자하는 것을 무엇이라 할까?", a: "유보이익", options: ["유보이익", "배당금", "자본잠식", "감자"], h: "미래를 위해 은행에 모아두는 회사 저축이야.", e: "유보이익이 많은 기업은 자체 자금으로 성장이 가능해. 워런 버핏이 자사주 매입에 쓰는 재원이 바로 이것이지." }
         ]
     },
     {
@@ -330,7 +335,9 @@ const STAGES = [
             { q: "단기 선이 장기 선을 아래에서 위로 뚫고 올라가는 신호는?", a: "골든크로스", options: ["골든크로스", "데드크로스"], h: "이름만 들어도 기분 좋은 황금빛 교차!", e: "골든크로스는 강력한 상승 추세 전환 신호야. 고래들이 진입하기 시작했다는 증거일 수 있어." },
             { q: "거래량이 갑자기 폭발하며 주가가 오르는 것은?", a: "진짜 상승", options: ["진짜 상승", "허수 주문"], h: "돈의 에너지가 실린 움직임을 봐.", e: "거래량은 속일 수 없는 지표야. 거래량 없는 상승은 모래성처럼 금방 무너지기 마련이지." },
             { q: "주가가 특정 범위 안에서만 오르내리는 지루한 장세는?", a: "횡보", options: ["횡보", "폭등"], h: "옆으로 기어가는 모양을 생각해보렴.", e: "횡보는 에너지를 응축하는 기간이야. 이 박스권을 뚫는 방향이 향후 운명을 결정한단다." },
-            { q: "캔들 몸통이 거의 없고 십자가 모양인 형태(도지)의 의미는?", a: "매수/매도 팽팽함", options: ["매수/매도 팽팽함", "무조건 하락"], h: "싸움이 비겼다는 뜻이야.", e: "도지 캔들은 추세의 변곡점에서 자주 나타나. 다음 날 방향성이 결정될 확률이 아주 높지." }
+            { q: "캔들 몸통이 거의 없고 십자가 모양인 형태(도지)의 의미는?", a: "매수/매도 팽팽함", options: ["매수/매도 팽팽함", "무조건 하락"], h: "싸움이 비겼다는 뜻이야.", e: "도지 캔들은 추세의 변곡점에서 자주 나타나. 다음 날 방향성이 결정될 확률이 아주 높지." },
+            { q: "주가가 수주 동안 일정 범위 안에서만 오르내리다가 에너지를 응축하는 상태는?", a: "박스권(횡보)", options: ["박스권(횡보)", "데드크로스", "골든크로스", "갭 상승"], h: "좌우로 기어가는 모양, 언제 폭발할지 모르는 용수철이야.", e: "박스권 돌파 방향이 향후 추세를 결정해. 상단 돌파는 강력한 매수 신호, 하단 이탈은 강력한 매도 신호야." },
+            { q: "볼린저밴드 상·하단의 간격이 좁아지는 현상이 의미하는 것은?", a: "큰 변동성 임박", options: ["큰 변동성 임박", "주가 하락 확정", "거래 중단 신호", "완전한 안정"], h: "스프링이 눌릴수록 튀어오르는 힘이 강해지는 것처럼!", e: "밴드 수축은 에너지가 응축되는 상태야. 곧 상방 또는 하방으로 큰 움직임이 올 확률이 매우 높아." }
         ]
     },
     {
@@ -345,7 +352,9 @@ const STAGES = [
             { q: "큰손들이 티 안 나게 물량을 조금씩 모으는 행위는?", a: "매집", options: ["매집", "투매"], h: "바구니에 야금야금 담는 중.", e: "진짜 고래들은 주가를 올리지 않으면서 조용히 매집해. 거래량의 미세한 변화로 찾아내야 하지." },
             { q: "고래가 탈출할 때 흔히 나타나는 차트 징후는?", a: "거래량 터진 음봉", options: ["거래량 터진 음봉", "거래량 없는 횡보"], h: "누군가 거대하게 팔고 나간 흔적!", e: "대량 거래를 동반한 음봉은 큰 세력이 이탈했다는 강력한 신호야. 일단 도망치는 게 상책이지." },
             { q: "우리가 고래 데이터를 보는 궁극적인 목적은?", a: "수익 확률 향상", options: ["수익 확률 향상", "시간 때우기"], h: "돈을 벌 확률을 높이는 거야.", e: "고래는 정보와 자금력에서 앞서 있어. 그들의 등에 타는 것이 가장 효율적인 생존법이지." },
-            { q: "외국인 투자자가 대규모로 특정 주식을 사들일 때 주가는 보통?", a: "오른다", options: ["오른다", "변화 없다"], h: "대형 수요가 들어오면?", e: "외국인의 순매수는 개인 투자자보다 훨씬 규모가 크기 때문에 주가에 큰 영향을 주지. 추적이 필수야." }
+            { q: "외국인 투자자가 대규모로 특정 주식을 사들일 때 주가는 보통?", a: "오른다", options: ["오른다", "변화 없다"], h: "대형 수요가 들어오면?", e: "외국인의 순매수는 개인 투자자보다 훨씬 규모가 크기 때문에 주가에 큰 영향을 주지. 추적이 필수야." },
+            { q: "기업 임원의 내부자 거래를 미국 SEC에 보고하는 공식 서류 이름은?", a: "Form 4", options: ["Form 4", "Form 10-K", "Form S-1", "Form 8-K"], h: "숫자 4를 기억해!", e: "내부자 거래는 2일 안에 Form 4를 통해 SEC에 공시해야 해. 이걸 실시간으로 추적하면 고래를 따라갈 수 있어." },
+            { q: "기관 투자자가 특정 종목을 '목표주가 상향 조정'할 때 일반적으로 시장은?", a: "긍정적 반응(상승)", options: ["긍정적 반응(상승)", "아무 반응 없다", "하락한다", "거래 중지"], h: "큰손의 공식 추천은 개미들을 끌어들여.", e: "기관의 리포트는 기업 가치에 대한 공식 의견이야. 목표가 상향은 '이 주식 더 오를 거야'라는 공개 선언이지." }
         ]
     },
     {
@@ -360,17 +369,37 @@ const STAGES = [
             { q: "손실 범위를 미리 정하고 대응하는 행위는?", a: "리스크 관리", options: ["리스크 관리", "운명 맡기기"], h: "방패를 먼저 준비하는 습관.", e: "공격보다 수비가 먼저야. 잃지 않는 매매를 반복하면 수익은 시장이 알아서 가져다준단다." },
             { q: "수익이 났을 때 계획대로 팔아 수익을 확정 짓는 것은?", a: "익절", options: ["익절", "손절"], h: "줄 때 먹는 실력!", e: "목표가에 도달하면 욕심 없이 수익을 챙겨야 해. 내 주머니에 들어오기 전까진 내 돈이 아니야." },
             { q: "투자를 방해하는 가장 무서운 적은 무엇인가?", a: "탐욕과 공포", options: ["탐욕과 공포", "낮은 지능"], h: "인간의 본능과 싸워야 해.", e: "남들이 겁낼 때 욕심내고, 남들이 욕심낼 때 겁을 내라. 워런 버핏이 매일 되새기는 말이지." },
-            { q: "사관학교 졸업생이 갖춰야 할 최고의 덕목은?", a: "원칙 준수", options: ["원칙 준수", "화려한 기술"], h: "멘토 재우가 100번 강조한 것!", e: "축하해! 기술은 다 배웠어. 이제 네가 세운 원칙을 얼마나 차갑게 지키느냐가 승부를 가를 거다." }
+            { q: "사관학교 졸업생이 갖춰야 할 최고의 덕목은?", a: "원칙 준수", options: ["원칙 준수", "화려한 기술"], h: "멘토 재우가 100번 강조한 것!", e: "축하해! 기술은 다 배웠어. 이제 네가 세운 원칙을 얼마나 차갑게 지키느냐가 승부를 가를 거다." },
+            { q: "매월 일정 금액을 꾸준히 투자해 평균 매입 단가를 조절하는 전략은?", a: "적립식 투자", options: ["적립식 투자", "몰빵 투자", "공매도", "레버리지"], h: "타이밍을 고민 안 해도 되는 가장 현실적인 방법이야.", e: "시장 타이밍을 맞히는 건 신도 어려워. 매월 꾸준히 사면 고점·저점을 자동으로 평균 내는 효과가 있어." },
+            { q: "목표 자산 비율을 유지하기 위해 오른 자산은 팔고 내린 자산은 사는 행위는?", a: "리밸런싱", options: ["리밸런싱", "포트폴리오 청산", "레버리지 투자", "숏 포지션"], h: "고점에 팔고 저점에 사는 원칙을 자동으로 실행하는 마법이야.", e: "리밸런싱은 분기 또는 연 1회 실행을 추천해. 비싼 건 팔고 싼 건 사는 원칙이 자연스럽게 구현되지." }
+        ]
+    },
+    {
+        stage: 5, title: "경제 지표 정복", icon: "🌏",
+        desc: "금리·환율·거시경제 지표와 주식의 연결고리를 마스터합니다",
+        topics: ["기준금리", "환율", "CPI", "FOMC"],
+        questions: [
+            { q: "중앙은행이 기준금리를 올리면 주식 시장은 일반적으로 어떤 반응을 보일까?", a: "하락 압력", options: ["하락 압력", "무조건 상승", "변화 없다", "배당 증가"], h: "돈 빌리는 비용이 오르면 기업 이익은?", e: "금리 인상 → 대출 이자 상승 → 기업 비용 증가 → 이익 감소 → 주가 하락 압력. 특히 부채가 많은 성장주가 직격탄을 맞아." },
+            { q: "미국 연방준비제도(연준)의 기준금리를 결정하는 회의 기구는?", a: "FOMC", options: ["FOMC", "SEC", "IMF", "WTO"], h: "미국 금리를 결정하는 연 8회 회의야.", e: "FOMC(Federal Open Market Committee) 발표 하나에 전 세계 주식·채권·환율이 동시에 요동쳐. 일정을 반드시 챙겨야 해." },
+            { q: "물가 상승률을 측정하는 대표 경제 지표는?", a: "CPI", options: ["CPI", "GDP", "PMI", "EPS"], h: "소비자들이 장바구니를 채우는 비용의 변화야.", e: "CPI(Consumer Price Index, 소비자물가지수)가 높으면 연준이 금리를 올려 경기를 식혀. CPI 발표 때마다 시장이 긴장하는 이유야." },
+            { q: "달러 가치가 강해지면(달러 강세) 한국 주식 시장에는 일반적으로?", a: "외국인 자금 유출 → 하락 압력", options: ["외국인 자금 유출 → 하락 압력", "외국인 자금 유입 → 상승", "무조건 상승", "환율과 무관"], h: "달러가 강해지면 신흥국에서 돈이 빠져나가는 경향이 있어.", e: "달러 강세 = 원화 약세 = 외국인 입장에서 한국 주식 가치 하락. 외국인 자금이 미국으로 빠져나가 코스피가 하락해." },
+            { q: "국가 경제 전체의 생산량을 나타내는 지표로 주식 시장과 밀접한 관계를 가진 것은?", a: "GDP", options: ["GDP", "CPI", "PER", "ROE"], h: "한 나라가 1년간 만들어낸 모든 가치의 합이야.", e: "GDP 성장률이 높으면 기업 실적도 좋을 가능성이 높아. '경제가 성장한다 = 기업이 돈을 더 번다 = 주가 상승'이야." },
+            { q: "중앙은행이 채권을 직접 매입해 시중에 돈을 대량으로 공급하는 정책은?", a: "양적완화(QE)", options: ["양적완화(QE)", "긴축 정책", "기준금리 인상", "공개 매각"], h: "2008 금융위기와 코로나 때 미국이 사용한 '돈 찍기' 정책이야.", e: "QE(Quantitative Easing)는 시장에 유동성을 풀어 자산 가격을 올리는 정책이야. 주식·부동산 모두 오르는 '유동성 장세'가 펼쳐지지." },
+            { q: "경기 확장기에 일반적으로 강세를 보이는 섹터를 고르면?", a: "경기 소비재 / 기술주", options: ["경기 소비재 / 기술주", "유틸리티 / 헬스케어", "채권 / 금", "현금 / 달러"], h: "사람들이 돈을 많이 쓰고 미래에 투자하는 시기야.", e: "경기 호황기엔 소비재와 기술주가 강해. 경기 침체기엔 필수 소비재·유틸리티처럼 경기 방어 섹터가 상대적으로 강해." },
+            { q: "시장 변동성 기대치를 나타내며 '공포지수'라 불리는 것은?", a: "VIX", options: ["VIX", "MACD", "RSI", "PER"], h: "이 수치가 40 이상이면 시장 전체가 극도로 겁에 질린 상태야.", e: "VIX가 40 이상인 공포 구간은 역설적으로 역대 최고의 매수 기회였던 경우가 많아. '공포에 사라'는 격언의 근거가 바로 VIX야." },
+            { q: "인플레이션이 지속될 때 현금을 보유한 사람에게 일어나는 일은?", a: "실질 구매력 감소", options: ["실질 구매력 감소", "자산 가치 증가", "이자 수익 증가", "변화 없다"], h: "자장면 값이 오르면 같은 돈으로 살 수 있는 게 줄어들잖아.", e: "인플레이션은 현금 보유자를 조용히 가난하게 만들어. 그래서 주식·부동산 같은 실물 자산이 인플레이션 헤지 수단이 되는 거야." },
+            { q: "거시경제를 읽는 투자자가 최우선으로 모니터링해야 할 3가지를 고른다면?", a: "금리 / 환율 / 기업 실적", options: ["금리 / 환율 / 기업 실적", "SNS 트렌드 / 친구 추천 / 유튜브", "점성술 / 직감 / 루머", "PER만 / PBR만 / ROE만"], h: "주식 가격을 움직이는 3대 핵심 변수야.", e: "금리는 자금 비용, 환율은 외국인 수급, 기업 실적은 주가의 펀더멘털이야. 이 세 가지를 꿰뚫으면 시장 흐름이 보이기 시작해." }
         ]
     }
 ];
 
 const RANKS = [
-    { name: "입문자",       icon: "🌱", min: 0 },
-    { name: "분석가",       icon: "📊", min: 1 },
-    { name: "고래 사냥꾼",  icon: "🐋", min: 2 },
+    { name: "입문자",        icon: "🌱", min: 0 },
+    { name: "분析家",        icon: "📊", min: 1 },
+    { name: "고래 사냥꾼",   icon: "🐋", min: 2 },
     { name: "프로 트레이더", icon: "⚡", min: 3 },
-    { name: "현명한 자산가", icon: "🏆", min: 4 },
+    { name: "경제 독해사",   icon: "🌏", min: 4 },
+    { name: "현명한 자산가", icon: "🏆", min: 5 },
 ];
 
 let unlockedStages  = parseInt(localStorage.getItem('jurini_stages')) || 1;
@@ -389,8 +418,9 @@ function renderLobby() {
     const rankObj = RANKS[Math.min(completedStages, RANKS.length - 1)];
     document.getElementById('rank-badge').innerText = rankObj.icon + ' ' + rankObj.name;
     document.getElementById('rank-avatar').innerText = rankObj.icon;
-    document.getElementById('rank-progress-text').innerText = `${completedStages} / 4 단계`;
-    document.getElementById('rank-prog-fill').style.width = (completedStages / 4 * 100) + '%';
+    const totalStages = STAGES.length;
+    document.getElementById('rank-progress-text').innerText = `${completedStages} / ${totalStages} 단계`;
+    document.getElementById('rank-prog-fill').style.width = (completedStages / totalStages * 100) + '%';
     document.getElementById('stat-unlocked').innerText = unlockedStages;
     document.getElementById('stat-total-q').innerText = totalSolved;
 
@@ -404,7 +434,7 @@ function renderLobby() {
         div.className = 'stage-card ' + (unlocked ? 'unlocked' : 'locked') + (completed ? ' completed' : '');
         div.innerHTML = `
             ${!unlocked ? '<span class="lock-icon">🔒</span>' : ''}
-            <div class="stage-num-big ${!unlocked ? 'locked-num' : ''}">0${s.stage}</div>
+            <div class="stage-num-big ${!unlocked ? 'locked-num' : ''}">${String(s.stage).padStart(2,'0')}</div>
             <div class="stage-title-text">${s.icon} ${s.title}</div>
             <div class="stage-desc-text">${s.desc}</div>
             <div class="stage-topics">
@@ -432,9 +462,10 @@ function renderQuestion() {
     const stage = STAGES[currentStageIdx];
     const q     = stage.questions[currentQIdx];
 
-    document.getElementById('qs-stage-label').innerText = `훈련 구역 0${currentStageIdx + 1} · ${stage.title}`;
-    document.getElementById('qs-q-count').innerText     = `${String(currentQIdx + 1).padStart(2, '0')} / 08`;
-    document.getElementById('qs-progress').style.width  = `${(currentQIdx + 1) / 8 * 100}%`;
+    const totalQs = stage.questions.length;
+    document.getElementById('qs-stage-label').innerText = `훈련 구역 ${String(currentStageIdx + 1).padStart(2,'0')} · ${stage.title}`;
+    document.getElementById('qs-q-count').innerText     = `${String(currentQIdx + 1).padStart(2, '0')} / ${String(totalQs).padStart(2, '0')}`;
+    document.getElementById('qs-progress').style.width  = `${(currentQIdx + 1) / totalQs * 100}%`;
     document.getElementById('qs-visual').innerText      = ["💰", "📉", "📈", "🛡️", "🔱", "📊", "🧭", "🏆"][currentQIdx % 8];
 
     // Typewriter effect
@@ -486,13 +517,14 @@ function checkAnswer(selected) {
     document.getElementById('am-title').innerText  = correct ? '정답!' : '틀렸어!';
     document.getElementById('am-title').style.color = correct ? 'var(--success)' : 'var(--danger)';
     document.getElementById('am-explanation').innerHTML = `<strong>정답: ${q.a}</strong><br><br>${q.e}`;
-    document.getElementById('am-next-btn').innerText = (currentQIdx === 7) ? '결과 보기' : '다음 문제 →';
+    document.getElementById('am-next-btn').innerText = (currentQIdx === STAGES[currentStageIdx].questions.length - 1) ? '결과 보기' : '다음 문제 →';
     openModal('answer-modal');
 }
 
 function handleModalNext() {
     closeModal('answer-modal');
-    if (currentQIdx < 7) { currentQIdx++; renderQuestion(); }
+    const totalQs = STAGES[currentStageIdx].questions.length;
+    if (currentQIdx < totalQs - 1) { currentQIdx++; renderQuestion(); }
     else showStageResult();
 }
 
@@ -508,13 +540,15 @@ function updateQuizSide() {
 }
 
 function showStageResult() {
-    const passed = score >= 6;
+    const totalQs   = STAGES[currentStageIdx].questions.length;
+    const passLine  = Math.round(totalQs * 0.7); // 70% to pass
+    const passed    = score >= passLine;
     document.getElementById('srm-icon').innerText  = passed ? '🎖️' : '😤';
     document.getElementById('srm-title').innerText = passed ? '임무 완료!' : '훈련 실패...';
-    document.getElementById('srm-score').innerText = `${score} / 8 정답`;
+    document.getElementById('srm-score').innerText = `${score} / ${totalQs} 정답`;
     document.getElementById('srm-msg').innerText   = passed
-        ? (score === 8 ? '완벽한 성적이야! 모든 문제를 맞췄어.' : '훌륭해! 다음 작전 구역으로 이동해도 좋아.')
-        : '최소 6개 이상 맞춰야 통과야. 다시 도전해보자!';
+        ? (score === totalQs ? '완벽한 성적이야! 모든 문제를 맞췄어.' : `훌륭해! ${passLine}개 기준을 통과했어. 다음 작전 구역으로!`)
+        : `최소 ${passLine}개 이상 맞춰야 통과야. 다시 도전해보자!`;
 
     if (passed && unlockedStages === currentStageIdx + 1) {
         unlockedStages++;
@@ -523,7 +557,7 @@ function showStageResult() {
 
     const btns = document.getElementById('srm-btns');
     btns.innerHTML = '';
-    if (passed && currentStageIdx < 3) {
+    if (passed && currentStageIdx < STAGES.length - 1) {
         const next = document.createElement('button');
         next.className = 'modal-btn';
         next.innerText = '다음 단계로 →';
