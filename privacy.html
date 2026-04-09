@@ -6,332 +6,641 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>개인정보처리방침 - 주린이 계산기</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --primary: #FFD600;
-            --neutral: #2D3436;
-            --neutral-light: #F8F9FA;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --primary: #FF5C00;
+            --bg: #000000;
+            --card: #111111;
+            --border: #1e1e1e;
+            --text: #ffffff;
+            --text-secondary: #888888;
+            --text-muted: #555555;
+            --shadow: 0 4px 24px rgba(0,0,0,0.6);
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
             font-family: 'DM Sans', sans-serif;
-            color: var(--neutral);
-            background: var(--neutral-light);
+            background: var(--bg);
+            color: var(--text);
             line-height: 1.8;
         }
-        
+
+        /* ── NAV ── */
         header {
-            background: white;
-            box-shadow: var(--shadow);
-            padding: 1.5rem 0;
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        
+
         nav {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 0 2rem;
+            height: 60px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .logo {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.5rem;
+            font-size: 1.1rem;
             font-weight: 700;
-            color: var(--neutral);
+            color: var(--text);
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        
+
+        .logo-icon {
+            width: 28px; height: 28px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem;
+        }
+
         .back-btn {
-            background: var(--neutral-light);
-            color: var(--neutral);
-            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.45rem 1.1rem;
             border-radius: 50px;
             text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            transition: all 0.2s;
         }
-        
-        .back-btn:hover {
-            background: var(--primary);
-        }
-        
-        .container {
-            max-width: 900px;
-            margin: 3rem auto;
-            padding: 0 2rem;
-        }
-        
-        .content {
-            background: white;
-            border-radius: 24px;
-            padding: 3rem;
-            box-shadow: var(--shadow);
-        }
-        
-        h1 {
-            font-family: 'Fredoka', cursive;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--neutral);
-        }
-        
-        .update-date {
-            color: #636E72;
-            margin-bottom: 3rem;
-        }
-        
-        h2 {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.75rem;
-            margin-top: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--neutral);
-        }
-        
-        p {
-            margin-bottom: 1.5rem;
-            color: #636E72;
-        }
-        
-        ul {
-            margin-bottom: 1.5rem;
-            margin-left: 2rem;
-        }
-        
-        li {
-            margin-bottom: 0.75rem;
-            color: #636E72;
-        }
-        
-        .highlight {
-            background: #FFF9E6;
-            padding: 1.5rem;
-            border-radius: 12px;
-            border-left: 4px solid var(--primary);
-            margin: 2rem 0;
-        }
-        /* ── DARK THEME OVERRIDE ─────────────────────────── */
-        :root {
-            --primary: #FF5C00 !important;
-            --primary-dark: #FF7A30 !important;
-            --success: #00D9A3 !important;
-            --danger: #FF6B6B !important;
-            --bg-gradient-start: #000000 !important;
-            --bg-gradient-end: #000000 !important;
-            --card-bg: #111111 !important;
-            --text-primary: #ffffff !important;
-            --text-secondary: #888888 !important;
-            --border-color: #1e1e1e !important;
-            --neutral-light: #111111 !important;
-            --input-bg: #0a0a0a !important;
-            --shadow: 0 4px 24px rgba(0,0,0,0.6) !important;
-            --shadow-hover: 0 12px 40px rgba(0,0,0,0.8) !important;
-            --pattern-color: rgba(255,92,0,0.03) !important;
-        }
-        body {
-            background: #000 !important;
-            color: #fff !important;
-        }
-        body::before { display: none !important; }
-        header, nav { background: rgba(0,0,0,0.9) !important; backdrop-filter: blur(20px); border-bottom: 1px solid #1e1e1e !important; }
-        .logo { color: #fff !important; }
-        .logo-icon { background: #FF5C00 !important; }
-        .nav-links a { color: #888 !important; }
-        .nav-links a:hover { color: #fff !important; }
-        .nav-links a::after { background: #FF5C00 !important; }
-        .theme-toggle { display: none !important; }
-        footer { background: #000 !important; border-top: 1px solid #1e1e1e !important; }
-        .footer-links a { color: #444 !important; }
-        .footer-links a:hover { color: #FF5C00 !important; }
-        .footer-bottom { border-top-color: #111 !important; color: #333 !important; }
-        .card, .calc-card, .result-card, .info-card, .feature-item, .tool-card, .stat-card {
-            background: #111 !important;
-            border-color: #1e1e1e !important;
-            color: #fff !important;
-        }
-        input, select, textarea {
-            background: #0a0a0a !important;
-            border-color: #1e1e1e !important;
-            color: #fff !important;
-        }
-        input:focus, select:focus, textarea:focus {
-            border-color: #FF5C00 !important;
-            box-shadow: 0 0 0 3px rgba(255,92,0,0.1) !important;
-        }
-        input::placeholder { color: #444 !important; }
-        label, .label, .input-label { color: #888 !important; }
-        h1, h2, h3, h4, h5, h6 { color: #fff !important; }
-        p { color: #888 !important; }
-        .result-value, .calc-result, .price-display, .total { color: #fff !important; }
-        .btn, button[type="submit"], .primary-btn, .calc-btn {
-            background: #FF5C00 !important;
-            color: #fff !important;
-            border: none !important;
-        }
-        .btn:hover, button[type="submit"]:hover, .primary-btn:hover, .calc-btn:hover {
-            background: #FF7A30 !important;
-        }
-        .section-title, .page-title { color: #fff !important; font-weight: 800 !important; }
-        .highlight, .accent { color: #FF5C00 !important; }
-        .success-text, .positive { color: #00D9A3 !important; }
-        .danger-text, .negative { color: #FF6B6B !important; }
-        .auth-btn-minimal { background: transparent !important; border: 1px solid #2a2a2a !important; color: #888 !important; border-radius: 50px !important; }
-        .logout-link { color: #FF6B6B !important; background: none !important; border: none !important; }
-        table { border-color: #1e1e1e !important; }
-        th { background: #111 !important; color: #888 !important; border-color: #1e1e1e !important; }
-        td { color: #fff !important; border-color: #1e1e1e !important; }
-        tr:hover { background: rgba(255,92,0,0.05) !important; }
-        .badge, .tag { background: rgba(255,92,0,0.12) !important; color: #FF5C00 !important; border: 1px solid rgba(255,92,0,0.25) !important; }
-        a { color: #FF5C00 !important; }
-        a:hover { color: #FF7A30 !important; }
-        nav a { text-decoration: none !important; }
-        .range-slider, input[type="range"] { accent-color: #FF5C00 !important; }
-        .progress-bar, .progress-fill { background: #FF5C00 !important; }
-        .divider, hr { border-color: #1e1e1e !important; }
-        .tooltip { background: #111 !important; border: 1px solid #1e1e1e !important; color: #fff !important; }
-        .modal, .popup { background: #111 !important; border: 1px solid #1e1e1e !important; }
-        .overlay { background: rgba(0,0,0,0.8) !important; }
-        .breadcrumb a, .back-link { color: #888 !important; }
-        .breadcrumb a:hover, .back-link:hover { color: #FF5C00 !important; }
-        .quiz-option, .option-btn { background: #111 !important; border-color: #1e1e1e !important; color: #fff !important; }
-        .quiz-option:hover, .option-btn:hover { border-color: #FF5C00 !important; background: rgba(255,92,0,0.08) !important; }
-        .quiz-option.correct { background: rgba(0,217,163,0.12) !important; border-color: #00D9A3 !important; }
-        .quiz-option.wrong { background: rgba(255,107,107,0.12) !important; border-color: #FF6B6B !important; }
-        .stage-card, .level-card { background: #111 !important; border-color: #1e1e1e !important; }
-        .stage-card:hover, .level-card:hover { border-color: rgba(255,92,0,0.4) !important; }
-        .locked { opacity: 0.4 !important; }
-        .completed { border-color: rgba(0,217,163,0.4) !important; }
-        .chart-container canvas { filter: brightness(0.9) !important; }
-        .game-board, .simulator-board { background: #111 !important; border-color: #1e1e1e !important; }
-        .word-card, .term-card, .dict-item { background: #111 !important; border-color: #1e1e1e !important; }
-        .word-card:hover, .term-card:hover, .dict-item:hover { border-color: rgba(255,92,0,0.35) !important; }
-        .search-box input, .search-input { background: #0a0a0a !important; border-color: #1e1e1e !important; color: #fff !important; }
-        .portfolio-item, .holding-row { background: #111 !important; border-color: #1e1e1e !important; }
-        .section-label-orange { color: #FF5C00 !important; font-size: 0.72rem !important; font-weight: 700 !important; letter-spacing: 0.1em !important; text-transform: uppercase !important; }
 
+        .back-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* ── LAYOUT ── */
+        .container {
+            max-width: 860px;
+            margin: 3rem auto;
+            padding: 0 2rem 5rem;
+        }
+
+        /* ── HEADER CARD ── */
+        .page-header {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .page-header .badge {
+            display: inline-block;
+            background: rgba(255,92,0,0.12);
+            color: var(--primary);
+            border: 1px solid rgba(255,92,0,0.3);
+            padding: 0.3rem 0.9rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header .meta {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* ── NOTICE BOX ── */
+        .notice-box {
+            background: rgba(255,92,0,0.07);
+            border: 1px solid rgba(255,92,0,0.25);
+            border-left: 3px solid var(--primary);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2rem;
+            color: #ccc;
+            font-size: 0.95rem;
+        }
+
+        .notice-box strong { color: var(--primary); }
+
+        /* ── SECTION CARD ── */
+        .section-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .section-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px; height: 28px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-right: 0.6rem;
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-card p:last-child { margin-bottom: 0; }
+
+        /* ── TABLE ── */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.88rem;
+        }
+
+        .info-table th {
+            background: #1a1a1a;
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+
+        .info-table td {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            color: #ccc;
+            vertical-align: top;
+        }
+
+        .info-table tr:hover td { background: rgba(255,92,0,0.03); }
+
+        /* ── LIST ── */
+        .section-card ul, .section-card ol {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            padding-left: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-card ul li, .section-card ol li {
+            margin-bottom: 0.5rem;
+        }
+
+        .section-card ul li:last-child, .section-card ol li:last-child { margin-bottom: 0; }
+
+        /* ── HIGHLIGHT ── */
+        .highlight-row {
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 1rem 1.2rem;
+            margin: 0.8rem 0;
+            font-size: 0.9rem;
+            color: #bbb;
+            border-left: 2px solid var(--border);
+        }
+
+        .highlight-row strong { color: var(--text); }
+
+        /* ── LINK ── */
+        a { color: var(--primary); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* ── FOOTER ── */
+        .privacy-footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 600px) {
+            .section-card { padding: 1.5rem; }
+            .page-header { padding: 1.5rem; }
+            .info-table { font-size: 0.78rem; }
+            .info-table th, .info-table td { padding: 0.55rem 0.65rem; }
+        }
     </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <a href="index.html" class="logo">📊 주린이 계산기</a>
-            <a href="index.html" class="back-btn">← 홈으로</a>
-        </nav>
-    </header>
 
-    <div class="container">
-        <div class="content">
-            <h1>개인정보처리방침</h1>
-            <p class="update-date">최종 업데이트: 2024년 1월 1일</p>
+<header>
+    <nav>
+        <a href="index.html" class="logo">
+            <span class="logo-icon">📊</span>
+            주린이 계산기
+        </a>
+        <a href="index.html" class="back-btn">← 홈으로</a>
+    </nav>
+</header>
 
-            <div class="highlight">
-                <strong>주린이 계산기는 사용자의 개인정보를 수집하거나 저장하지 않습니다.</strong>
-                모든 계산은 사용자의 브라우저에서만 처리되며, 서버로 어떠한 데이터도 전송되지 않습니다.
-            </div>
+<div class="container">
 
-            <h2>1. 개인정보의 처리 목적</h2>
-            <p>
-                주린이 계산기는 다음의 목적으로 개인정보를 처리합니다. 
-                처리하고 있는 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며, 
-                이용 목적이 변경되는 경우에는 「개인정보 보호법」 제18조에 따라 별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다.
-            </p>
-            <ul>
-                <li>주식 계산 서비스 제공</li>
-                <li>서비스 개선 및 사용자 경험 향상</li>
-                <li>문의 및 민원 처리</li>
-            </ul>
+    <!-- 페이지 헤더 -->
+    <div class="page-header">
+        <div class="badge">개인정보 보호</div>
+        <h1>개인정보처리방침</h1>
+        <p class="meta">시행일: 2025년 1월 1일 &nbsp;|&nbsp; 최종 개정: 2025년 4월 9일</p>
+    </div>
 
-            <h2>2. 개인정보의 수집 항목 및 방법</h2>
-            <p>
-                주린이 계산기는 <strong>개인정보를 수집하지 않습니다.</strong> 
-                모든 계산 도구는 클라이언트 사이드에서 작동하며, 입력한 데이터는 사용자의 브라우저에만 저장됩니다.
-            </p>
-            <ul>
-                <li><strong>배당금 계산기:</strong> 보유 주식 수, 배당금 등의 계산 데이터는 서버로 전송되지 않음</li>
-                <li><strong>용어 사전:</strong> 검색 기록이나 퀴즈 점수는 저장되지 않음</li>
-                <li><strong>평단가 계산기:</strong> 매수 내역은 브라우저에만 임시 저장되며 서버에 전송되지 않음</li>
-            </ul>
+    <!-- 서문 -->
+    <div class="notice-box">
+        <strong>주린이 계산기</strong>는 정보주체의 자유와 권리 보호를 위해 「개인정보 보호법」 및 관계 법령이 정한 바를 준수하여, 적법하게 개인정보를 처리하고 안전하게 관리합니다. 이에 「개인정보 보호법」 제30조에 따라 정보주체에게 개인정보 처리에 관한 절차 및 기준을 안내하고, 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기 위하여 다음과 같이 개인정보처리방침을 수립·공개합니다.
+    </div>
 
-            <h2>3. 쿠키(Cookie) 사용</h2>
-            <p>
-                주린이 계산기는 사용자 경험 개선을 위해 쿠키를 사용할 수 있습니다. 
-                쿠키는 웹사이트 방문 시 사용자의 컴퓨터에 저장되는 작은 텍스트 파일입니다.
-            </p>
-            <ul>
-                <li>쿠키는 사용자 설정 저장 및 서비스 개선 목적으로만 사용됩니다</li>
-                <li>브라우저 설정을 통해 쿠키 설치를 거부할 수 있습니다</li>
-                <li>쿠키 거부 시 일부 서비스 이용에 제한이 있을 수 있습니다</li>
-            </ul>
+    <!-- 1. 처리 목적 -->
+    <div class="section-card">
+        <div class="section-title">
+            <span class="section-num">1</span>
+            개인정보의 처리 목적
+        </div>
+        <p>주린이 계산기(이하 "운영자")는 다음의 목적을 위하여 개인정보를 처리합니다. 처리하고 있는 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며, 이용 목적이 변경되는 경우에는 「개인정보 보호법」 제18조에 따라 별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다.</p>
+        <ul>
+            <li><strong>서비스 제공:</strong> 주식 계산기(평단가·배당금·모의투자 등), 주식 용어사전, 차트 시뮬레이터, 초보자 가이드 등 무료 학습 도구 제공</li>
+            <li><strong>서비스 품질 개선:</strong> 이용 패턴 분석을 통한 기능 개선 및 사용자 경험 향상</li>
+            <li><strong>광고 서비스 제공:</strong> Google AdSense를 통한 맞춤형 광고 게재(광고 수익으로 무료 서비스 유지)</li>
+            <li><strong>민원 처리:</strong> 서비스 이용 관련 문의 및 불만 처리</li>
+        </ul>
+    </div>
 
-            <h2>4. 광고 서비스</h2>
-            <p>
-                주린이 계산기는 Google AdSense를 통해 광고를 제공합니다. 
-                Google은 사용자의 관심사에 맞는 광고를 표시하기 위해 쿠키를 사용할 수 있습니다.
-            </p>
-            <ul>
-                <li>Google의 광고 쿠키 사용에 대한 자세한 내용은 <a href="https://policies.google.com/technologies/ads" target="_blank">Google 광고 개인정보 보호 정책</a>을 참조하세요</li>
-                <li>사용자는 <a href="https://www.google.com/settings/ads" target="_blank">광고 설정 페이지</a>에서 맞춤 광고를 비활성화할 수 있습니다</li>
-            </ul>
-
-            <h2>5. 개인정보의 보유 및 이용 기간</h2>
-            <p>
-                주린이 계산기는 개인정보를 수집하거나 저장하지 않으므로, 
-                보유 및 이용 기간이 존재하지 않습니다. 
-                사용자가 입력한 모든 데이터는 브라우저를 닫거나 페이지를 새로고침하면 삭제됩니다.
-            </p>
-
-            <h2>6. 개인정보의 제3자 제공</h2>
-            <p>
-                주린이 계산기는 사용자의 개인정보를 제3자에게 제공하지 않습니다. 
-                다만, 다음의 경우에는 예외로 합니다.
-            </p>
-            <ul>
-                <li>사용자가 사전에 동의한 경우</li>
-                <li>법령의 규정에 의거하거나, 수사 목적으로 법령에 정해진 절차와 방법에 따라 수사기관의 요구가 있는 경우</li>
-            </ul>
-
-            <h2>7. 이용자의 권리와 행사 방법</h2>
-            <p>
-                주린이 계산기는 개인정보를 수집하지 않으므로, 
-                개인정보 열람, 정정, 삭제, 처리정지 요구 등의 권리 행사가 필요하지 않습니다.
-            </p>
-
-            <h2>8. 개인정보 보호책임자</h2>
-            <p>
-                주린이 계산기는 개인정보 처리에 관한 업무를 총괄해서 책임지고, 
-                개인정보 처리와 관련한 정보주체의 불만처리 및 피해구제 등을 위하여 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.
-            </p>
-            <ul>
-                <li><strong>문의:</strong> <a href="contact.html">문의하기 페이지</a>를 통해 연락해주세요</li>
-            </ul>
-
-            <h2>9. 개인정보 처리방침의 변경</h2>
-            <p>
-                이 개인정보 처리방침은 2024년 1월 1일부터 적용됩니다. 
-                법령, 정책 또는 보안기술의 변경에 따라 내용의 추가, 삭제 및 수정이 있을 시에는 
-                변경사항의 시행 7일 전부터 웹사이트의 공지사항을 통하여 고지할 것입니다.
-            </p>
-
-            <div class="highlight">
-                <strong>💡 안심하세요!</strong><br>
-                주린이 계산기의 모든 도구는 100% 클라이언트 사이드에서 작동합니다. 
-                입력하신 데이터는 서버로 전송되지 않으며, 오직 사용자의 브라우저에서만 처리됩니다.
-            </div>
+    <!-- 2. 처리 및 보유 기간 -->
+    <div class="section-card">
+        <div class="section-title">
+            <span class="section-num">2</span>
+            개인정보의 처리 및 보유 기간
+        </div>
+        <p>운영자는 법령에 따른 개인정보 보유·이용기간 또는 정보주체로부터 개인정보를 수집 시에 동의받은 개인정보 보유·이용기간 내에서 개인정보를 처리·보유합니다.</p>
+        <div class="highlight-row">
+            <strong>계산기 입력 데이터:</strong> 사용자가 직접 입력한 수치(주식 수, 매수가 등)는 서버로 전송되지 않으며, 브라우저 세션 종료 시 즉시 삭제됩니다.
+        </div>
+        <div class="highlight-row">
+            <strong>퀴즈 학습 진행 데이터:</strong> localStorage를 이용해 사용자 기기에만 저장되며, 브라우저 데이터 초기화 시 삭제됩니다. 서버에 전송되지 않습니다.
+        </div>
+        <div class="highlight-row">
+            <strong>광고 관련 데이터 (Google AdSense):</strong> Google의 개인정보 보호정책에 따라 처리되며, 보유 기간은 <a href="https://policies.google.com/privacy" target="_blank">Google 개인정보처리방침</a>을 따릅니다.
+        </div>
+        <div class="highlight-row">
+            <strong>문의 이메일:</strong> 민원 처리 완료 후 3년간 보유 후 파기 (「전자상거래 등에서의 소비자보호에 관한 법률」에 따름)
         </div>
     </div>
+
+    <!-- 3. 처리하는 개인정보의 항목 -->
+    <div class="section-card">
+        <div class="section-title">
+            <span class="section-num">3</span>
+            처리하는 개인정보의 항목
+        </div>
+        <p>운영자는 다음의 개인정보 항목을 처리하고 있습니다.</p>
+        <table class="info-table">
+            <thead>
+                <tr>
+                    <th>처리 업무</th>
+                    <th>수집 항목</th>
+                    <th>수집 방법</th>
+                    <th>보유 기간</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>광고 서비스<br>(Google AdSense)</td>
+                    <td>IP 주소, 쿠키, 기기 정보, 브라우저 정보, 행태정보(방문 페이지·체류 시간 등)</td>
+                    <td>자동 수집 (쿠키·유사기술)</td>
+                    <td>Google 정책에 따름</td>
+                </tr>
+                <tr>
+                    <td>서비스 이용 분석<br>(GitHub Pages)</td>
+                    <td>IP 주소, 접속 로그</td>
+                    <td>자동 수집</td>
+                    <td>GitHub 정책에 따름</td>
+                </tr>
+                <tr>
+                    <td>이용자 문의</td>
+                    <td>이메일 주소, 문의 내용</td>
+                    <td>이용자 직접 입력</td>
+                    <td>처리 완료 후 3년</td>
+                </tr>
+                <tr>
+                    <td>퀴즈 진행 현황</td>
+                    <td>단계별 학습 진행 상태 (개인 식별 불가)</td>
+                    <td>브라우저 localStorage (기기 저장)</td>
+                    <td>이용자 기기에만 보관, 서버 미전송</td>
+                </tr>
+            </tbody>
+        </table>
+        <p style="font-size:0.82rem; color: var(--text-muted); margin-top: 0.5rem;">※ 운영자는 회원가입 시스템을 운영하지 않으므로 성명, 생년월일, 주소 등 일반 개인정보를 직접 수집하지 않습니다.</p>
+    </div>
+
+    <!-- 4. 만 14세 미만 아동 -->
+    <div class="section-card">
+        <div class="section-title">
+            <span class="section-num">4</span>
+            만 14세 미만 아동의 개인정보 처리에 관한 사항
+        </div>
+        <p>주린이 계산기는 만 14세 미만 아동을 대상으로 하는 서비스가 아닙니다. 운영자는 만 14세 미만 아동의 개인정보를 의도적으로 수집하지 않으며, 만 14세 미만 아동이 개인정보를 제출하였음이 확인될 경우 즉시 해당 정보를 삭제합니다.</p>
+        <p>만 14세 미만 아동의 경우 보호자의 지도하에 서비스를 이용하시기 바랍니다.</p>
+    </div>
+
+    <!-- 5. 제3자 제공 -->
+    <div class="section-card">
+        <div class="section-title">
+            <span class="section-num">5</span>
+            개인정보의 제3자 제공에 관한 사항
+        </div>
+        <p>운영자는 정보주체의 개인정보를 개인정보의 처리 목적에서 명시한 범위 내에서만 처리하며, 정보주체의 동의, 법률의 특별한 규정 등 「개인정보 보호법」 제17조 및 제18조에 해당하는 경우에만 개인정보를 제3자에게 제공합니다.</p>
+        <table class="info-table">
+            <thead>
+                <tr>
+                    <th>제공받는 자</th>
+                    <th>제공 목적</th>
+                    <th>제공 항목</th>
+                    <th>보유·이용 기간</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Google LLC</td>
+                    <td>맞춤형 광고 제공 (Google AdSense)</td>
+                    <td>쿠키, IP 주소, 기기·브라우저 정보, 행태정보</td>
+                    <td>Google 개인정보처리방침에 따름</td>
+                </tr>
+                <tr>
+                    <td>GitHub Inc.</td>
+                    <td>웹사이트 호스팅 (GitHub Pages)</td>
+                    <td>IP 주소, 접속 로그</td>
+                    <td>GitHub 개인정보처리방침에 따름</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>그 밖에 재난, 감염병, 급박한 생명·신체 위험을 초래하는 사건·사고 등 긴급상황이 발생하는 경우 정보주체의 동의 없이 관계기관에 개인정보를 제공할 수 있습니다.</p>
+    </div>
+
+    <!-- 6. 처리업무의 위탁 -->
+    <div class="section-card">
+        <div class="section-title">
+            <span class="section-num">6</span>
+            개인정보 처리업무의 위탁에 관한 사항
+        </div>
+        <p>운영자는 원활한 개인정보 업무처리를 위하여 다음과 같이 개인정보 처리업무를 위탁하고 있습니다.</p>
+        <table class="info-table">
+            <thead>
+                <tr>
+                    <th>수탁자</th>
+                    <th>위탁 업무</th>
+                    <th>보유 및 이용기간</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Google LLC</td>
+                    <td>광고 플랫폼 운영 및 관리 (AdSense)</td>
+                    <td>위탁 계약 종료 시까지</td>
+                </tr>
+                <tr>
+                    <td>GitHub Inc.</td>
+                    <td>웹사이트 서버 호스팅</td>
+                    <td>위탁 계약 종료 시까지</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>운영자는 위탁계약 체결 시 「개인정보 보호법」 제26조에 따라 위탁업무 수행목적 외 개인정보 처리금지, 기술적·관리적 보호조치, 재위탁 제한, 수탁자에 대한 관리·감독, 손해배상 등 책임에 관한 사항을 계약서 등 문서에 명시하고, 수탁자가 개인정보를 안전하게 처리하는지를 감독하고 있습니다.</p>
+    </div>
+
+    <!-- 7. 국외 이전 -->
+    <div class="section-card">
+        <div class="section-title">
+            <span class="section-num">7</span>
+            개인정보의 국외 이전에 관한 사항
+        </div>
+        <p>운영자는 다음과 같이 개인정보를 국외로 이전하고 있습니다.</p>
+        <table class="info-table">
+            <thead>
+                <tr>
+                    <th>이전받는 자</th>
+                    <th>국가</th>
+                    <th>이전 항목</th>
+                    <th>이전 목적</th>
+                    <th>보유·이용 기간</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Google LLC</td>
+                    <td>미국 (및 Google 데이터센터 소재국)</td>
+                    <td>쿠키, IP 주소, 기기·행태정보</td>
+                    <td>광고 서비스 제공</td>
+                    <td>Google 정책에 따름</td>
+                </tr>
+                <tr>
+                    <td>GitHub Inc.</td>
+                    <td>미국</td>
+                    <td>IP 주소, 접속 로그</td>
+                    <td>웹사이트 호스팅</td>
+                    <td>GitHub 정책에 따름</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>이전받는 자의 개인정보 보호 관련 문의처: <a href="https://policies.google.com/privacy" target="_blank">Google 개인정보처리방침</a> / <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank">GitHub 개인정보처리방침</a></p>
+    </div>
+
+    <!-- 8. 파기 절차 및 방법 -->
+    <div class="section-card">
+        <div class="section-title">
+            <span class="section-num">8</span>
+            개인정보의 파기 절차 및 방법에 관한 사항
+        </div>
+        <p>운영자는 개인정보 보유기간의 경과, 처리목적 달성 등 개인정보가 불필요하게 되었을 때에는 지체없이 해당 개인정보를 파기합니다.</p>
+        <div class="highlight-row">
+            <strong>파기 절차:</strong> 파기 사유가 발생한 개인정보를 선정하고, 운영자의 개인정보 보호책임자의 승인을 받아 개인정보를 파기합니다.
+        </div>
+        <div class="highlight-row">
+            <strong>파기 방법 (전자적 파일):</strong> 기록을 재생할 수 없도록 영구 삭제합니다.
+        </div>
+        <div class="highlight-row">
+            <strong>브라우저 저장 데이터:</strong> 계산기 입력 데이터 및 퀴즈 진행 현황은 서버에 저장되지 않으며, 사용자가 브라우저 데이터를 초기화하면 즉시 삭제됩니다.
+        </div>
+    </div>
+
+    <!-- 9. 자동 수집 장치 (쿠키) -->
+    <div class="section-card">
+        <div class="section-title">
+            <span class="section-num">9</span>
+            개인정보를 자동으로 수집하는 장치의 설치·운영 및 그 거부에 관한 사항
+        </div>
+        <p>운영자는 이용자에게 개별적인 맞춤서비스를 제공하기 위해 이용 정보를 저장하고 수시로 불러오는 '쿠키(Cookie)'를 사용합니다.</p>
+        <ul>
+            <li><strong>쿠키의 사용 목적:</strong> Google AdSense 맞춤형 광고 제공, 서비스 이용 분석</li>
+            <li><strong>쿠키 설치·운영 및 거부:</strong> 웹브라우저 옵션 설정을 통해 쿠키 허용/차단을 선택할 수 있습니다. 쿠키 설정을 거부하는 경우 맞춤형 광고 서비스 이용이 제한될 수 있습니다.</li>
+        </ul>
+        <div class="highlight-row">
+            <strong>크롬(Chrome):</strong> 설정 → 개인정보 및 보안 → 쿠키 및 기타 사이트 데이터<br>
+            <strong>엣지(Edge):</strong> 설정 → 개인정보, 검색 및 서비스 → 쿠키<br>
+            <strong>사파리(Safari):</strong> 환경설정 → 개인정보 보호
+        </div>
+        <p>또한, <a href="https://www.google.com/settings/ads" target="_blank">Google 광고 설정 페이지</a>에서 맞춤형 광고를 직접 비활성화할 수 있습니다.</p>
+    </div>
+
+    <!-- 10. 행태정보 -->
+    <div class="section-card">
+        <div class="section-title">
+            <span class="section-num">10</span>
+            행태정보의 수집·이용·제공 및 거부 등에 관한 사항
+        </div>
+        <p>운영자는 서비스 이용과정에서 행태정보를 수집·이용합니다.</p>
+        <table class="info-table">
+            <thead>
+                <tr>
+                    <th>수집 항목</th>
+                    <th>수집 방법</th>
+                    <th>수집 목적</th>
+                    <th>보유·이용기간</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>방문 페이지, 클릭 이력, 체류 시간, 검색어, 기기 및 브라우저 정보</td>
+                    <td>Google AdSense를 통한 자동 수집</td>
+                    <td>이용자 관심 기반 맞춤형 광고 제공</td>
+                    <td>Google 정책에 따름</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>이용자는 온라인 맞춤형 광고 수신을 거부할 수 있습니다.</p>
+        <ul>
+            <li><a href="https://optout.aboutads.info" target="_blank">DAA 광고 옵트아웃 페이지</a></li>
+            <li><a href="https://www.google.com/settings/ads" target="_blank">Google 광고 설정 페이지</a></li>
+            <li>모바일 앱: 기기 설정 → 광고 → 광고 ID 초기화 또는 맞춤 광고 비활성화</li>
+        </ul>
+    </div>
+
+    <!-- 11. 정보주체의 권리·의무 -->
+    <div class="section-card">
+        <div class="section-title">
+            <span class="section-num">11</span>
+            정보주체와 법정대리인의 권리·의무 및 행사방법에 관한 사항
+        </div>
+        <p>정보주체는 운영자에 대해 언제든지 개인정보 열람·정정·삭제·처리정지 요구 등의 권리를 행사할 수 있습니다.</p>
+        <ul>
+            <li>권리 행사는 운영자에 대해 「개인정보 보호법」 시행령 제41조 제1항에 따라 서면, 전자우편, 모사전송(FAX) 등을 통하여 하실 수 있으며, 운영자는 이에 대해 지체없이 조치하겠습니다.</li>
+            <li>권리 행사는 정보주체의 법정대리인이나 위임을 받은 자 등 대리인을 통하여 하실 수도 있습니다. 이 경우 「개인정보 보호법」 시행규칙 별지 제11호 서식에 따른 위임장을 제출하셔야 합니다.</li>
+            <li>개인정보 열람 및 처리정지 요구는 「개인정보 보호법」 제35조 제4항, 제37조 제2항에 의하여 정보주체의 권리가 제한될 수 있습니다.</li>
+            <li>개인정보의 정정 및 삭제 요구는 다른 법령에서 그 개인정보가 수집 대상으로 명시되어 있는 경우에는 그 삭제를 요구할 수 없습니다.</li>
+        </ul>
+        <p>단, 본 서비스는 회원가입 시스템을 운영하지 않으므로 서버에 저장된 개인 식별 정보가 없습니다. 문의사항은 아래 개인정보 보호책임자에게 연락해 주세요.</p>
+    </div>
+
+    <!-- 12. 안전성 확보조치 -->
+    <div class="section-card">
+        <div class="section-title">
+            <span class="section-num">12</span>
+            개인정보의 안전성 확보조치에 관한 사항
+        </div>
+        <p>운영자는 개인정보의 안전성 확보를 위해 다음과 같은 조치를 취하고 있습니다.</p>
+        <ul>
+            <li><strong>기술적 조치:</strong> HTTPS(SSL/TLS) 암호화 프로토콜 적용, 서버 측 개인정보 미보관 구조 설계</li>
+            <li><strong>클라이언트 사이드 처리:</strong> 모든 계산 기능은 사용자 브라우저 내에서만 처리되며 서버로 전송되지 않습니다.</li>
+            <li><strong>최소 수집 원칙:</strong> 서비스 운영에 불필요한 개인정보는 수집하지 않습니다.</li>
+            <li><strong>접근 통제:</strong> GitHub Pages 기반 정적 사이트 운영으로 불필요한 서버 접근 경로를 원천 차단합니다.</li>
+        </ul>
+    </div>
+
+    <!-- 13. 개인정보 보호책임자 -->
+    <div class="section-card">
+        <div class="section-title">
+            <span class="section-num">13</span>
+            개인정보 보호책임자에 관한 사항
+        </div>
+        <p>운영자는 개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보 처리와 관련한 정보주체의 불만처리 및 피해구제 등을 위하여 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.</p>
+        <div class="highlight-row">
+            <strong>개인정보 보호책임자</strong><br>
+            성명: 신재우<br>
+            직책: 운영자<br>
+            이메일: <a href="mailto:momlego5510@gmail.com">momlego5510@gmail.com</a>
+        </div>
+        <p>정보주체는 운영자의 서비스를 이용하시면서 발생한 모든 개인정보 보호 관련 문의, 불만처리, 피해구제 등에 관한 사항을 개인정보 보호책임자에게 문의하실 수 있습니다. 운영자는 정보주체의 문의에 대해 지체없이 답변 및 처리해 드릴 것입니다.</p>
+    </div>
+
+    <!-- 14. 열람청구 접수 부서 -->
+    <div class="section-card">
+        <div class="section-title">
+            <span class="section-num">14</span>
+            개인정보의 열람청구를 접수·처리하는 부서
+        </div>
+        <p>정보주체는 「개인정보 보호법」 제35조에 따른 개인정보의 열람 청구를 아래의 부서에 할 수 있습니다. 운영자는 정보주체의 개인정보 열람청구가 신속하게 처리되도록 노력하겠습니다.</p>
+        <div class="highlight-row">
+            <strong>개인정보 열람청구 접수·처리 부서</strong><br>
+            담당: 신재우 (개인정보 보호책임자)<br>
+            이메일: <a href="mailto:momlego5510@gmail.com">momlego5510@gmail.com</a>
+        </div>
+    </div>
+
+    <!-- 15. 권익침해 구제방법 -->
+    <div class="section-card">
+        <div class="section-title">
+            <span class="section-num">15</span>
+            정보주체의 권익침해에 대한 구제방법
+        </div>
+        <p>정보주체는 개인정보침해로 인한 구제를 받기 위하여 개인정보분쟁조정위원회, 한국인터넷진흥원 개인정보침해신고센터 등에 분쟁해결이나 상담 등을 신청할 수 있습니다. 이 밖에 기타 개인정보침해의 신고, 상담에 대하여는 아래의 기관에 문의하시기 바랍니다.</p>
+        <ul>
+            <li><strong>개인정보분쟁조정위원회:</strong> (국번없이) 1833-6972 / <a href="https://www.kopico.go.kr" target="_blank">www.kopico.go.kr</a></li>
+            <li><strong>개인정보침해신고센터 (한국인터넷진흥원):</strong> (국번없이) 118 / <a href="https://privacy.kisa.or.kr" target="_blank">privacy.kisa.or.kr</a></li>
+            <li><strong>대검찰청 사이버수사과:</strong> (국번없이) 1301 / <a href="https://www.spo.go.kr" target="_blank">www.spo.go.kr</a></li>
+            <li><strong>경찰청 사이버안전국:</strong> (국번없이) 182 / <a href="https://cyberbureau.police.go.kr" target="_blank">cyberbureau.police.go.kr</a></li>
+        </ul>
+        <p>「개인정보 보호법」 제35조(개인정보의 열람), 제36조(개인정보의 정정·삭제), 제37조(개인정보의 처리정지 등)의 규정에 의한 요구에 대하여 공공기관의 장이 행한 처분 또는 부작위로 인하여 권리 또는 이익의 침해를 받은 자는 행정심판법이 정하는 바에 따라 행정심판을 청구할 수 있습니다.</p>
+    </div>
+
+    <!-- 16. 처리방침의 변경 -->
+    <div class="section-card">
+        <div class="section-title">
+            <span class="section-num">16</span>
+            개인정보 처리방침의 변경에 관한 사항
+        </div>
+        <p>이 개인정보처리방침은 2025년 4월 9일부터 적용됩니다.</p>
+        <p>법령, 정책 또는 보안기술의 변경에 따라 내용의 추가, 삭제 및 수정이 있을 시에는 변경사항의 시행 7일 전부터 웹사이트 공지를 통하여 고지할 것입니다. 다만, 정보주체의 권리 또는 의무에 중대한 변경이 발생하는 경우에는 시행 30일 전부터 고지합니다.</p>
+        <div class="highlight-row">
+            <strong>이전 개인정보처리방침:</strong> 2025년 1월 1일 ~ 2025년 4월 8일 (문의 시 제공)
+        </div>
+    </div>
+
+    <div class="privacy-footer">
+        © 2025 주린이 계산기 · 본 방침은 「개인정보 보호법」 제30조 및 시행령 제31조에 따라 작성되었습니다.
+    </div>
+
+</div>
 </body>
 </html>
