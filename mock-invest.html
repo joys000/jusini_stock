@@ -6,7 +6,7 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagservices.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://finnhub.io https://*.onrender.com https://corsproxy.io https://query2.finance.yahoo.com https://finance.naver.com https://pagead2.googlesyndication.com; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; object-src 'none'; base-uri 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagservices.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.workers.dev https://*.onrender.com https://corsproxy.io https://query2.finance.yahoo.com https://finance.naver.com https://pagead2.googlesyndication.com; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; object-src 'none'; base-uri 'self';">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>실전 모의투자 | 주린이 계산기</title>
@@ -325,7 +325,8 @@ function escHtml(str) {
         .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-const FINNHUB_KEY = 'd70u9vhr01ql6rg0mgr0d70u9vhr01ql6rg0mgrg';
+// Finnhub API는 Cloudflare Worker 프록시를 통해 호출 (API 키 서버측 보관)
+const PROXY_URL = "https://workerjs.momlego5510.workers.dev/api";
 const CORS_PROXY = 'https://corsproxy.io/?url=';
 const EX_RATE = 1350;
 
@@ -449,7 +450,7 @@ function setupSearch() {
             // Finnhub search for US stocks
             timer = setTimeout(async () => {
                 try {
-                    const res = await fetch(`https://finnhub.io/api/v1/search?q=${encodeURIComponent(input.value.trim())}&token=${FINNHUB_KEY}`);
+                    const res = await fetch(`${PROXY_URL}/search?q=${encodeURIComponent(input.value.trim())}`);
                     const data = await res.json();
                     if (data.result && data.result.length) {
                         const filtered = data.result.filter(i => i.type === 'Common Stock' && !i.symbol.includes('.') && i.symbol.length <= 5);
@@ -497,7 +498,7 @@ async function selectUSStock(symbol, name) {
     document.getElementById('selected-info').innerHTML = '<span class="loading-spinner"></span>';
 
     try {
-        const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${FINNHUB_KEY}`);
+        const res = await fetch(`${PROXY_URL}/quote?symbol=${symbol}`);
         const data = await res.json();
         if (data.c) {
             const krwPrice = Math.round(data.c * EX_RATE);
@@ -590,7 +591,7 @@ async function refreshAllPrices() {
             newPrice = await fetchYFPrice(sym);
         } else {
             try {
-                const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${sym}&token=${FINNHUB_KEY}`);
+                const res = await fetch(`${PROXY_URL}/quote?symbol=${sym}`);
                 const data = await res.json();
                 if (data.c) newPrice = Math.round(data.c * EX_RATE);
             } catch(e) {}
