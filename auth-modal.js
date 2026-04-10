@@ -363,8 +363,14 @@ async function initAuth() {
             closeModal();
         }
     } catch (e) {
-        if (e.code && e.code !== 'auth/no-auth-event') {
+        const ignoreCodes = ['auth/no-auth-event', 'auth/null-user'];
+        if (e.code && !ignoreCodes.includes(e.code)) {
             console.warn('getRedirectResult 오류:', e.code, e.message);
+            // redirect 결과 오류는 UI 에러로 표시 (모달이 열려 있을 때만)
+            const errEl = document.getElementById('auth-error');
+            if (errEl && document.getElementById('auth-modal')?.classList.contains('active')) {
+                showAuthError(errEl, `로그인 오류 (${e.code})\n잠시 후 다시 시도해주세요.`);
+            }
         }
     }
 
