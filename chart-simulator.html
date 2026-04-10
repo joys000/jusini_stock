@@ -219,14 +219,23 @@
             .action-row { grid-template-columns: 1fr; gap: 9px; }
             .result-grid { grid-template-columns: 1fr; }
         }
-    </style>
+    
+        /* ── 브랜드 로고 이미지 ── */
+        .logo-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: block;
+            flex-shrink: 0;
+        }
+        </style>
 </head>
 <body>
 
 <!-- ═══ FIXED HEADER ═══ -->
 <header>
     <a href="index.html" class="logo">
-        <div class="logo-icon">📊</div>
+        <img class="logo-img" src="logo.svg" alt="주린이 계산기 로고">
         주린이 계산기
     </a>
     <nav class="nav-links">

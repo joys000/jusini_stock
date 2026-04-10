@@ -1224,7 +1224,16 @@
             .search-container { padding: 1.5rem; }
             .download-grid { grid-template-columns: 1fr; }
         }
-    </style>
+    
+        /* ── 브랜드 로고 이미지 ── */
+        .logo-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: block;
+            flex-shrink: 0;
+        }
+        </style>
 </head>
 <body>
 
@@ -1232,7 +1241,7 @@
     <header>
         <nav>
             <a href="index.html" class="logo">
-                <div class="logo-icon">📊</div>
+                <img class="logo-img" src="logo.svg" alt="주린이 계산기 로고">
                 <span>주린이 계산기</span>
             </a>
 
@@ -1647,7 +1656,7 @@
         <div class="footer-content">
             <div class="footer-section">
                 <div class="footer-logo">
-                    <div class="logo-icon" style="width:28px;height:28px;font-size:0.9rem;">📊</div>
+                    <img class="logo-img" src="logo.svg" alt="주린이 계산기 로고" style="width:28px;height:28px;">
                     <span style="font-weight:800;font-size:0.95rem;color:#fff;letter-spacing:0.04em;text-transform:uppercase;">주린이 계산기</span>
                 </div>
                 <p>초보 투자자를 위한<br>무료 주식 계산 도구</p>
@@ -1972,76 +1981,93 @@
             await fetchAndDisplayData();
         }
 
+        // Yahoo Finance API fetch (corsproxy 경유)
+        async function yfFetch(symbol) {
+            const controller = new AbortController();
+            const tid = setTimeout(() => controller.abort(), 7000);
+            try {
+                // query1 우선, 실패 시 query2
+                for (const host of ['query1', 'query2']) {
+                    const url = `https://${host}.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbol)}`;
+                    const proxied = `https://corsproxy.io/?url=${encodeURIComponent(url)}`;
+                    try {
+                        const res = await fetch(proxied, {
+                            signal: controller.signal,
+                            headers: { 'Accept': 'application/json' }
+                        });
+                        if (!res.ok) continue;
+                        const json = await res.json();
+                        const q = json?.quoteResponse?.result?.[0];
+                        if (q?.regularMarketPrice) { clearTimeout(tid); return q; }
+                    } catch(e) { if (e.name === 'AbortError') break; }
+                }
+            } finally { clearTimeout(tid); }
+            return null;
+        }
+
         async function fetchAndDisplayData() {
             const priceEl = document.getElementById('stock-price');
             priceEl.textContent = "불러오는 중...";
 
-            const fmtKRW = v => (v !== undefined && v !== null && !isNaN(v)) ? Number(v).toLocaleString('ko-KR') + '원' : '—';
-            const fmtUSD = v => (v !== undefined && v !== null && !isNaN(v)) ? '$' + Number(v).toFixed(2) : '—';
+            const sym  = currentSelectedSymbol;
+            const isKR = isCurrentKR;
+
+            const fmtKRW = v => (v != null && !isNaN(v)) ? Number(v).toLocaleString('ko-KR') + '원' : '—';
+            const fmtUSD = v => (v != null && !isNaN(v)) ? '$' + Number(v).toFixed(2) : '—';
 
             try {
-                if (isCurrentKR) {
-                    // 1차: Render 서버 시도
-                    const res = await fetch(`${RENDER_SERVER_URL}/quote/kr/${currentSelectedSymbol}`).catch(() => null);
-                    const data = res?.ok ? await res.json() : null;
+                // ── 1차: Yahoo Finance (주요 소스, 무료·무제한) ──
+                const q = await yfFetch(sym);
 
-                    if (data?.status === "success" && data.price) {
-                        priceEl.textContent = fmtKRW(data.price);
-                        updateChangeUI(data.change ?? '—', data.change_percent ?? '—', data.time ?? '실시간', !!data.is_positive);
-                        document.getElementById('stock-open').textContent = fmtKRW(data.open);
-                        document.getElementById('stock-high').textContent = fmtKRW(data.high);
-                        document.getElementById('stock-low').textContent = fmtKRW(data.low);
-                        document.getElementById('stock-prev-close').textContent = fmtKRW(data.prev_close);
+                if (q) {
+                    const isKRW  = isKR || q.currency === 'KRW';
+                    const fmt    = isKRW ? fmtKRW : fmtUSD;
+                    const chgRaw = q.regularMarketChange ?? 0;
+                    const chg    = isKRW
+                        ? Number(chgRaw).toLocaleString('ko-KR')
+                        : chgRaw.toFixed(2);
+                    const chgPct = (q.regularMarketChangePercent ?? 0).toFixed(2) + '%';
+
+                    priceEl.textContent = fmt(q.regularMarketPrice);
+                    updateChangeUI(chg, chgPct, '실시간', chgRaw >= 0);
+                    document.getElementById('stock-open').textContent      = fmt(q.regularMarketOpen);
+                    document.getElementById('stock-high').textContent      = fmt(q.regularMarketDayHigh);
+                    document.getElementById('stock-low').textContent       = fmt(q.regularMarketDayLow);
+                    document.getElementById('stock-prev-close').textContent = fmt(q.regularMarketPreviousClose);
+                    return;
+                }
+
+                // ── 2차 폴백: Finnhub (US) / Render (KR) ──
+                if (isKR) {
+                    const res = await fetch(`${RENDER_SERVER_URL}/quote/kr/${sym}`).catch(() => null);
+                    const d   = res?.ok ? await res.json() : null;
+                    if (d?.status === 'success' && d.price) {
+                        priceEl.textContent = fmtKRW(d.price);
+                        updateChangeUI(d.change ?? '—', d.change_percent ?? '—', d.time ?? '보조소스', !!d.is_positive);
+                        document.getElementById('stock-open').textContent       = fmtKRW(d.open);
+                        document.getElementById('stock-high').textContent       = fmtKRW(d.high);
+                        document.getElementById('stock-low').textContent        = fmtKRW(d.low);
+                        document.getElementById('stock-prev-close').textContent = fmtKRW(d.prev_close);
                     } else {
-                        // 2차 폴백: Yahoo Finance
-                        await fetchFromYahoo(currentSelectedSymbol, true);
+                        priceEl.textContent = '데이터를 불러올 수 없습니다';
                     }
                 } else {
-                    // 1차: Cloudflare Worker (Finnhub)
-                    const res = await fetch(`${PROXY_URL}/quote?symbol=${currentSelectedSymbol}`).catch(() => null);
-                    const data = res?.ok ? await res.json() : null;
-
-                    if (data?.c) {
-                        priceEl.textContent = fmtUSD(data.c);
-                        updateChangeUI(data.d?.toFixed(2) ?? '—', (data.dp?.toFixed(2) ?? '—') + '%', '실시간', (data.d ?? 0) >= 0);
-                        document.getElementById('stock-open').textContent = fmtUSD(data.o);
-                        document.getElementById('stock-high').textContent = fmtUSD(data.h);
-                        document.getElementById('stock-low').textContent = fmtUSD(data.l);
-                        document.getElementById('stock-prev-close').textContent = fmtUSD(data.pc);
+                    const res = await fetch(`${PROXY_URL}/quote?symbol=${sym}`).catch(() => null);
+                    const d   = res?.ok ? await res.json() : null;
+                    if (d?.c) {
+                        priceEl.textContent = fmtUSD(d.c);
+                        updateChangeUI((d.d ?? 0).toFixed(2), (d.dp ?? 0).toFixed(2) + '%', '보조소스', (d.d ?? 0) >= 0);
+                        document.getElementById('stock-open').textContent       = fmtUSD(d.o);
+                        document.getElementById('stock-high').textContent       = fmtUSD(d.h);
+                        document.getElementById('stock-low').textContent        = fmtUSD(d.l);
+                        document.getElementById('stock-prev-close').textContent = fmtUSD(d.pc);
                     } else {
-                        // 2차 폴백: Yahoo Finance
-                        await fetchFromYahoo(currentSelectedSymbol, false);
+                        priceEl.textContent = '데이터를 불러올 수 없습니다';
                     }
                 }
-            } catch (e) { priceEl.textContent = "에러 발생"; console.error(e); }
-        }
-
-        async function fetchFromYahoo(symbol, isKR) {
-            const priceEl = document.getElementById('stock-price');
-            try {
-                const yfUrl = `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbol)}`;
-                const res = await fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl)}`);
-                if (!res.ok) throw new Error('YF fetch failed');
-                const json = await res.json();
-                const q = json?.quoteResponse?.result?.[0];
-                if (!q) { priceEl.textContent = '데이터 없음'; return; }
-
-                const fmtKRW = v => (v != null && !isNaN(v)) ? Number(v).toLocaleString('ko-KR') + '원' : '—';
-                const fmtUSD = v => (v != null && !isNaN(v)) ? '$' + Number(v).toFixed(2) : '—';
-                const fmt = isKR ? fmtKRW : fmtUSD;
-
-                const chg = (q.regularMarketChange ?? 0).toFixed(2);
-                const chgPct = (q.regularMarketChangePercent ?? 0).toFixed(2) + '%';
-
-                priceEl.textContent = fmt(q.regularMarketPrice);
-                updateChangeUI(chg, chgPct, '실시간 (YF)', (q.regularMarketChange ?? 0) >= 0);
-                document.getElementById('stock-open').textContent = fmt(q.regularMarketOpen);
-                document.getElementById('stock-high').textContent = fmt(q.regularMarketDayHigh);
-                document.getElementById('stock-low').textContent = fmt(q.regularMarketDayLow);
-                document.getElementById('stock-prev-close').textContent = fmt(q.regularMarketPreviousClose);
             } catch (e) {
-                priceEl.textContent = '데이터 없음';
-                console.error('Yahoo Finance 폴백 실패:', e);
+                priceEl.textContent = '불러오기 실패';
+                console.error('fetchAndDisplayData 오류:', e);
             }
         }
 

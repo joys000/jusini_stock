@@ -137,14 +137,23 @@
 
         /* ── HISTORY PANEL HIDDEN BY DEFAULT ── */
         #history-panel { display: none; }
-    </style>
+    
+        /* ── 브랜드 로고 이미지 ── */
+        .logo-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: block;
+            flex-shrink: 0;
+        }
+        </style>
 </head>
 <body>
 
 <header>
     <nav>
         <a href="index.html" class="logo">
-            <span class="logo-icon">📊</span>
+            <img class="logo-img" src="logo.svg" alt="주린이 계산기 로고">
             주린이 계산기
         </a>
         <ul class="nav-links">
