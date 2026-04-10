@@ -451,25 +451,49 @@ function setupSearch() {
                 results.style.display = 'block';
             }
         } else {
-            // Finnhub search for US stocks
+            // 해외 주식: Finnhub + Yahoo Finance 폴백
             timer = setTimeout(async () => {
+                const YF_SEARCH = `https://corsproxy.io/?url=${encodeURIComponent('https://query2.finance.yahoo.com/v1/finance/search?quotesCount=10&newsCount=0&enableFuzzyQuery=false&q=')}`;
                 try {
-                    const res = await fetch(`${PROXY_URL}/search?q=${encodeURIComponent(input.value.trim())}`);
-                    const data = await res.json();
-                    if (data.result && data.result.length) {
-                        const filtered = data.result.filter(i => i.type === 'Common Stock' && !i.symbol.includes('.') && i.symbol.length <= 5);
-                        results.innerHTML = filtered.slice(0, 6).map(i => `
-                            <div class="res-item" onclick="selectUSStock('${escHtml(i.symbol)}','${escHtml(i.description)}')">
+                    const [finnRes, yfRes] = await Promise.all([
+                        fetch(`${PROXY_URL}/search?q=${encodeURIComponent(input.value.trim())}`).catch(() => null),
+                        fetch(YF_SEARCH + encodeURIComponent(input.value.trim())).catch(() => null)
+                    ]);
+
+                    let items = [];
+
+                    if (finnRes?.ok) {
+                        const data = await finnRes.json();
+                        if (data.result?.length) {
+                            const filtered = data.result.filter(i => i.type === 'Common Stock' && !i.symbol.includes('.') && i.symbol.length <= 5);
+                            items = filtered.slice(0, 6).map(i => ({ symbol: i.symbol, name: i.description }));
+                        }
+                    }
+                    // Yahoo Finance 폴백
+                    if (items.length === 0 && yfRes?.ok) {
+                        const yfData = await yfRes.json();
+                        const yfFiltered = (yfData.quotes || [])
+                            .filter(q => (q.quoteType === 'EQUITY' || q.quoteType === 'ETF') && !q.symbol.includes('.'))
+                            .slice(0, 8);
+                        items = yfFiltered.map(q => ({ symbol: q.symbol, name: q.shortname || q.longname || q.symbol }));
+                    }
+
+                    if (items.length) {
+                        results.innerHTML = items.map(i => `
+                            <div class="res-item" onclick="selectUSStock('${escHtml(i.symbol)}','${escHtml(i.name)}')">
                                 <div>
                                     <div class="res-symbol">${escHtml(i.symbol)}</div>
-                                    <div class="res-name">${i.description}</div>
+                                    <div class="res-name">${escHtml(i.name)}</div>
                                 </div>
                                 <span class="res-market us">US</span>
                             </div>
                         `).join('');
                         results.style.display = 'block';
+                    } else {
+                        results.innerHTML = '<div style="padding:14px;text-align:center;color:var(--muted);font-size:0.82rem;">검색 결과 없음</div>';
+                        results.style.display = 'block';
                     }
-                } catch(e) { console.warn('Finnhub search error', e); }
+                } catch(e) { console.warn('Search error', e); }
             }, 350);
         }
     });

@@ -943,23 +943,42 @@
             searchTimer = setTimeout(async () => {
                 let combinedResults = [];
                 try {
-                    const krTargetUrl = `${RENDER_SERVER_URL}/search/kr?q=${encodeURIComponent(query)}`;
-                    const krRes = await fetch(krTargetUrl).catch(() => null);
-                    if (krRes && krRes.ok) {
+                    const YF_SEARCH = `https://corsproxy.io/?url=${encodeURIComponent('https://query2.finance.yahoo.com/v1/finance/search?quotesCount=12&newsCount=0&enableFuzzyQuery=false&q=')}`;
+                    const [krRes, usRes, yfRes] = await Promise.all([
+                        fetch(`${RENDER_SERVER_URL}/search/kr?q=${encodeURIComponent(query)}`).catch(() => null),
+                        fetch(`${PROXY_URL}/search?q=${encodeURIComponent(query)}`).catch(() => null),
+                        fetch(YF_SEARCH + encodeURIComponent(query)).catch(() => null)
+                    ]);
+
+                    // 국내 주식 (Render 서버)
+                    if (krRes?.ok) {
                         const krData = await krRes.json();
                         if (krData.status === "success") combinedResults = [...combinedResults, ...krData.result];
                     }
-
-                    const usRes = await fetch(`${PROXY_URL}/search?q=${encodeURIComponent(query)}`).catch(() => null);
-                    if (usRes && usRes.ok) {
+                    // 해외 주식 (Finnhub Worker)
+                    if (usRes?.ok) {
                         const usData = await usRes.json();
-                        if (usData.result) combinedResults = [...combinedResults, ...usData.result];
+                        if (usData.result) combinedResults = [...combinedResults, ...usData.result.filter(i => !['BOND','FUTURE','CURRENCY','INDEX'].includes(i.type))];
+                    }
+                    // Yahoo Finance 폴백 (해외 검색 보완)
+                    if (yfRes?.ok) {
+                        const yfData = await yfRes.json();
+                        const yfList = (yfData.quotes || [])
+                            .filter(q => q.quoteType === 'EQUITY' || q.quoteType === 'ETF')
+                            .map(q => ({
+                                symbol: q.symbol,
+                                displaySymbol: q.symbol,
+                                description: q.shortname || q.longname || q.symbol,
+                                type: (q.symbol.endsWith('.KS') || q.symbol.endsWith('.KQ')) ? 'KOREA' : 'Common Stock'
+                            }));
+                        const existing = new Set(combinedResults.map(i => i.symbol));
+                        combinedResults = [...combinedResults, ...yfList.filter(q => !existing.has(q.symbol))];
                     }
 
                     if (combinedResults.length > 0) {
                         displaySearchResults(combinedResults, query);
                     } else {
-                        resultsDiv.innerHTML = `<div class="no-results" style="padding:1rem;">"${query}" 결과가 없습니다.</div>`;
+                        resultsDiv.innerHTML = `<div class="search-item" style="cursor:default;color:var(--text-secondary);padding:1rem;">"${query}" 검색 결과가 없습니다.</div>`;
                         resultsDiv.style.display = 'block';
                     }
                 } catch (error) {
