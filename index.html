@@ -1701,8 +1701,8 @@
         }
 
         const RENDER_SERVER_URL = "https://dividend-server.onrender.com";
-        // Finnhub API는 Cloudflare Worker 프록시를 통해 호출 (API 키 서버측 보관)
-        const PROXY_URL = "https://workerjs.momlego5510.workers.dev/api";
+        const PROXY_URL    = "https://workerjs.momlego5510.workers.dev/api";
+        const YF_PROXY_URL = "https://workerjs.momlego5510.workers.dev/yf";   // Yahoo Finance 전용
 
         let searchTimer = null;
         let currentSelectedSymbol = null;
@@ -1981,27 +1981,33 @@
             await fetchAndDisplayData();
         }
 
-        // Yahoo Finance API fetch (corsproxy 경유)
+        // Yahoo Finance 데이터 fetch — Worker → 직접 → corsproxy 순서로 시도
         async function yfFetch(symbol) {
-            const controller = new AbortController();
-            const tid = setTimeout(() => controller.abort(), 7000);
-            try {
-                // query1 우선, 실패 시 query2
-                for (const host of ['query1', 'query2']) {
-                    const url = `https://${host}.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbol)}`;
-                    const proxied = `https://corsproxy.io/?url=${encodeURIComponent(url)}`;
-                    try {
-                        const res = await fetch(proxied, {
-                            signal: controller.signal,
-                            headers: { 'Accept': 'application/json' }
-                        });
-                        if (!res.ok) continue;
-                        const json = await res.json();
-                        const q = json?.quoteResponse?.result?.[0];
-                        if (q?.regularMarketPrice) { clearTimeout(tid); return q; }
-                    } catch(e) { if (e.name === 'AbortError') break; }
+            const encoded = encodeURIComponent(symbol);
+            // 시도 순서: 1) 우리 Worker(가장 신뢰), 2) 직접 YF, 3) corsproxy 폴백
+            const candidates = [
+                `${YF_PROXY_URL}/v7/finance/quote?symbols=${encoded}`,
+                `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encoded}`,
+                `https://corsproxy.io/?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}`)}`,
+            ];
+            for (const url of candidates) {
+                const ctrl = new AbortController();
+                const tid  = setTimeout(() => ctrl.abort(), 7000);
+                try {
+                    const res  = await fetch(url, {
+                        signal: ctrl.signal,
+                        headers: { 'Accept': 'application/json', 'Accept-Language': 'en-US' }
+                    });
+                    clearTimeout(tid);
+                    if (!res.ok) continue;
+                    const json = await res.json();
+                    const q    = json?.quoteResponse?.result?.[0];
+                    if (q?.regularMarketPrice != null) return q;
+                } catch(e) {
+                    clearTimeout(tid);
+                    if (e.name === 'AbortError') continue;   // timeout → 다음 시도
                 }
-            } finally { clearTimeout(tid); }
+            }
             return null;
         }
 

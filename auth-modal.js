@@ -213,75 +213,88 @@ function saveLoginPrefs(remember) {
     }
 }
 
+const GOOGLE_BTN_INNER = `<svg width="19" height="19" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+</svg>Google로 계속하기`;
+
+function showAuthError(errEl, msg, isWarn = false) {
+    if (!errEl) return;
+    errEl.style.background = isWarn ? 'rgba(255,170,0,0.1)' : 'rgba(255,107,107,0.1)';
+    errEl.style.borderColor = isWarn ? 'rgba(255,170,0,0.3)' : 'rgba(255,107,107,0.25)';
+    errEl.style.color = isWarn ? '#FFAA00' : '#FF6B6B';
+    errEl.style.whiteSpace = 'pre-line';
+    errEl.textContent = msg;
+    errEl.style.display = 'block';
+}
+
 async function handleGoogleLogin() {
     const { auth, provider } = getFirebase();
-    const btn = document.getElementById('auth-google-btn');
-    const errEl = document.getElementById('auth-error');
+    const btn    = document.getElementById('auth-google-btn');
+    const errEl  = document.getElementById('auth-error');
     const remember = document.getElementById('auth-remember')?.checked ?? true;
 
-    if (btn) { btn.disabled = true; btn.style.opacity = '0.7'; btn.textContent = '로그인 중...'; }
+    if (btn)   { btn.disabled = true; btn.style.opacity = '0.7'; btn.textContent = '처리 중...'; }
     if (errEl) errEl.style.display = 'none';
 
+    // 로그인 방식 결정:
+    // GitHub Pages(.github.io) → signInWithRedirect (팝업 차단·서드파티쿠키 이슈 완전 회피)
+    // 로컬/기타              → signInWithPopup 우선, 실패 시 redirect 폴백
+    const useRedirect = location.hostname.endsWith('.github.io');
+
     try {
-        await signInWithPopup(auth, provider);
         saveLoginPrefs(remember);
-        closeModal();
+
+        if (useRedirect) {
+            // ── Redirect 방식 (GitHub Pages 전용) ──────────────────
+            // 버튼 UI 업데이트 후 페이지 이동 (return 전에 사용자가 볼 수 있도록)
+            if (btn) { btn.textContent = 'Google 페이지로 이동 중...'; btn.style.opacity = '0.5'; }
+            await signInWithRedirect(auth, provider);
+            // 이 줄 이후는 실행되지 않음 (페이지 이동)
+        } else {
+            // ── Popup 방식 (로컬 환경) ──────────────────────────────
+            await signInWithPopup(auth, provider);
+            closeModal();
+        }
     } catch (err) {
         console.error('로그인 실패:', err.code, err.message);
 
-        if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
-            // 팝업 차단 시 → 리다이렉트 방식으로 전환
-            if (errEl) {
-                errEl.style.background = 'rgba(255,170,0,0.1)';
-                errEl.style.borderColor = 'rgba(255,170,0,0.3)';
-                errEl.style.color = '#FFAA00';
-                errEl.textContent = '팝업이 차단되었습니다. 페이지 이동 방식으로 재시도합니다...';
-                errEl.style.display = 'block';
-            }
-            // 자동 redirect 폴백
-            setTimeout(async () => {
-                saveLoginPrefs(remember);
-                await signInWithRedirect(auth, provider);
-            }, 1200);
-            return;
-        }
-
-        // 에러 코드별 상세 메시지
         const msgMap = {
+            'auth/popup-blocked':
+                '팝업이 차단되었습니다.\n페이지 이동 방식으로 재시도합니다...',
+            'auth/popup-closed-by-user':
+                '로그인 창이 닫혔습니다. 다시 시도해주세요.',
             'auth/unauthorized-domain':
-                `이 도메인이 Firebase에 등록되지 않았습니다.\n` +
-                `Firebase Console → Authentication → Settings → Authorized Domains에\n` +
-                `"${location.hostname}" 을 추가해주세요.`,
+                `도메인 미인증 오류\nFirebase Console → Authentication → Authorized Domains\n"${location.hostname}" 추가 필요`,
             'auth/operation-not-allowed':
-                'Google 로그인이 Firebase 프로젝트에서 활성화되지 않았습니다.',
+                'Firebase에서 Google 로그인이 비활성화 상태입니다.',
             'auth/network-request-failed':
-                '네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.',
+                '네트워크 오류입니다. 인터넷 연결을 확인하세요.',
             'auth/too-many-requests':
                 '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
-            'auth/user-disabled':
-                '이 계정은 비활성화되었습니다. 관리자에게 문의하세요.',
+            'auth/internal-error':
+                '내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
         };
-        const msg = msgMap[err.code] ??
-            `로그인 오류 (${err.code ?? 'unknown'})\n잠시 후 다시 시도해주세요.`;
 
-        if (errEl) {
-            errEl.style.background = 'rgba(255,107,107,0.1)';
-            errEl.style.borderColor = 'rgba(255,107,107,0.25)';
-            errEl.style.color = '#FF6B6B';
-            errEl.style.whiteSpace = 'pre-line';
-            errEl.textContent = msg;
-            errEl.style.display = 'block';
+        const isPopupBlock = err.code === 'auth/popup-blocked';
+        const msg = msgMap[err.code] ?? `오류 코드: ${err.code ?? 'unknown'}\n잠시 후 다시 시도해주세요.`;
+        showAuthError(errEl, msg, isPopupBlock);
+
+        // 팝업 차단이면 redirect로 자동 재시도
+        if (isPopupBlock) {
+            setTimeout(async () => {
+                try { await signInWithRedirect(auth, provider); } catch(e) {}
+            }, 1500);
+            return; // finally에서 버튼 복원 안 함
         }
     } finally {
-        if (btn) {
+        // redirect 중이거나 팝업차단 재시도 중일 때는 버튼 유지
+        if (btn && !btn.textContent.includes('이동')) {
             btn.disabled = false;
             btn.style.opacity = '1';
-            btn.innerHTML = `<svg width="19" height="19" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-            </svg>Google로 계속하기`;
+            btn.innerHTML = GOOGLE_BTN_INNER;
         }
     }
 }
@@ -351,15 +364,19 @@ async function initAuth() {
     if (loginBtn)  loginBtn.onclick  = openModal;
     if (logoutBtn) logoutBtn.onclick = handleLogout;
 
-    // redirect 로그인 결과 처리 (팝업 차단 시 redirect 방식 사용 후 돌아왔을 때)
+    // ── redirect 로그인 결과 처리 ─────────────────────────────
+    // GitHub Pages에서 signInWithRedirect 후 돌아왔을 때 결과를 수신
     try {
         const result = await getRedirectResult(auth);
         if (result?.user) {
-            // redirect 로그인 성공 → 저장된 프리퍼런스 유지 (이미 저장됨)
-            console.log('redirect 로그인 성공:', result.user.displayName);
+            console.log('✅ redirect 로그인 성공:', result.user.displayName);
+            closeModal();   // 모달이 남아있을 경우 닫기
         }
     } catch (e) {
-        console.warn('getRedirectResult 오류:', e.code);
+        // redirect 결과 오류는 조용히 처리 (페이지 최초 로드 시 항상 호출됨)
+        if (e.code && e.code !== 'auth/no-auth-event') {
+            console.warn('getRedirectResult 오류:', e.code, e.message);
+        }
     }
 
     onAuthStateChanged(auth, (user) => {
