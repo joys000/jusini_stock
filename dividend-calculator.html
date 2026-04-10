@@ -6,7 +6,7 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagservices.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.workers.dev https://*.onrender.com https://corsproxy.io https://query2.finance.yahoo.com https://finance.naver.com https://pagead2.googlesyndication.com https://corsproxy.io https://query2.finance.yahoo.com; frame-src https://jurinicalc.firebaseapp.com https://accounts.google.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; object-src 'none'; base-uri 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagservices.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.gstatic.com https://cdn.sheetjs.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.workers.dev https://*.onrender.com https://corsproxy.io https://query2.finance.yahoo.com https://finance.naver.com https://pagead2.googlesyndication.com https://corsproxy.io https://query2.finance.yahoo.com; frame-src https://jurinicalc.firebaseapp.com https://accounts.google.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; object-src 'none'; base-uri 'self';">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="배당금 자동 계산기 - 배당 수익, 재투자 효과, 세금까지 한 번에 계산하세요">
@@ -14,1114 +14,420 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
     
-    <style>
+        <style>
+        /* ── 주린이 계산기 공통 디자인 시스템 ── */
         :root {
-            --primary: #FFD600;
-            --primary-dark: #FFC400;
-            --success: #00D9A3;
-            --danger: #FF6B6B;
-            --neutral: #2D3436;
-            --neutral-light: #F8F9FA;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            
-            /* Light mode colors */
-            --bg-gradient-start: #E8F5E9;
-            --bg-gradient-end: #FFFFFF;
-            --card-bg: #FFFFFF;
-            --text-primary: #2D3436;
-            --text-secondary: #636E72;
-            --border-color: #E8E8E8;
-            --input-bg: #FFFFFF;
-            --pattern-color: rgba(0, 217, 163, 0.03);
+            --primary:          #FF5C00;
+            --primary-hover:    #FF7A30;
+            --primary-glow:     rgba(255,92,0,0.22);
+            --success:          #00D9A3;
+            --danger:           #FF6B6B;
+            --bg:               #000;
+            --card:             #111;
+            --card-hover:       #161616;
+            --border:           #1e1e1e;
+            --text:             #fff;
+            --text-secondary:   #888;
+            --muted:            #444;
+            --input-bg:         #0a0a0a;
         }
-        
-        /* Dark Mode */
-        body[data-theme="dark"] {
-            --primary: #FFD600;
-            --primary-dark: #FFC400;
-            --success: #00D9A3;
-            --danger: #FF6B6B;
-            --neutral: #E8E8E8;
-            --neutral-light: #2D3436;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            
-            --bg-gradient-start: #1A1A1A;
-            --bg-gradient-end: #2D3436;
-            --card-bg: #333333;
-            --text-primary: #E8E8E8;
-            --text-secondary: #B0B0B0;
-            --border-color: #4A4A4A;
-            --input-bg: #2D3436;
-            --pattern-color: rgba(0, 217, 163, 0.08);
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-        }
-        
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
         body {
-            font-family: 'DM Sans', sans-serif;
-            color: var(--text-primary);
-            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
-            line-height: 1.6;
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
-            transition: background 0.3s ease, color 0.3s ease;
+            line-height: 1.6;
         }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                repeating-linear-gradient(0deg, transparent, transparent 49px, var(--pattern-color) 49px, var(--pattern-color) 50px),
-                repeating-linear-gradient(90deg, transparent, transparent 49px, var(--pattern-color) 49px, var(--pattern-color) 50px);
-            pointer-events: none;
-            z-index: 0;
-        }
-        
-        /* Header */
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* ── HEADER / NAV ── */
         header {
-            background: var(--card-bg);
-            box-shadow: var(--shadow);
-            padding: 1.5rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            transition: background 0.3s ease;
+            position: fixed; top:0; left:0; right:0; z-index:200;
+            background: rgba(0,0,0,0.88); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.85rem 0;
         }
-        
         nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            max-width: 1200px; margin:0 auto; padding:0 2rem;
+            display:flex; justify-content:space-between; align-items:center;
         }
-        
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .theme-toggle {
-            background: var(--neutral-light);
-            border: 2px solid var(--border-color);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.5rem;
-        }
-        
-        .theme-toggle:hover {
-            background: var(--primary);
-            transform: rotate(20deg) scale(1.1);
-        }
-        
         .logo {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            display:flex; align-items:center; gap:0.55rem;
+            text-decoration:none; color:var(--text);
+            font-weight:800; font-size:0.95rem;
+            letter-spacing:0.04em; text-transform:uppercase;
         }
-        
+        .logo-icon {
+            background:var(--primary); width:28px; height:28px;
+            border-radius:7px; display:flex; align-items:center;
+            justify-content:center; font-size:0.9rem; flex-shrink:0;
+        }
+        .nav-actions { display:flex; align-items:center; gap:0.75rem; }
         .back-btn {
-            background: var(--neutral-light);
-            color: var(--text-primary);
-            padding: 0.75rem 1.5rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            background:transparent; border:1px solid var(--border);
+            color:var(--text-secondary); padding:0.42rem 1rem;
+            border-radius:50px; text-decoration:none;
+            font-size:0.82rem; font-weight:600;
+            transition:all 0.2s; font-family:'DM Sans',sans-serif;
         }
-        
-        .back-btn:hover {
-            background: var(--primary);
-            transform: translateX(-5px);
-        }
-        
-        /* Main Container */
+        .back-btn:hover { border-color:var(--primary); color:var(--primary); }
+
+        /* ── MAIN CONTAINER ── */
         .container {
-            max-width: 1200px;
-            margin: 3rem auto;
-            padding: 0 2rem;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .page-title {
-            text-align: center;
-            margin-bottom: 3rem;
-            animation: fadeInDown 0.8s ease;
-        }
-        
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .page-title h1 {
-            font-family: 'Fredoka', cursive;
-            font-size: 3rem;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-        
-        .page-title .icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            display: inline-block;
-            animation: bounce 2s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .page-title p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
+            max-width: 1200px; margin:0 auto;
+            padding: 6.5rem 2rem 4rem;
         }
 
-        #exchange-rate-info {
-            word-break: keep-all; /* 모바일에서 환율 정보 줄바꿈 최적화 */
+        /* ── PAGE HERO ── */
+        .page-hero {
+            text-align:center; margin-bottom:3rem;
+            animation: fadeInUp 0.7s ease both;
         }
-        
-        /* Calculator Layout */
-        .calculator-layout {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 2rem;
-            margin-bottom: 3rem;
-            animation: fadeInUp 0.8s ease 0.2s both;
-        }
-        
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity:0; transform:translateY(24px); }
+            to   { opacity:1; transform:translateY(0); }
         }
-        
-        /* Input Panel */
-        .input-panel {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 2.5rem;
-            box-shadow: var(--shadow);
-            transition: background 0.3s ease;
+        .page-badge {
+            display:inline-flex; align-items:center; gap:0.5rem;
+            background:rgba(255,92,0,0.1); border:1px solid rgba(255,92,0,0.25);
+            color:var(--primary); border-radius:50px;
+            padding:0.35rem 1rem; font-size:0.78rem; font-weight:700;
+            letter-spacing:0.06em; text-transform:uppercase; margin-bottom:1.25rem;
         }
-        
-        .input-panel h2 {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.75rem;
-            margin-bottom: 2rem;
-            color: var(--text-primary);
+        .badge-dot { width:6px; height:6px; border-radius:50%; background:var(--primary); animation:pulse 1.8s ease-in-out infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+        .page-hero h1 { font-size:2.4rem; font-weight:800; margin-bottom:0.6rem; letter-spacing:-0.02em; }
+        .page-hero h1 span { color:var(--primary); }
+        .page-hero p { color:var(--text-secondary); font-size:1rem; }
+        #exchange-rate-info { margin-top:0.75rem; color:var(--success); font-size:0.88rem; font-weight:600; }
+
+        /* ── LAYOUT ── */
+        .calculator-layout {
+            display:grid; grid-template-columns:1fr 1.25fr;
+            gap:1.5rem; margin-bottom:3rem;
+            animation: fadeInUp 0.7s ease 0.1s both;
         }
-        
-        .input-group {
-            margin-bottom: 1.75rem;
+
+        /* ── CARD ── */
+        .input-panel, .result-panel {
+            background:var(--card); border:1px solid var(--border);
+            border-radius:20px; padding:2rem;
+            transition:border-color 0.2s;
         }
-        
+        .input-panel:hover, .result-panel:hover { border-color:#2a2a2a; }
+        .input-panel h2, .result-panel h2 {
+            font-size:1.05rem; font-weight:800; margin-bottom:1.75rem;
+            text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary);
+        }
+
+        /* ── SECTION LABEL ── */
+        .section-label-orange {
+            font-size:0.72rem; font-weight:700; letter-spacing:0.1em;
+            text-transform:uppercase; color:var(--primary); margin-bottom:0.4rem;
+        }
+
+        /* ── INPUTS ── */
+        .input-group { margin-bottom:1.4rem; }
         .input-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
-            font-size: 1rem;
+            display:block; font-weight:700; font-size:0.82rem;
+            margin-bottom:0.5rem; color:var(--text-secondary);
+            text-transform:uppercase; letter-spacing:0.05em;
         }
-        
-        .input-group label .required {
-            color: var(--danger);
-        }
-        
-        .currency-toggle-btn {
-            background: linear-gradient(135deg, var(--success), #00C292);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-left: 0.75rem;
-            font-family: 'DM Sans', sans-serif;
-        }
-        
-        .currency-toggle-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 217, 163, 0.3);
-        }
-        
-        .currency-toggle-btn:active {
-            transform: translateY(0);
-        }
-        
-        .search-dividend-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #667EEA, #764BA2);
-            color: white;
-            border: none;
-            padding: 0.875rem 1.25rem;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 0.75rem;
-            font-family: 'DM Sans', sans-serif;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-        }
-        
-        .search-dividend-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
-        }
-        
-        .search-dividend-btn:active {
-            transform: translateY(0);
-        }
-        
-        /* Modal Popup */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 9999;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideIn {
-            from { opacity: 0; transform: translate(-50%, -48%); }
-            to { opacity: 1; transform: translate(-50%, -50%); }
-        }
-        
-        .modal-content {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 2.5rem;
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
-            width: 90%;
-            animation: slideIn 0.3s ease;
-            /* 모바일 세로 스크롤 방어 */
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--neutral);
-            font-family: 'Fredoka', sans-serif;
-        }
-        
-        .modal-close {
-            background: #F0F0F0;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.3rem;
-            color: #636E72;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-close:hover {
-            background: #E0E0E0;
-            transform: rotate(90deg);
-        }
-        
-        .modal-body {
-            margin-bottom: 0;
-        }
-        
-        .modal-stock-name {
-            background: linear-gradient(135deg, #E8F5E9, #DCFCE7);
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            font-weight: 600;
-            color: var(--success);
-            font-size: 1.1rem;
-        }
-        
-        .modal-description {
-            color: #636E72;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-        
-        .modal-google-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #4285F4, #34A853);
-            color: white;
-            border: none;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
-        
-        .modal-google-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(66, 133, 244, 0.4);
-        }
-        
-        .modal-google-btn:active {
-            transform: translateY(0);
-        }
-        
-        .action-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .action-btn {
-            padding: 1rem;
-            border-radius: 12px;
-            border: 2px solid var(--success);
-            background: var(--card-bg);
-            color: var(--success);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .action-btn:hover {
-            background: var(--success);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 217, 163, 0.25);
-        }
-        
+        .input-group label .required { color:var(--danger); }
         .input-wrapper {
-            position: relative;
+            display:flex; align-items:center;
+            background:var(--input-bg); border:1px solid var(--border);
+            border-radius:12px; overflow:hidden;
+            transition:border-color 0.2s;
         }
-        
-        .input-group input,
-        .input-group select {
-            width: 100%;
-            padding: 1rem 1.25rem;
-            border: 2px solid #E8E8E8;
-            border-radius: 16px;
-            font-size: 1rem;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.3s ease;
-            background: var(--neutral-light);
-            color: var(--text-primary);
+        .input-wrapper:focus-within { border-color:var(--primary); }
+        .input-wrapper input {
+            flex:1; background:transparent; border:none; outline:none;
+            color:var(--text); font-family:'DM Sans',sans-serif;
+            font-size:1rem; font-weight:600; padding:0.8rem 1rem;
         }
-        
-        .input-group input:focus,
-        .input-group select:focus {
-            outline: none;
-            border-color: var(--success);
-            background: var(--card-bg);
-            box-shadow: 0 0 0 4px rgba(0, 217, 163, 0.1);
-        }
-        
+        .input-wrapper input::placeholder { color:var(--muted); font-weight:400; }
         .input-suffix {
-            position: absolute;
-            right: 1.25rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #636E72;
-            font-weight: 500;
+            padding:0 0.9rem; color:var(--text-secondary);
+            font-size:0.82rem; font-weight:600; white-space:nowrap;
         }
-        
+
+        select {
+            width:100%; background:var(--input-bg); border:1px solid var(--border);
+            border-radius:12px; color:var(--text);
+            font-family:'DM Sans',sans-serif; font-size:0.95rem;
+            padding:0.8rem 1rem; outline:none;
+            cursor:pointer; transition:border-color 0.2s;
+            appearance:none;
+            background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23888' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+            background-repeat:no-repeat; background-position:right 1rem center;
+        }
+        select:focus { border-color:var(--primary); }
+        select option { background:#111; }
+
         .tooltip {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            background: var(--success);
-            color: white;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 18px;
-            font-size: 0.75rem;
-            margin-left: 0.5rem;
-            cursor: help;
-            font-weight: bold;
-        }
-        
-        .calculate-btn {
-            width: 100%;
-            background: linear-gradient(135deg, var(--success), #00C292);
-            color: white;
-            border: none;
-            padding: 1.25rem;
-            border-radius: 16px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-            font-family: 'DM Sans', sans-serif;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .calculate-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        
-        .calculate-btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-        
-        .calculate-btn:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(0, 217, 163, 0.3);
-        }
-        
-        .calculate-btn:active {
-            transform: translateY(-1px) scale(0.98);
-        }
-        
-        /* Result Panel */
-        .result-panel {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 2.5rem;
-            box-shadow: var(--shadow);
-            transition: background 0.3s ease;
-        }
-        
-        .result-panel h2 {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.75rem;
-            margin-bottom: 2rem;
-            color: var(--neutral);
-        }
-        
-        .result-cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .result-card {
-            background: linear-gradient(135deg, #F0FDF4, #DCFCE7);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border-left: 4px solid var(--success);
-        }
-        
-        .result-card.warning {
-            background: linear-gradient(135deg, #FFF7ED, #FFEDD5);
-            border-left-color: #FB923C;
-        }
-        
-        .result-card-label {
-            font-size: 0.9rem;
-            color: #636E72;
-            margin-bottom: 0.5rem;
-        }
-        
-        .result-card-value {
-            font-family: 'Fredoka', cursive;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            /* 긴 숫자 모바일 줄바꿈 처리 */
-            word-break: break-all;
-        }
-        
-        .result-card-value .unit {
-            font-size: 1.25rem;
-            color: #636E72;
-            font-weight: 400;
-        }
-        
-        .result-detail {
-            background: var(--neutral-light);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .result-detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #E8E8E8;
-            /* 긴 숫자 모바일 처리 */
-            gap: 1rem;
-        }
-        
-        .result-detail-row:last-child {
-            border-bottom: none;
-        }
-        
-        .result-detail-label {
-            color: #636E72;
-        }
-        
-        .result-detail-value {
-            font-weight: 700;
-            color: var(--text-primary);
-            text-align: right;
-            word-break: break-all;
-        }
-        
-        .chart-container {
-            background: var(--neutral-light);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-            height: 300px;
-            position: relative;
-        }
-        
-        /* Tax Warning Boxes */
-        .tax-warning-box {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border-left: 5px solid var(--primary);
-            box-shadow: var(--shadow);
+            display:inline-flex; align-items:center; justify-content:center;
+            width:16px; height:16px; border-radius:50%;
+            background:var(--muted); color:#fff;
+            font-size:0.65rem; font-weight:700; cursor:help;
+            margin-left:0.35rem; vertical-align:middle;
         }
 
-        body[data-theme="dark"] .tax-warning-box h4 { color: var(--text-primary); }
-        body[data-theme="dark"] .tax-warning-box p, 
-        body[data-theme="dark"] .tax-warning-box ul li,
-        body[data-theme="dark"] .tax-warning-box ul li small { color: var(--text-secondary); }
-        body[data-theme="dark"] .tax-warning-box ul li strong,
-        body[data-theme="dark"] .tax-warning-box ul li span { color: var(--text-primary); }
-
-        .tax-calculator-mini {
-            background: var(--neutral-light);
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-top: 1rem;
+        /* ── SEARCH BOX ── */
+        #stock-search {
+            width:100%; background:var(--input-bg); border:1px solid var(--border);
+            border-radius:12px; color:var(--text);
+            font-family:'DM Sans',sans-serif; font-size:0.95rem;
+            padding:0.8rem 1rem; outline:none;
+            transition:border-color 0.2s;
         }
-
-        body[data-theme="dark"] .tax-calculator-mini label { color: var(--text-primary); }
-        
-        .tax-warning-box.danger {
-            border-left-color: var(--danger);
-            background: linear-gradient(135deg, #FFF5F5, #FFFFFF);
-        }
-        
-        .tax-warning-box.info {
-            border-left-color: #667EEA;
-            background: linear-gradient(135deg, #F7F8FF, #FFFFFF);
-        }
-        
-        .tax-warning-box .warning-icon {
-            font-size: 2.5rem;
-            float: left;
-            margin-right: 1rem;
-        }
-        
-        .tax-warning-box .warning-content {
-            overflow: hidden;
-        }
-        
-        .tax-warning-box h4 {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.25rem;
-            margin-bottom: 0.75rem;
-            color: var(--neutral);
-        }
-        
-        .tax-warning-box p {
-            color: #636E72;
-            line-height: 1.6;
-            margin-bottom: 1rem;
-        }
-        
-        .tax-warning-box ul {
-            list-style: none;
-            padding-left: 0;
-            margin-bottom: 1rem;
-        }
-        
-        .tax-warning-box ul li {
-            padding: 0.5rem 0;
-            color: #636E72;
-            border-bottom: 1px solid #F0F0F0;
-        }
-        
-        .tax-warning-box ul li:last-child {
-            border-bottom: none;
-        }
-        
-        .tax-warning-box ul li strong,
-        .tax-warning-box ul li span {
-            color: var(--neutral);
-            font-weight: 700;
-        }
-        
-        .warning-note {
-            background: rgba(255, 214, 0, 0.1);
-            padding: 1rem;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            margin-top: 1rem;
-        }
-        
-        .tax-calculator-mini label {
-            display: block;
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-            color: var(--neutral);
-        }
-
-        /* 미니 계산기 모바일 레이아웃 조정 */
-        .tax-calc-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        /* Guide Section */
-        .guide-section {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 2.5rem;
-            box-shadow: var(--shadow);
-            margin-bottom: 3rem;
-            color: var(--text-primary);
-        }
-        
-        .guide-section h2 {
-            font-family: 'Fredoka', cursive;
-            font-size: 2rem;
-            margin-bottom: 2rem;
-            color: var(--neutral);
-        }
-        
-        .guide-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* 모바일 너비 축소 */
-            gap: 2rem;
-        }
-        
-        .guide-card {
-            background: var(--neutral-light);
-            border-radius: 16px;
-            padding: 2rem;
-        }
-        
-        .guide-card h3 {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--neutral);
-        }
-        
-        .guide-card ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        
-        .guide-card li {
-            padding: 0.5rem 0;
-            color: #636E72;
-            display: flex;
-            gap: 0.75rem;
-        }
-        
-        .guide-card li::before {
-            content: '✓';
-            color: var(--success);
-            font-weight: bold;
-        }
-        
-        /* Warning Box */
-        .warning-box {
-            background: linear-gradient(135deg, #FFF7ED, #FFEDD5);
-            border-left: 4px solid #FB923C;
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin: 2rem 0;
-        }
-        
-        .warning-box h3 {
-            font-family: 'Fredoka', cursive;
-            color: #EA580C;
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .warning-box p {
-            color: #9A3412;
-            line-height: 1.6;
-        }
-
-        /* Stock Search Results */
+        #stock-search:focus { border-color:var(--primary); }
+        #stock-search::placeholder { color:var(--muted); }
         #search-results {
-            position: absolute;
-            top: calc(100% + 5px);
-            left: 0;
-            right: 0;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-            max-height: 350px;
-            overflow-y: auto;
-            z-index: 1000;
-            border: 2px solid var(--success);
+            position:absolute; z-index:50; width:100%;
+            background:#111; border:1px solid var(--border);
+            border-radius:12px; margin-top:4px;
+            box-shadow:0 8px 32px rgba(0,0,0,0.6);
+            max-height:260px; overflow-y:auto;
         }
-        
-        .search-result-item {
-            padding: 1.25rem 1.5rem;
-            cursor: pointer;
-            border-bottom: 1px solid #F0F0F0;
-            transition: all 0.2s ease;
-            position: relative;
+        .search-item {
+            padding:0.75rem 1rem; cursor:pointer;
+            border-bottom:1px solid var(--border);
+            transition:background 0.15s;
         }
-        
-        .search-result-item:first-child {
-            border-top-left-radius: 14px;
-            border-top-right-radius: 14px;
+        .search-item:last-child { border-bottom:none; }
+        .search-item:hover { background:rgba(255,92,0,0.08); }
+        .search-item-sym { font-weight:700; font-size:0.9rem; color:var(--primary); }
+        .search-item-name { font-size:0.8rem; color:var(--text-secondary); margin-top:2px; }
+        .input-wrapper-rel { position:relative; }
+
+        /* ── BUTTONS ── */
+        .calculate-btn {
+            width:100%; padding:0.95rem;
+            background:var(--primary); color:#fff;
+            border:none; border-radius:14px;
+            font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:800;
+            cursor:pointer; letter-spacing:0.02em;
+            transition:all 0.2s;
+            box-shadow:0 4px 24px rgba(255,92,0,0.35);
+            margin-top:0.5rem;
         }
-        
-        .search-result-item:last-child {
-            border-bottom: none;
-            border-bottom-left-radius: 14px;
-            border-bottom-right-radius: 14px;
+        .calculate-btn:hover {
+            background:var(--primary-hover); transform:translateY(-1px);
+            box-shadow:0 6px 32px rgba(255,92,0,0.45);
         }
-        
-        .search-result-item:hover {
-            background: linear-gradient(135deg, #E8F5E9, #DCFCE7);
-            transform: translateX(5px);
+        .calculate-btn:active { transform:translateY(0); }
+
+        .currency-toggle-btn {
+            background:rgba(0,217,163,0.1); border:1px solid rgba(0,217,163,0.25);
+            color:var(--success); padding:0.28rem 0.7rem; border-radius:50px;
+            font-size:0.74rem; font-weight:700; cursor:pointer;
+            transition:all 0.2s; margin-left:0.5rem;
+            font-family:'DM Sans',sans-serif; white-space:nowrap;
         }
-        
-        .search-result-item::before {
-            content: '→';
-            position: absolute;
-            left: 1rem;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            color: var(--success);
-            font-weight: bold;
+        .currency-toggle-btn:hover { background:rgba(0,217,163,0.18); transform:translateY(-1px); }
+
+        .search-dividend-btn {
+            width:100%; margin-top:0.75rem;
+            padding:0.72rem 1rem;
+            background:rgba(255,92,0,0.1); border:1px solid rgba(255,92,0,0.25);
+            color:var(--primary); border-radius:12px;
+            font-family:'DM Sans',sans-serif; font-size:0.85rem; font-weight:700;
+            cursor:pointer; transition:all 0.2s;
         }
-        
-        .search-result-item:hover::before {
-            opacity: 1;
+        .search-dividend-btn:hover { background:rgba(255,92,0,0.18); transform:translateY(-1px); }
+
+        .action-buttons { display:flex; gap:0.75rem; margin-top:0.85rem; }
+        .action-btn {
+            flex:1; padding:0.65rem;
+            background:var(--input-bg); border:1px solid var(--border);
+            color:var(--text-secondary); border-radius:12px;
+            font-family:'DM Sans',sans-serif; font-size:0.82rem; font-weight:700;
+            cursor:pointer; transition:all 0.2s;
         }
-        
-        .search-result-item:hover .search-result-symbol,
-        .search-result-item:hover .search-result-name {
-            padding-left: 1.5rem;
+        .action-btn:hover { border-color:var(--primary); color:var(--primary); background:rgba(255,92,0,0.06); }
+
+        /* ── RESULT PANEL ── */
+        .result-cards { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem; }
+        .result-card {
+            background:var(--input-bg); border:1px solid var(--border);
+            border-radius:14px; padding:1.2rem;
+            transition:border-color 0.2s;
         }
-        
-        .search-result-symbol {
-            font-weight: 700;
-            color: var(--success);
-            margin-bottom: 0.25rem;
-            font-size: 1.1rem;
-            transition: padding-left 0.2s ease;
+        .result-card.warning { border-color:rgba(255,92,0,0.3); background:rgba(255,92,0,0.06); }
+        .result-card-label { font-size:0.75rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.6rem; }
+        .result-card-value { font-size:1.5rem; font-weight:800; color:var(--text); }
+        .result-card.warning .result-card-value { color:var(--primary); }
+        .unit { font-size:0.85rem; font-weight:600; color:var(--text-secondary); margin-left:2px; }
+
+        .result-detail { display:flex; flex-direction:column; gap:0; border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+        .result-detail-row {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:0.75rem 1rem; border-bottom:1px solid var(--border);
+            font-size:0.88rem; transition:background 0.15s;
         }
-        
-        .search-result-name {
-            color: var(--neutral);
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: padding-left 0.2s ease;
+        .result-detail-row:last-child { border-bottom:none; }
+        .result-detail-row:hover { background:rgba(255,255,255,0.02); }
+        .result-detail-label { color:var(--text-secondary); }
+        .result-detail-value { font-weight:700; color:var(--text); }
+
+        .empty-state {
+            text-align:center; padding:3rem 0; color:var(--text-secondary);
         }
-        
-        .search-result-exchange {
-            color: #B2BEC3;
-            font-size: 0.8rem;
-            margin-top: 0.25rem;
-            font-weight: 600;
-            text-transform: uppercase;
+        .empty-state-icon { font-size:3.5rem; margin-bottom:1rem; opacity:0.4; }
+        .empty-state p { font-size:0.9rem; }
+
+        /* ── CHART ── */
+        .chart-container {
+            background:var(--input-bg); border:1px solid var(--border);
+            border-radius:14px; padding:1.25rem;
+            margin: 1.5rem 0;
         }
 
-        /* 테이블 모바일 스크롤 지원 */
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
+        /* ── TAX WARNING BOXES ── */
+        #tax-warnings { margin-top:2rem; }
+        #tax-warnings h3 { font-size:1rem; font-weight:800; margin-bottom:1rem; color:var(--text); }
+        .tax-warning-box {
+            border-radius:14px; padding:1.25rem 1.25rem 1.25rem 1rem;
+            margin-bottom:1rem; border-left:3px solid;
+            display:flex; gap:0.85rem;
         }
-        
-        #dividend-history-body tr:hover { background-color: #f8f9fa; }
-        #dividend-history-body td { padding: 12px 10px; border-bottom: 1px solid #eee; }
-        .apply-div-btn { 
-            padding: 4px 12px; background: var(--success); color: white; 
-            border: none; border-radius: 6px; cursor: pointer; font-size: 0.8rem; 
-            white-space: nowrap; /* 모바일에서 버튼 텍스트 줄바꿈 방지 */
+        .tax-warning-box.danger { background:rgba(255,107,107,0.07); border-color:var(--danger); }
+        .tax-warning-box.info   { background:rgba(255,92,0,0.06);   border-color:var(--primary); }
+        .warning-icon { font-size:1.4rem; flex-shrink:0; }
+        .warning-content h4 { font-size:0.88rem; font-weight:800; margin-bottom:0.4rem; color:var(--text); }
+        .warning-content p  { font-size:0.82rem; color:var(--text-secondary); line-height:1.65; margin-bottom:0.5rem; }
+        .warning-content ul { font-size:0.8rem; color:var(--text-secondary); padding-left:1.2rem; margin-bottom:0.5rem; line-height:1.8; }
+        .warning-content strong { color:var(--text); }
+        .warning-note { font-size:0.76rem !important; color:var(--muted) !important; font-style:italic; }
+        .tax-calculator-mini {
+            background:var(--input-bg); border:1px solid var(--border);
+            border-radius:10px; padding:0.85rem; margin-top:0.75rem;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .spinner { display: inline-block; font-size: 2rem; animation: spin 2s linear infinite; }
-        
-        /* 🚨 모바일 반응형 미디어 쿼리 (대폭 강화) */
-        @media (max-width: 968px) {
-            .calculator-layout { grid-template-columns: 1fr; gap: 1.5rem; }
+        .tax-calculator-mini label { font-size:0.8rem; color:var(--text-secondary); font-weight:600; display:block; margin-bottom:0.5rem; }
+        .tax-calc-controls { display:flex; gap:0.5rem; align-items:center; }
+        .tax-calc-controls input {
+            flex:1; background:var(--input-bg); border:1px solid var(--border);
+            border-radius:8px; color:var(--text); padding:0.5rem 0.75rem;
+            font-family:'DM Sans',sans-serif; font-size:0.88rem; outline:none;
         }
-
-        @media (max-width: 768px) {
-            .container { padding: 0 1rem; margin: 1.5rem auto; }
-            nav { padding: 0 1rem; }
-            .logo { font-size: 1.25rem; }
-            .back-btn { padding: 0.5rem 1rem; font-size: 0.9rem; }
-            
-            .page-title h1 { font-size: 2.25rem; }
-            .page-title p { font-size: 0.95rem; }
-            .page-title .icon { font-size: 3rem; }
-
-            .input-panel, .result-panel, .guide-section { padding: 1.5rem; border-radius: 20px; }
-            .input-panel h2, .result-panel h2, .guide-section h2 { font-size: 1.5rem; margin-bottom: 1.5rem; }
-
-            .input-group label {
-                display: flex;
-                flex-wrap: wrap;
-                align-items: center;
-                gap: 5px;
-            }
-            .currency-toggle-btn { margin-left: auto; /* 우측 정렬 유지 */ margin-top: 5px; }
-
-            .result-cards { grid-template-columns: 1fr; gap: 1rem; }
-            .result-card { padding: 1.25rem; }
-            .result-card-value { font-size: 1.5rem; }
-
-            .action-buttons { grid-template-columns: 1fr; }
-            
-            .tax-calc-controls { flex-direction: column; align-items: stretch; }
-            .tax-calc-controls input { width: 100% !important; }
-            
-            .chart-container { padding: 1rem; height: 250px; }
-
-            .modal-content { width: 95%; padding: 1.5rem; border-radius: 16px; }
-            .modal-header { flex-wrap: wrap; gap: 10px; }
-            .modal-title { font-size: 1.2rem; }
-            .modal-stock-name { font-size: 1rem; padding: 0.75rem; }
-            .modal-description { font-size: 0.9rem; }
+        .tax-calc-controls input:focus { border-color:var(--primary); }
+        #btn-calc-tax {
+            padding:0.5rem 1rem; background:var(--primary); border:none;
+            border-radius:8px; cursor:pointer; font-weight:700; color:#fff;
+            font-family:'DM Sans',sans-serif; font-size:0.82rem;
+            transition:all 0.2s;
         }
+        #btn-calc-tax:hover { background:var(--primary-hover); }
+        #capital-gains-result { font-size:0.85rem; color:var(--success); font-weight:700; margin-top:0.75rem; }
 
-        @media (max-width: 480px) {
-            .logo span { display: none; } /* 아주 작은 화면에선 로고 텍스트 숨김 */
-            .page-title h1 { font-size: 1.8rem; }
-            .result-detail-row { flex-direction: column; gap: 0.5rem; }
-            .result-detail-value { text-align: left; }
-            
-            .tax-warning-box .warning-icon { float: none; display: block; margin-bottom: 0.5rem; }
+        /* ── GUIDE SECTION ── */
+        .guide-section {
+            animation: fadeInUp 0.7s ease 0.2s both;
         }
+        .guide-section h2 {
+            font-size:1.5rem; font-weight:800; margin-bottom:2rem;
+            color:var(--text); letter-spacing:-0.01em;
+        }
+        .guide-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
+        .guide-card {
+            background:var(--card); border:1px solid var(--border);
+            border-radius:16px; padding:1.5rem;
+            transition:border-color 0.2s, transform 0.2s;
+        }
+        .guide-card:hover { border-color:rgba(255,92,0,0.3); transform:translateY(-2px); }
+        .guide-card h3 { font-size:0.9rem; font-weight:800; margin-bottom:0.85rem; color:var(--text); }
+        .guide-card ul { list-style:none; display:flex; flex-direction:column; gap:0.35rem; }
+        .guide-card li { font-size:0.8rem; color:var(--text-secondary); padding-left:0.85rem; position:relative; line-height:1.55; }
+        .guide-card li::before { content:'›'; position:absolute; left:0; color:var(--primary); font-weight:700; }
+        .warning-box {
+            background:rgba(255,107,107,0.07); border:1px solid rgba(255,107,107,0.2);
+            border-radius:16px; padding:1.5rem; margin-top:1rem;
+        }
+        .warning-box h3 { font-size:0.9rem; font-weight:800; margin-bottom:0.6rem; color:var(--danger); }
+        .warning-box p  { font-size:0.82rem; color:var(--text-secondary); line-height:1.7; }
 
-        /* 다크모드 전용 UI 보정 */
-        body[data-theme="dark"] {
-            #search-results { 
-                background-color: var(--card-bg) !important; 
-                border-color: var(--success) !important; 
-                box-shadow: 0 10px 40px rgba(0,0,0,0.5) !important;
-            }
-            .search-result-item { 
-                color: var(--text-primary) !important; 
-                border-bottom-color: var(--border-color) !important; 
-            }
-            .search-result-item:hover { background: #3d3d3d !important; }
-            .search-result-name { color: var(--text-secondary) !important; }
+        /* ── MODAL ── */
+        .modal-overlay {
+            position:fixed; inset:0; z-index:9000;
+            background:rgba(0,0,0,0.85); backdrop-filter:blur(8px);
+            display:none; align-items:center; justify-content:center;
+            animation:fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn { from{opacity:0}to{opacity:1} }
+        .modal-overlay.active { display:flex; }
+        .modal-content {
+            background:var(--card); border:1px solid var(--border);
+            border-radius:20px; width:min(600px,92vw);
+            max-height:85vh; overflow-y:auto;
+            animation:slideUp 0.25s ease;
+        }
+        @keyframes slideUp {
+            from{opacity:0;transform:translateY(20px)}
+            to{opacity:1;transform:translateY(0)}
+        }
+        .modal-header {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:1.25rem 1.5rem; border-bottom:1px solid var(--border);
+        }
+        .modal-title { font-size:1rem; font-weight:800; color:var(--text); }
+        .modal-close {
+            background:var(--input-bg); border:1px solid var(--border);
+            color:var(--text-secondary); width:28px; height:28px;
+            border-radius:50%; cursor:pointer; font-size:0.85rem;
+            display:flex; align-items:center; justify-content:center;
+            transition:all 0.2s;
+        }
+        .modal-close:hover { background:#222; color:var(--text); }
+        .modal-body { padding:1.5rem; }
+        .modal-stock-name { font-size:1.1rem; font-weight:800; margin-bottom:1rem; color:var(--text); }
+        .table-responsive { overflow-x:auto; }
+        .table-responsive table { width:100%; border-collapse:collapse; font-size:0.88rem; }
+        .table-responsive th {
+            padding:0.6rem 0.75rem; text-align:left;
+            color:var(--text-secondary); font-size:0.75rem; font-weight:700;
+            text-transform:uppercase; letter-spacing:0.05em;
+            border-bottom:1px solid var(--border);
+        }
+        .table-responsive td { padding:0.6rem 0.75rem; border-bottom:1px solid var(--border); color:var(--text); }
+        .table-responsive tr:last-child td { border-bottom:none; }
+        .table-responsive tr:hover td { background:rgba(255,255,255,0.02); }
+        .btn-select-dividend {
+            background:var(--primary); border:none; color:#fff;
+            padding:0.35rem 0.75rem; border-radius:50px;
+            font-size:0.75rem; font-weight:700; cursor:pointer;
+            transition:all 0.2s; font-family:'DM Sans',sans-serif;
+        }
+        .btn-select-dividend:hover { background:var(--primary-hover); }
 
-            .tax-warning-box { 
-                background: var(--card-bg) !important; 
-                border: 1px solid var(--border-color) !important; 
-                box-shadow: var(--shadow) !important;
-            }
-            .tax-warning-box h4 { color: var(--text-primary) !important; }
-            .tax-warning-box p, 
-            .tax-warning-box ul li { color: var(--text-secondary) !important; }
-            
-            .tax-warning-box ul li strong, 
-            .tax-warning-box ul li span,
-            .warning-content strong { color: var(--success) !important; } 
+        /* ── SPINNER ── */
+        .spinner { font-size:2rem; animation:spin 1s linear infinite; display:inline-block; }
+        @keyframes spin { to{transform:rotate(360deg)} }
+        #api-loading p { color:var(--text-secondary); font-size:0.88rem; margin-top:0.75rem; }
+        #api-loading p strong { color:var(--primary); }
+        #api-loading p small { color:var(--muted); }
+        #api-error { color:var(--danger); text-align:center; padding:1rem; }
 
-            .result-panel h2 { color: var(--text-primary); }
-            .result-card-label { color: var(--text-secondary); }
-            .result-card-value { color: var(--text-primary) !important; }
-            .result-detail-value { color: var(--text-primary); }
-            .result-card { background: #1E293B !important; border-left: 4px solid var(--success) !important; }
-            .result-card.warning { background: #431407 !important; border-left-color: #FB923C !important; }
+        input[type="range"] { accent-color:var(--primary); }
 
-            .action-btn { 
-                background-color: var(--card-bg) !important; 
-                border-color: var(--success) !important;
-                color: var(--success) !important; 
-            }
-            .action-btn:hover { background-color: var(--success) !important; color: white !important; }
-
-            .guide-section { background-color: var(--card-bg) !important; color: var(--text-primary) !important; }
-            .guide-section h2 { color: var(--text-primary) !important; }
-            .tax-calculator-mini { background-color: #262626 !important; }
-            .tax-calculator-mini label { color: var(--text-primary) !important; }
-            
-            .modal-content { background-color: var(--card-bg) !important; color: var(--text-primary) !important; }
-            .modal-title { color: var(--text-primary) !important; }
-            .modal-close { background: #4A4A4A !important; color: white !important; }
+        /* ── RESPONSIVE ── */
+        @media (max-width:900px) { .calculator-layout { grid-template-columns:1fr; } }
+        @media (max-width:680px) {
+            .result-cards { grid-template-columns:1fr; }
+            .guide-grid { grid-template-columns:1fr; }
+            .container { padding:6rem 1rem 3rem; }
         }
-        /* ── DARK THEME OVERRIDE ─────────────────────────── */
-        :root {
-            --primary: #FF5C00 !important;
-            --primary-dark: #FF7A30 !important;
-            --success: #00D9A3 !important;
-            --danger: #FF6B6B !important;
-            --bg-gradient-start: #000000 !important;
-            --bg-gradient-end: #000000 !important;
-            --card-bg: #111111 !important;
-            --text-primary: #ffffff !important;
-            --text-secondary: #888888 !important;
-            --border-color: #1e1e1e !important;
-            --neutral-light: #111111 !important;
-            --input-bg: #0a0a0a !important;
-            --shadow: 0 4px 24px rgba(0,0,0,0.6) !important;
-            --shadow-hover: 0 12px 40px rgba(0,0,0,0.8) !important;
-            --pattern-color: rgba(255,92,0,0.03) !important;
-        }
-        body {
-            background: #000 !important;
-            color: #fff !important;
-        }
-        body::before { display: none !important; }
-        header, nav { background: rgba(0,0,0,0.9) !important; backdrop-filter: blur(20px); border-bottom: 1px solid #1e1e1e !important; }
-        .logo { color: #fff !important; }
-        .logo-icon { background: #FF5C00 !important; }
-        .nav-links a { color: #888 !important; }
-        .nav-links a:hover { color: #fff !important; }
-        .nav-links a::after { background: #FF5C00 !important; }
-        .theme-toggle { display: none !important; }
-        footer { background: #000 !important; border-top: 1px solid #1e1e1e !important; }
-        .footer-links a { color: #444 !important; }
-        .footer-links a:hover { color: #FF5C00 !important; }
-        .footer-bottom { border-top-color: #111 !important; color: #333 !important; }
-        .card, .calc-card, .result-card, .info-card, .feature-item, .tool-card, .stat-card {
-            background: #111 !important;
-            border-color: #1e1e1e !important;
-            color: #fff !important;
-        }
-        input, select, textarea {
-            background: #0a0a0a !important;
-            border-color: #1e1e1e !important;
-            color: #fff !important;
-        }
-        input:focus, select:focus, textarea:focus {
-            border-color: #FF5C00 !important;
-            box-shadow: 0 0 0 3px rgba(255,92,0,0.1) !important;
-        }
-        input::placeholder { color: #444 !important; }
-        label, .label, .input-label { color: #888 !important; }
-        h1, h2, h3, h4, h5, h6 { color: #fff !important; }
-        p { color: #888 !important; }
-        .result-value, .calc-result, .price-display, .total { color: #fff !important; }
-        .btn, button[type="submit"], .primary-btn, .calc-btn {
-            background: #FF5C00 !important;
-            color: #fff !important;
-            border: none !important;
-        }
-        .btn:hover, button[type="submit"]:hover, .primary-btn:hover, .calc-btn:hover {
-            background: #FF7A30 !important;
-        }
-        .section-title, .page-title { color: #fff !important; font-weight: 800 !important; }
-        .highlight, .accent { color: #FF5C00 !important; }
-        .success-text, .positive { color: #00D9A3 !important; }
-        .danger-text, .negative { color: #FF6B6B !important; }
-        table { border-color: #1e1e1e !important; }
-        th { background: #111 !important; color: #888 !important; border-color: #1e1e1e !important; }
-        td { color: #fff !important; border-color: #1e1e1e !important; }
-        tr:hover { background: rgba(255,92,0,0.05) !important; }
-        .badge, .tag { background: rgba(255,92,0,0.12) !important; color: #FF5C00 !important; border: 1px solid rgba(255,92,0,0.25) !important; }
-        a { color: #FF5C00 !important; }
-        a:hover { color: #FF7A30 !important; }
-        nav a { text-decoration: none !important; }
-        .range-slider, input[type="range"] { accent-color: #FF5C00 !important; }
-        .progress-bar, .progress-fill { background: #FF5C00 !important; }
-        .divider, hr { border-color: #1e1e1e !important; }
-        .tooltip { background: #111 !important; border: 1px solid #1e1e1e !important; color: #fff !important; }
-        .modal, .popup { background: #111 !important; border: 1px solid #1e1e1e !important; }
-        .overlay { background: rgba(0,0,0,0.8) !important; }
-        .breadcrumb a, .back-link { color: #888 !important; }
-        .breadcrumb a:hover, .back-link:hover { color: #FF5C00 !important; }
-        .quiz-option, .option-btn { background: #111 !important; border-color: #1e1e1e !important; color: #fff !important; }
-        .quiz-option:hover, .option-btn:hover { border-color: #FF5C00 !important; background: rgba(255,92,0,0.08) !important; }
-        .quiz-option.correct { background: rgba(0,217,163,0.12) !important; border-color: #00D9A3 !important; }
-        .quiz-option.wrong { background: rgba(255,107,107,0.12) !important; border-color: #FF6B6B !important; }
-        .stage-card, .level-card { background: #111 !important; border-color: #1e1e1e !important; }
-        .stage-card:hover, .level-card:hover { border-color: rgba(255,92,0,0.4) !important; }
-        .locked { opacity: 0.4 !important; }
-        .completed { border-color: rgba(0,217,163,0.4) !important; }
-        .chart-container canvas { filter: brightness(0.9) !important; }
-        .game-board, .simulator-board { background: #111 !important; border-color: #1e1e1e !important; }
-        .word-card, .term-card, .dict-item { background: #111 !important; border-color: #1e1e1e !important; }
-        .word-card:hover, .term-card:hover, .dict-item:hover { border-color: rgba(255,92,0,0.35) !important; }
-        .search-box input, .search-input { background: #0a0a0a !important; border-color: #1e1e1e !important; color: #fff !important; }
-        .portfolio-item, .holding-row { background: #111 !important; border-color: #1e1e1e !important; }
-        .section-label-orange { color: #FF5C00 !important; font-size: 0.72rem !important; font-weight: 700 !important; letter-spacing: 0.1em !important; text-transform: uppercase !important; }
-
     </style>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1131,7 +437,8 @@
     <header>
         <nav>
             <a href="index.html" class="logo">
-                <span style="font-size:1.8rem">📊</span> <span>주린이 계산기</span>
+                <div class="logo-icon">📊</div>
+                <span>주린이 계산기</span>
             </a>
             <div id="auth-ui" style="display:flex;align-items:center;gap:0.75rem;margin-right:5px;">
     <button id="btn-login" class="auth-btn-nav">
@@ -1148,10 +455,7 @@
     </div>
 </div>
             <div class="nav-actions">
-                <button id="theme-toggle" class="theme-toggle" title="다크모드 전환">
-                    <span class="theme-icon">🌙</span>
-                </button>
-                <a href="index.html" class="back-btn">
+<a href="index.html" class="back-btn">
                     ← 홈
                 </a>
             </div>
@@ -1159,25 +463,25 @@
     </header>
 
     <div class="container">
-        <div class="page-title">
-            <div class="icon">💰</div>
-            <h1>배당금 자동 계산기</h1>
-            <p>배당 수익과 재투자 효과를 한눈에 확인하세요</p>
-            <div id="exchange-rate-info" style="margin-top: 1rem; color: #00D9A3; font-weight: 600;"></div>
+        <div class="page-hero">
+            <div class="page-badge"><span class="badge-dot"></span>Dividend Calculator</div>
+            <h1>배당금 <span>자동</span> 계산기</h1>
+            <p>배당 수익과 재투자 복리 효과를 한눈에 확인하세요</p>
+            <div id="exchange-rate-info"></div>
         </div>
 
         <div class="calculator-layout">
             <div class="input-panel">
-                <h2>배당 정보 입력</h2>
+                <h2>📋 배당 정보 입력</h2>
                 
                 <div class="input-group">
                     <label>
                         주식 검색 🔍
                         <span class="tooltip" title="종목명이나 티커를 입력하세요 (예: 삼성전자, AAPL)">?</span>
                     </label>
-                    <div class="input-wrapper">
+                    <div class="input-wrapper-rel">
                         <input type="text" id="stock-search" placeholder="삼성전자, AAPL, TSLA 등..." autocomplete="off">
-                        <div id="search-results" style="display: none;"></div>
+                        <div id="search-results" style="display:none;"></div>
                     </div>
                 </div>
 
@@ -1275,7 +579,7 @@
             </div> 
             
             <div class="result-panel">
-                <h2>계산 결과</h2>
+                <h2>📊 계산 결과</h2>
                 
                 <div id="results" style="display: none;">
                     <div class="result-cards">
@@ -1336,7 +640,7 @@
                     </div>
 
                     <div id="tax-warnings" style="display: none; margin-top: 2rem;">
-                        <h3 style="font-family: 'Fredoka', cursive; font-size: 1.5rem; margin-bottom: 1rem; color: var(--neutral);">
+                        <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--neutral);">
                             ⚠️ 세금 및 비용 안내
                         </h3>
                         
@@ -1389,8 +693,8 @@
                         </div>
                     </div>
                 </div> 
-                <div id="empty-state" style="text-align: center; padding: 3rem 0; color: #B2BEC3;">
-                    <div style="font-size: 4rem; margin-bottom: 1rem;">📊</div>
+                <div id="empty-state" class="empty-state">
+                    <div class="empty-state-icon">📊</div>
                     <p>배당 정보를 입력하고<br>계산 버튼을 눌러주세요</p>
                 </div>
             </div> 
@@ -1481,10 +785,10 @@
                 <div id="api-result" style="display: none;">
                     <div class="table-responsive"> <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem;">
                             <thead>
-                                <tr style="border-bottom: 2px solid #eee; text-align: left;">
-                                    <th style="padding: 10px; min-width: 90px;">배당락일</th>
-                                    <th style="padding: 10px;">배당금</th>
-                                    <th style="padding: 10px;">선택</th>
+                                <tr >
+                                    <th >배당락일</th>
+                                    <th >배당금</th>
+                                    <th >선택</th>
                                 </tr>
                             </thead>
                             <tbody id="dividend-history-body"></tbody>
@@ -1517,7 +821,7 @@
         let lastExchangeRateUpdate = null;
 
         document.addEventListener('DOMContentLoaded', () => {
-            initTheme();
+            // initTheme(); // 다크 전용 고정
             
             fetchExchangeRate();
             setInterval(fetchExchangeRate, 30 * 60 * 1000);
@@ -1537,13 +841,13 @@
                 searchInput.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
-                        const firstResult = document.querySelector('.search-result-item');
+                        const firstResult = document.querySelector('.search-item');
                         if (firstResult) firstResult.click();
                     }
                 });
             }
 
-            document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+            // theme-toggle 비활성화 (다크 전용)
             document.getElementById('currency-toggle')?.addEventListener('click', toggleCurrency);
             document.getElementById('search-dividend-btn')?.addEventListener('click', openDividendAnalysis);
             document.getElementById('btn-calculate')?.addEventListener('click', calculate);
@@ -1672,7 +976,7 @@
             filtered = Array.from(new Map(filtered.map(item => [item.symbol, item])).values());
             
             if (filtered.length === 0) {
-                resultsDiv.innerHTML = `<div class="no-results" style="padding:1rem;">결과가 없습니다.</div>`;
+                resultsDiv.innerHTML = `<div class="search-item" style="cursor:default;color:var(--text-secondary);">검색 결과가 없습니다</div>`;
                 resultsDiv.style.display = 'block';
                 return;
             }
@@ -1681,10 +985,9 @@
                 const isKorea = r.type === "KOREA" || r.symbol.endsWith('.KS') || r.symbol.endsWith('.KQ');
                 const typeLabel = isKorea ? '🇰🇷 KR' : '🇺🇸 US';
                 return `
-                <div class="search-result-item" onclick="selectStock('${r.symbol}')">
-                    <div class="search-result-symbol">${r.displaySymbol || r.symbol}</div>
-                    <div class="search-result-name">${r.description || 'N/A'}</div>
-                    <div class="search-result-exchange">${typeLabel}</div>
+                <div class="search-item" onclick="selectStock('${escHtml(r.symbol)}')">
+                    <div class="search-item-sym">${escHtml(r.displaySymbol || r.symbol)} <span style="font-size:0.72rem;color:var(--text-secondary);font-weight:600">${typeLabel}</span></div>
+                    <div class="search-item-name">${escHtml(r.description || 'N/A')}</div>
                 </div>
             `}).join('');
 
@@ -1744,7 +1047,7 @@
             const stockTitle = document.getElementById('modal-stock-name');
             const msgEl = document.getElementById('loading-message');
 
-            modal.style.display = 'block';
+            modal.classList.add('active');
             stockTitle.textContent = `${selectedStock.symbol} 분석 중...`;
             loading.style.display = 'block';
             msgEl.textContent = '서버를 깨우는 중입니다...';
@@ -1796,7 +1099,7 @@
         }
 
         function closeDividendModal() {
-            document.getElementById('dividend-modal').style.display = 'none';
+            document.getElementById('dividend-modal').classList.remove('active');
         }
 
         function applyDividend(amount) {
