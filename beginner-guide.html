@@ -35,9 +35,6 @@
         .nav-links a { color: var(--secondary); text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: color 0.2s; position: relative; }
         .nav-links a:hover, .nav-links a.active { color: var(--text); }
         .nav-links a.active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: var(--primary); border-radius: 2px; }
-        .auth-btn { background: transparent; border: 1px solid #2a2a2a; color: var(--secondary); padding: 0.42rem 1rem; border-radius: 50px; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
-        .auth-btn:hover { border-color: var(--primary); color: var(--primary); }
-        .logout-link { background: none; border: none; color: var(--danger); font-size: 0.78rem; text-decoration: underline; cursor: pointer; font-weight: 600; }
 
         /* ── MAIN ── */
         main { max-width: 1100px; margin: 0 auto; padding: 90px 2rem 60px; }
@@ -164,11 +161,18 @@
             <li><a href="chart-simulator.html">차트 신내림</a></li>
         </ul>
         <div style="display:flex;align-items:center;gap:0.7rem;">
-            <div id="auth-ui" style="display:flex;align-items:center;gap:0.7rem;">
-                <button id="btn-login" class="auth-btn">🔑 로그인</button>
-                <div id="user-info" style="display:none;align-items:center;gap:0.7rem;">
-                    <span id="user-name" style="font-size:0.82rem;font-weight:700;color:var(--secondary);"></span>
-                    <button id="btn-logout" class="logout-link">로그아웃</button>
+            <div id="auth-ui" style="display:flex;align-items:center;gap:0.75rem;">
+                <button id="btn-login" class="auth-btn-nav">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                    로그인
+                </button>
+                <div id="user-info" style="display:none;align-items:center;">
+                    <div class="auth-user-chip">
+                        <div class="auth-avatar" id="user-avatar"></div>
+                        <span id="user-name" class="auth-uname"></span>
+                        <div class="auth-divider-v"></div>
+                        <button id="btn-logout" class="auth-logout-link">로그아웃</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -303,7 +307,7 @@
     </div>
 </div>
 
-<script type="module" src="auth-global.js"></script>
+<script type="module" src="auth-modal.js"></script>
 
 <script>
 // ──────────────────────────────────────────

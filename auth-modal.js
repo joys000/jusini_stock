@@ -1,0 +1,311 @@
+// auth-modal.js — 주린이 계산기 통합 인증 모듈
+// Firebase Google OAuth + 자동로그인 + 24시간 만료 + 로그인 팝업 모달
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import {
+    getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyALn9C2PHgMd95J41cNpceCojbp-c5Sfo0",
+    authDomain: "jurinicalc.firebaseapp.com",
+    projectId: "jurinicalc",
+    storageBucket: "jurinicalc.firebasestorage.app",
+    messagingSenderId: "935820034253",
+    appId: "1:935820034253:web:8ad46e0b4af866664aa984"
+};
+
+let _app, _auth, _provider;
+
+function getFirebase() {
+    if (!_auth) {
+        _app = initializeApp(firebaseConfig);
+        _auth = getAuth(_app);
+        _provider = new GoogleAuthProvider();
+    }
+    return { auth: _auth, provider: _provider };
+}
+
+/* ─── 스타일 주입 ──────────────────────────────────────── */
+function injectStyles() {
+    if (document.getElementById('auth-modal-css')) return;
+    const s = document.createElement('style');
+    s.id = 'auth-modal-css';
+    s.textContent = `
+        /* ── 모달 오버레이 ── */
+        #auth-modal {
+            position: fixed; inset: 0; z-index: 9999;
+            display: none;
+        }
+        #auth-modal.active { display: flex; align-items: center; justify-content: center; }
+        .auth-overlay {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.82);
+            backdrop-filter: blur(10px);
+            animation: authFadeIn 0.2s ease;
+        }
+        .auth-box {
+            position: relative; z-index: 1;
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 24px;
+            padding: 2.5rem 2rem 2rem;
+            width: min(400px, 90vw);
+            text-align: center;
+            animation: authSlideUp 0.25s ease;
+            box-shadow: 0 0 80px rgba(255,92,0,0.07), 0 20px 60px rgba(0,0,0,0.5);
+        }
+        @keyframes authFadeIn { from{opacity:0} to{opacity:1} }
+        @keyframes authSlideUp {
+            from { opacity:0; transform: translateY(24px); }
+            to   { opacity:1; transform: translateY(0); }
+        }
+        .auth-close {
+            position: absolute; top: 1rem; right: 1rem;
+            width: 30px; height: 30px; border-radius: 50%;
+            background: #1a1a1a; border: 1px solid #2a2a2a;
+            color: #666; font-size: 0.9rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; line-height: 1;
+        }
+        .auth-close:hover { background: #222; color: #fff; border-color: #333; }
+        .auth-logo-wrap {
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, #FF5C00, #ff8533);
+            border-radius: 16px; margin: 0 auto 1.25rem;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 8px 24px rgba(255,92,0,0.35);
+        }
+        .auth-title { font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 0.4rem; }
+        .auth-sub { font-size: 0.85rem; color: #666; margin-bottom: 1.75rem; }
+        .auth-google-btn {
+            width: 100%; padding: 0.88rem 1.5rem;
+            background: #fff; color: #222;
+            border: none; border-radius: 14px;
+            font-size: 0.92rem; font-weight: 700;
+            cursor: pointer; gap: 0.7rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+        }
+        .auth-google-btn:hover {
+            background: #f5f5f5;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 24px rgba(255,255,255,0.12);
+        }
+        .auth-google-btn:active { transform: translateY(0); }
+        .auth-google-btn svg { flex-shrink: 0; }
+        .auth-remember {
+            display: flex; align-items: center; justify-content: center; gap: 0.55rem;
+            margin-top: 1.25rem; cursor: pointer;
+            font-size: 0.85rem; color: #888;
+        }
+        .auth-remember input {
+            accent-color: #FF5C00; width: 15px; height: 15px; cursor: pointer;
+        }
+        .auth-note { font-size: 0.77rem; color: #444; margin-top: 0.55rem; }
+        .auth-error {
+            background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.25);
+            border-radius: 10px; padding: 0.6rem 0.9rem;
+            color: #FF6B6B; font-size: 0.82rem; margin-top: 0.85rem; display: none;
+        }
+
+        /* ── 네비게이션 로그인 버튼 ── */
+        .auth-btn-nav {
+            background: transparent;
+            border: 1px solid #2a2a2a;
+            color: #888;
+            padding: 0.44rem 1rem;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+            display: flex; align-items: center; gap: 0.4rem;
+            white-space: nowrap;
+        }
+        .auth-btn-nav:hover { border-color: #FF5C00; color: #FF5C00; }
+        .auth-btn-nav svg { transition: transform 0.2s; }
+        .auth-btn-nav:hover svg { transform: scale(1.1); }
+
+        /* ── 유저 칩 (로그인 후) ── */
+        .auth-user-chip {
+            display: flex; align-items: center; gap: 0.45rem;
+            background: #0d0d0d; border: 1px solid #222;
+            border-radius: 50px; padding: 0.28rem 0.75rem 0.28rem 0.28rem;
+            transition: border-color 0.2s;
+        }
+        .auth-user-chip:hover { border-color: #333; }
+        .auth-avatar {
+            width: 24px; height: 24px; border-radius: 50%;
+            background: linear-gradient(135deg, #FF5C00, #ff8c42);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.72rem; font-weight: 800; color: #fff;
+            flex-shrink: 0; overflow: hidden;
+        }
+        .auth-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .auth-uname {
+            font-size: 0.81rem; font-weight: 700; color: #ccc;
+            max-width: 72px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .auth-divider-v { width: 1px; height: 13px; background: #2a2a2a; flex-shrink: 0; }
+        .auth-logout-link {
+            background: none; border: none;
+            color: #555; font-size: 0.76rem;
+            cursor: pointer; padding: 0;
+            font-family: 'DM Sans', sans-serif;
+            transition: color 0.2s; white-space: nowrap;
+        }
+        .auth-logout-link:hover { color: #FF6B6B; }
+    `;
+    document.head.appendChild(s);
+}
+
+/* ─── 모달 HTML 주입 ──────────────────────────────────── */
+function injectModal() {
+    if (document.getElementById('auth-modal')) return;
+    const el = document.createElement('div');
+    el.id = 'auth-modal';
+    el.innerHTML = `
+        <div class="auth-overlay" id="auth-overlay"></div>
+        <div class="auth-box">
+            <button class="auth-close" id="auth-close" aria-label="닫기">✕</button>
+            <div class="auth-logo-wrap">📊</div>
+            <h2 class="auth-title">주린이 계산기</h2>
+            <p class="auth-sub">Google 계정으로 간편하게 로그인하세요</p>
+            <button class="auth-google-btn" id="auth-google-btn">
+                <svg width="19" height="19" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Google로 계속하기
+            </button>
+            <label class="auth-remember">
+                <input type="checkbox" id="auth-remember" checked>
+                <span>자동 로그인 — 내가 로그아웃할 때까지 유지</span>
+            </label>
+            <p class="auth-note">미선택 시 24시간 후 자동으로 로그아웃됩니다</p>
+            <div class="auth-error" id="auth-error"></div>
+        </div>
+    `;
+    document.body.appendChild(el);
+
+    document.getElementById('auth-close').onclick    = closeModal;
+    document.getElementById('auth-overlay').onclick  = closeModal;
+    document.getElementById('auth-google-btn').onclick = handleGoogleLogin;
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+    });
+}
+
+function openModal()  { document.getElementById('auth-modal')?.classList.add('active'); }
+function closeModal() { document.getElementById('auth-modal')?.classList.remove('active'); }
+
+async function handleGoogleLogin() {
+    const { auth, provider } = getFirebase();
+    const btn = document.getElementById('auth-google-btn');
+    const errEl = document.getElementById('auth-error');
+    const remember = document.getElementById('auth-remember')?.checked ?? true;
+
+    if (btn) { btn.disabled = true; btn.style.opacity = '0.7'; }
+    if (errEl) errEl.style.display = 'none';
+
+    try {
+        await signInWithPopup(auth, provider);
+        localStorage.setItem('jurini_auto_login', remember ? 'true' : 'false');
+        if (!remember) {
+            localStorage.setItem('jurini_login_time', Date.now().toString());
+        } else {
+            localStorage.removeItem('jurini_login_time');
+        }
+        closeModal();
+    } catch (err) {
+        console.error('로그인 실패:', err);
+        const msg = err.code === 'auth/popup-blocked'
+            ? '팝업이 차단되었습니다. 브라우저 팝업 허용 후 다시 시도해주세요.'
+            : err.code === 'auth/popup-closed-by-user'
+            ? '로그인 창이 닫혔습니다. 다시 시도해주세요.'
+            : '로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+        if (errEl) { errEl.textContent = msg; errEl.style.display = 'block'; }
+    } finally {
+        if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+    }
+}
+
+/* ─── 세션 만료 체크 ─────────────────────────────────── */
+function checkExpiry(user) {
+    if (!user) return;
+    const autoLogin = localStorage.getItem('jurini_auto_login') === 'true';
+    if (autoLogin) return;
+    const loginTime = parseInt(localStorage.getItem('jurini_login_time') || '0');
+    const EXPIRE_MS = 24 * 60 * 60 * 1000; // 24h
+    if (loginTime && Date.now() - loginTime > EXPIRE_MS) {
+        const { auth } = getFirebase();
+        signOut(auth);
+        localStorage.removeItem('jurini_login_time');
+        localStorage.removeItem('jurini_auto_login');
+    }
+}
+
+/* ─── 네비 UI 업데이트 ───────────────────────────────── */
+function updateNavUI(user) {
+    const loginBtn  = document.getElementById('btn-login');
+    const userInfo  = document.getElementById('user-info');
+
+    if (!loginBtn && !userInfo) return;
+
+    if (user) {
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (userInfo) {
+            userInfo.style.display = 'flex';
+            const avatar = userInfo.querySelector('.auth-avatar');
+            const uname  = userInfo.querySelector('.auth-uname, #user-name');
+            if (avatar) {
+                avatar.innerHTML = user.photoURL
+                    ? `<img src="${user.photoURL}" alt="avatar">`
+                    : (user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U');
+            }
+            if (uname) {
+                const first = user.displayName ? user.displayName.split(' ')[0] : '사용자';
+                uname.textContent = first;
+            }
+        }
+    } else {
+        if (loginBtn) loginBtn.style.display = '';
+        if (userInfo) userInfo.style.display = 'none';
+    }
+}
+
+/* ─── 로그아웃 핸들러 ────────────────────────────────── */
+function handleLogout() {
+    const { auth } = getFirebase();
+    signOut(auth);
+    localStorage.removeItem('jurini_auto_login');
+    localStorage.removeItem('jurini_login_time');
+}
+
+/* ─── 초기화 (DOMContentLoaded 에서 호출) ─────────────── */
+function initAuth() {
+    injectStyles();
+    injectModal();
+
+    const { auth } = getFirebase();
+
+    const loginBtn  = document.getElementById('btn-login');
+    const logoutBtn = document.getElementById('btn-logout');
+
+    if (loginBtn)  loginBtn.onclick  = openModal;
+    if (logoutBtn) logoutBtn.onclick = handleLogout;
+
+    onAuthStateChanged(auth, (user) => {
+        checkExpiry(user);
+        updateNavUI(user);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initAuth);
+
+export { openModal, closeModal, handleLogout };

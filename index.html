@@ -6,7 +6,7 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagservices.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.workers.dev https://*.onrender.com https://corsproxy.io https://query2.finance.yahoo.com https://finance.naver.com https://pagead2.googlesyndication.com; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; object-src 'none'; base-uri 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagservices.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.workers.dev https://*.onrender.com https://corsproxy.io https://query2.finance.yahoo.com https://finance.naver.com https://pagead2.googlesyndication.com https://*.googleapis.com https://*.firebaseapp.com https://*.firebaseio.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://jurinicalc.firebaseapp.com https://accounts.google.com; object-src 'none'; base-uri 'self';">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="주식 초보자를 위한 무료 계산기 모음 - 배당금, 평단가, 용어 사전까지! 서버 저장 없는 100% 안전한 도구">
@@ -138,34 +138,6 @@
         }
 
         #auth-ui { display: flex; align-items: center; gap: 0.75rem; }
-
-        .auth-btn-minimal {
-            background: transparent;
-            border: 1px solid #2a2a2a;
-            color: var(--text-secondary);
-            padding: 0.45rem 1.1rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'DM Sans', sans-serif;
-        }
-
-        .auth-btn-minimal:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .logout-link {
-            background: none;
-            border: none;
-            color: var(--danger);
-            font-size: 0.8rem;
-            text-decoration: underline;
-            cursor: pointer;
-            font-weight: 600;
-        }
 
         /* Hide theme toggle — always dark */
         .theme-toggle { display: none !important; }
@@ -909,6 +881,101 @@
             font-style: italic;
         }
 
+        /* ── DOWNLOAD SECTION ───────────────────────────── */
+        .download-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem 6rem;
+        }
+        .download-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+        .download-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .download-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,92,0,0.04) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .download-card:hover { border-color: rgba(255,92,0,0.3); transform: translateY(-2px); }
+        .download-card.soon { opacity: 0.65; }
+        .download-card.soon:hover { transform: none; border-color: var(--border); }
+        .dl-badge {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.3rem 0.75rem; border-radius: 50px;
+            font-size: 0.74rem; font-weight: 700;
+            margin-bottom: 1.25rem;
+        }
+        .dl-badge.live { background: rgba(0,217,163,0.12); color: #00D9A3; border: 1px solid rgba(0,217,163,0.25); }
+        .dl-badge.soon { background: rgba(255,92,0,0.08); color: #FF8533; border: 1px solid rgba(255,92,0,0.2); }
+        .dl-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: dlPulse 1.8s ease-in-out infinite; }
+        @keyframes dlPulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+        .dl-icon { font-size: 2.5rem; margin-bottom: 0.9rem; }
+        .dl-title { font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 0.5rem; }
+        .dl-desc { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.65; margin-bottom: 1.5rem; }
+        .dl-features { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1.75rem; }
+        .dl-features li { font-size: 0.83rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem; }
+        .dl-features li::before { content: '✓'; color: var(--primary); font-weight: 700; font-size: 0.8rem; flex-shrink: 0; }
+        .dl-btn {
+            display: inline-flex; align-items: center; gap: 0.55rem;
+            padding: 0.7rem 1.4rem; border-radius: 50px;
+            font-size: 0.88rem; font-weight: 700;
+            cursor: pointer; transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+            text-decoration: none;
+        }
+        .dl-btn.primary {
+            background: var(--primary); color: #fff; border: none;
+            box-shadow: 0 4px 20px rgba(255,92,0,0.35);
+        }
+        .dl-btn.primary:hover { background: #ff7a30; transform: translateY(-1px); box-shadow: 0 6px 28px rgba(255,92,0,0.45); }
+        .dl-btn.disabled {
+            background: transparent; color: #555;
+            border: 1px solid #222; cursor: not-allowed;
+        }
+        .dl-version { font-size: 0.74rem; color: #444; margin-top: 0.75rem; }
+
+        /* ── 스켈레톤 로딩 ──────────────────────────────── */
+        .news-card.skeleton {
+            animation: skeletonPulse 1.6s ease-in-out infinite;
+            pointer-events: none;
+        }
+        .skeleton-line {
+            background: #1e1e1e; border-radius: 6px; margin-bottom: 0.65rem;
+        }
+        .skeleton-badge { height: 20px; width: 90px; }
+        .skeleton-title { height: 16px; width: 80%; margin-top: 0.5rem; }
+        .skeleton-title2 { height: 16px; width: 55%; }
+        .skeleton-text { height: 12px; width: 100%; }
+        .skeleton-text2 { height: 12px; width: 70%; }
+        @keyframes skeletonPulse {
+            0%,100% { opacity: 1; }
+            50%      { opacity: 0.45; }
+        }
+        .server-wakeup-notice {
+            display: flex; align-items: center; gap: 0.6rem;
+            font-size: 0.8rem; color: #555;
+            margin-bottom: 1rem;
+        }
+        .wakeup-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: #FF8533;
+            animation: dlPulse 1.2s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
         /* ── NEWS SECTION ────────────────────────────────── */
         .news-section {
             max-width: 1200px;
@@ -1150,6 +1217,7 @@
             .features-grid { grid-template-columns: 1fr; }
             .news-header { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
             .search-container { padding: 1.5rem; }
+            .download-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -1172,10 +1240,17 @@
 
             <div class="nav-actions">
                 <div id="auth-ui" style="display:flex;align-items:center;gap:0.75rem;">
-                    <button id="btn-login" class="auth-btn-minimal">🔑 로그인</button>
-                    <div id="user-info" style="display:none;align-items:center;gap:0.75rem;">
-                        <span id="user-name" style="font-weight:700;font-size:0.85rem;color:var(--text-secondary);"></span>
-                        <button id="btn-logout" class="logout-link">로그아웃</button>
+                    <button id="btn-login" class="auth-btn-nav">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                        로그인
+                    </button>
+                    <div id="user-info" style="display:none;align-items:center;">
+                        <div class="auth-user-chip">
+                            <div class="auth-avatar" id="user-avatar"></div>
+                            <span id="user-name" class="auth-uname"></span>
+                            <div class="auth-divider-v"></div>
+                            <button id="btn-logout" class="auth-logout-link">로그아웃</button>
+                        </div>
                     </div>
                 </div>
                 <!-- Hidden: keep for JS compatibility -->
@@ -1469,17 +1544,64 @@
     </section>
 
 
+    <!-- ── DOWNLOAD SECTION ──────────────────────────── -->
+    <section class="download-section" id="download">
+        <div class="section-label">앱 다운로드</div>
+        <h2 class="section-title">더 강력한 버전으로 만나보세요</h2>
+        <p class="section-subtitle">웹 버전은 지금 바로 무료 사용 가능, 데스크탑 앱은 출시 예정입니다.</p>
+        <div class="download-grid">
+            <div class="download-card">
+                <div class="dl-badge live"><span class="dl-badge-dot"></span>운영 중</div>
+                <div class="dl-icon">🌐</div>
+                <div class="dl-title">주린이 계산기 웹</div>
+                <p class="dl-desc">PC·모바일 어디서나 즉시 사용. 설치 없이 브라우저만으로 모든 기능을 무료로 이용하세요.</p>
+                <ul class="dl-features">
+                    <li>실시간 주식 가격 조회</li>
+                    <li>배당금 · 평단가 · 모의투자 계산기</li>
+                    <li>내부자 매수 포착 · 글로벌 뉴스</li>
+                    <li>주식 사관학교 커리큘럼</li>
+                </ul>
+                <a href="#tools" class="dl-btn primary">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15H11v-6h2zm0-8H11V7h2z"/></svg>
+                    지금 바로 사용하기
+                </a>
+            </div>
+
+            <div class="download-card soon">
+                <div class="dl-badge soon"><span class="dl-badge-dot"></span>출시 예정</div>
+                <div class="dl-icon">💻</div>
+                <div class="dl-title">주린이 계산기 Desktop</div>
+                <p class="dl-desc">더 빠르고 강력한 데스크탑 전용 앱. 오프라인에서도 사용 가능한 심화 기능을 준비 중입니다.</p>
+                <ul class="dl-features">
+                    <li>오프라인 계산 기능</li>
+                    <li>알림 · 포트폴리오 자동 추적</li>
+                    <li>고급 차트 분석 도구</li>
+                    <li>Windows / macOS 지원</li>
+                </ul>
+                <button class="dl-btn disabled" disabled>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15H11v-6h2zm0-8H11V7h2z"/></svg>
+                    준비 중입니다
+                </button>
+                <p class="dl-version">출시 알림 신청: <a href="https://discord.gg/a3rB4u6QXF" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;">Discord →</a></p>
+            </div>
+        </div>
+    </section>
+
+
     <!-- ── WHALE / NEWS ─────────────────────────────── -->
     <section class="news-section" id="whale-section" style="padding-top:6rem;">
         <div class="news-header">
             <h2>🐋 내부자 매수 포착</h2>
             <a href="news-intelligence.html" class="view-more-btn">고래 정보 전체보기 →</a>
         </div>
+        <div class="server-wakeup-notice" id="whale-wakeup-notice">
+            <span class="wakeup-dot"></span>
+            <span>서버 연결 중… 최초 로딩은 최대 30초가 소요될 수 있습니다.</span>
+        </div>
         <div class="news-slider" id="whale-container">
-            <div class="news-card">
-                <span class="whale-tag">🐋 내부자 매수 포착</span>
-                <h3 style="text-align:center;">고래 데이터를<br>불러오는 중...</h3>
-            </div>
+            <div class="news-card skeleton"><div class="skeleton-line skeleton-badge"></div><div class="skeleton-line skeleton-title"></div><div class="skeleton-line skeleton-title2"></div><div class="skeleton-line skeleton-text" style="margin-top:0.5rem;"></div><div class="skeleton-line skeleton-text2"></div></div>
+            <div class="news-card skeleton"><div class="skeleton-line skeleton-badge"></div><div class="skeleton-line skeleton-title"></div><div class="skeleton-line skeleton-title2"></div><div class="skeleton-line skeleton-text" style="margin-top:0.5rem;"></div><div class="skeleton-line skeleton-text2"></div></div>
+            <div class="news-card skeleton"><div class="skeleton-line skeleton-badge"></div><div class="skeleton-line skeleton-title"></div><div class="skeleton-line skeleton-title2"></div><div class="skeleton-line skeleton-text" style="margin-top:0.5rem;"></div><div class="skeleton-line skeleton-text2"></div></div>
         </div>
     </section>
 
@@ -1488,11 +1610,14 @@
             <h2>📡 글로벌 경제 뉴스</h2>
             <a href="news-intelligence.html" class="view-more-btn">인텔리전스 전체보기 →</a>
         </div>
+        <div class="server-wakeup-notice" id="news-wakeup-notice">
+            <span class="wakeup-dot"></span>
+            <span>서버 연결 중… 최초 로딩은 최대 30초가 소요될 수 있습니다.</span>
+        </div>
         <div class="news-slider" id="news-container">
-            <div class="news-card">
-                <span class="news-badge badge-cnbc">데이터 수신 대기중</span>
-                <h3 style="text-align:center;">시장 속보를<br>불러오는 중... 📡</h3>
-            </div>
+            <div class="news-card skeleton"><div class="skeleton-line skeleton-badge"></div><div class="skeleton-line skeleton-title"></div><div class="skeleton-line skeleton-title2"></div><div class="skeleton-line skeleton-text" style="margin-top:0.5rem;"></div><div class="skeleton-line skeleton-text2"></div></div>
+            <div class="news-card skeleton"><div class="skeleton-line skeleton-badge"></div><div class="skeleton-line skeleton-title"></div><div class="skeleton-line skeleton-title2"></div><div class="skeleton-line skeleton-text" style="margin-top:0.5rem;"></div><div class="skeleton-line skeleton-text2"></div></div>
+            <div class="news-card skeleton"><div class="skeleton-line skeleton-badge"></div><div class="skeleton-line skeleton-title"></div><div class="skeleton-line skeleton-title2"></div><div class="skeleton-line skeleton-text" style="margin-top:0.5rem;"></div><div class="skeleton-line skeleton-text2"></div></div>
         </div>
     </section>
 
@@ -1646,8 +1771,17 @@
             if (!newsContainer || !whaleContainer) return;
 
             try {
-                const response = await fetch(`${RENDER_SERVER_URL}/get_intel`);
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 35000);
+                const response = await fetch(`${RENDER_SERVER_URL}/get_intel`, { signal: controller.signal });
+                clearTimeout(timeout);
                 const result = await response.json();
+
+                // 서버 연결 성공 → 웨이크업 알림 숨김
+                const whaleNotice = document.getElementById('whale-wakeup-notice');
+                const newsNotice  = document.getElementById('news-wakeup-notice');
+                if (whaleNotice) whaleNotice.style.display = 'none';
+                if (newsNotice)  newsNotice.style.display  = 'none';
 
                 if (result.status === "success" && result.data && result.data.length > 0) {
                     const sortedData = result.data.sort((a, b) => {
@@ -1697,7 +1831,19 @@
                     whaleContainer.innerHTML = whaleHtml ? (whaleHtml + moreCard('고래 정보')) : `<div class="news-card" style="display:flex;justify-content:center;align-items:center;"><h3 style="text-align:center;color:var(--text-secondary);">최신 데이터가 없습니다.</h3></div>`;
                     newsContainer.innerHTML = newsHtml ? (newsHtml + moreCard('경제 뉴스')) : `<div class="news-card" style="display:flex;justify-content:center;align-items:center;"><h3 style="text-align:center;color:var(--text-secondary);">최신 뉴스가 없습니다.</h3></div>`;
                 }
-            } catch (error) { console.error("인텔리전스 로드 실패", error); }
+            } catch (error) {
+                console.error("인텔리전스 로드 실패", error);
+                // 타임아웃 시 재시도 안내
+                const whaleNotice = document.getElementById('whale-wakeup-notice');
+                const newsNotice  = document.getElementById('news-wakeup-notice');
+                if (whaleNotice) whaleNotice.innerHTML = '<span class="wakeup-dot" style="background:#FF6B6B"></span><span>서버 응답 없음. <a href="javascript:updateIntelligenceCards()" style="color:var(--primary);">다시 시도</a></span>';
+                if (newsNotice)  newsNotice.innerHTML  = '<span class="wakeup-dot" style="background:#FF6B6B"></span><span>서버 응답 없음. <a href="javascript:updateIntelligenceCards()" style="color:var(--primary);">다시 시도</a></span>';
+                const emptyCard = `<div class="news-card" style="display:flex;justify-content:center;align-items:center;flex-direction:column;gap:0.5rem;"><h3 style="text-align:center;color:var(--text-secondary);">잠시 후 다시 시도해주세요</h3><p style="text-align:center;color:#555;font-size:0.8rem;">서버가 깨어나는 중입니다 (최대 30초)</p></div>`;
+                const wc = document.getElementById('whale-container');
+                const nc = document.getElementById('news-container');
+                if (wc && wc.querySelector('.skeleton')) wc.innerHTML = emptyCard;
+                if (nc && nc.querySelector('.skeleton')) nc.innerHTML = emptyCard;
+            }
         }
 
         async function fetchMarketIndices() {
@@ -1868,50 +2014,8 @@
         }
     </script>
 
-    <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyALn9C2PHgMd95J41cNpceCojbp-c5Sfo0",
-        authDomain: "jurinicalc.firebaseapp.com",
-        projectId: "jurinicalc",
-        storageBucket: "jurinicalc.firebasestorage.app",
-        messagingSenderId: "935820034253",
-        appId: "1:935820034253:web:8ad46e0b4af866664aa984"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-
-    const btnLogin = document.getElementById('btn-login');
-    const userInfo = document.getElementById('user-info');
-    const userName = document.getElementById('user-name');
-    const btnLogout = document.getElementById('btn-logout');
-
-    btnLogin.onclick = async () => {
-        try {
-            await signInWithPopup(auth, provider);
-        } catch (error) {
-            console.error("로그인 실패:", error);
-            alert("로그인 중 오류가 발생했어!");
-        }
-    };
-
-    btnLogout.onclick = () => signOut(auth);
-
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            btnLogin.style.display = 'none';
-            userInfo.style.display = 'flex';
-            userName.innerText = user.displayName;
-        } else {
-            btnLogin.style.display = 'block';
-            userInfo.style.display = 'none';
-        }
-    });
-    </script>
+    <!-- Firebase 인증: auth-modal.js 통합 모듈 -->
+    <script type="module" src="auth-modal.js"></script>
 
 </body>
 </html>

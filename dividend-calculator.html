@@ -6,7 +6,7 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagservices.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.workers.dev https://*.onrender.com https://corsproxy.io https://query2.finance.yahoo.com https://finance.naver.com https://pagead2.googlesyndication.com; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; object-src 'none'; base-uri 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagservices.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.workers.dev https://*.onrender.com https://corsproxy.io https://query2.finance.yahoo.com https://finance.naver.com https://pagead2.googlesyndication.com https://corsproxy.io https://query2.finance.yahoo.com; frame-src https://jurinicalc.firebaseapp.com https://accounts.google.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; object-src 'none'; base-uri 'self';">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="배당금 자동 계산기 - 배당 수익, 재투자 효과, 세금까지 한 번에 계산하세요">
@@ -1025,25 +1025,6 @@
             .modal-title { color: var(--text-primary) !important; }
             .modal-close { background: #4A4A4A !important; color: white !important; }
         }
-        .auth-btn-minimal {
-    background: var(--primary);
-    color: #000;
-    border: none;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-weight: 800;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: 0.2s;
-}
-.logout-link {
-    background: none;
-    border: none;
-    color: var(--danger);
-    font-size: 0.75rem;
-    text-decoration: underline;
-    cursor: pointer;
-}
         /* ── DARK THEME OVERRIDE ─────────────────────────── */
         :root {
             --primary: #FF5C00 !important;
@@ -1109,8 +1090,6 @@
         .highlight, .accent { color: #FF5C00 !important; }
         .success-text, .positive { color: #00D9A3 !important; }
         .danger-text, .negative { color: #FF6B6B !important; }
-        .auth-btn-minimal { background: transparent !important; border: 1px solid #2a2a2a !important; color: #888 !important; border-radius: 50px !important; }
-        .logout-link { color: #FF6B6B !important; background: none !important; border: none !important; }
         table { border-color: #1e1e1e !important; }
         th { background: #111 !important; color: #888 !important; border-color: #1e1e1e !important; }
         td { color: #fff !important; border-color: #1e1e1e !important; }
@@ -1154,11 +1133,18 @@
             <a href="index.html" class="logo">
                 <span style="font-size:1.8rem">📊</span> <span>주린이 계산기</span>
             </a>
-            <div id="auth-ui" style="display: flex; align-items: center; gap: 10px; margin-right: 5px;">
-    <button id="btn-login" class="auth-btn-minimal">🔑 로그인</button>
-    <div id="user-info" style="display: none; align-items: center; gap: 10px;">
-        <span id="user-name" style="font-weight: 700; font-size: 0.85rem; color: var(--text);"></span>
-        <button id="btn-logout" class="logout-link">로그아웃</button>
+            <div id="auth-ui" style="display:flex;align-items:center;gap:0.75rem;margin-right:5px;">
+    <button id="btn-login" class="auth-btn-nav">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+        로그인
+    </button>
+    <div id="user-info" style="display:none;align-items:center;">
+        <div class="auth-user-chip">
+            <div class="auth-avatar" id="user-avatar"></div>
+            <span id="user-name" class="auth-uname"></span>
+            <div class="auth-divider-v"></div>
+            <button id="btn-logout" class="auth-logout-link">로그아웃</button>
+        </div>
     </div>
 </div>
             <div class="nav-actions">
@@ -2104,6 +2090,6 @@
             if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
         }
     </script>
-    <script type="module" src="auth-global.js"></script>
+    <script type="module" src="auth-modal.js"></script>
 </body>
 </html>
