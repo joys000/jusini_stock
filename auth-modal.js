@@ -239,31 +239,20 @@ async function handleGoogleLogin() {
     if (btn)   { btn.disabled = true; btn.style.opacity = '0.7'; btn.textContent = '처리 중...'; }
     if (errEl) errEl.style.display = 'none';
 
-    // 로그인 방식 결정:
-    // GitHub Pages(.github.io) → signInWithRedirect (팝업 차단·서드파티쿠키 이슈 완전 회피)
-    // 로컬/기타              → signInWithPopup 우선, 실패 시 redirect 폴백
-    const useRedirect = location.hostname.endsWith('.github.io');
-
     try {
         saveLoginPrefs(remember);
 
-        if (useRedirect) {
-            // ── Redirect 방식 (GitHub Pages 전용) ──────────────────
-            // 버튼 UI 업데이트 후 페이지 이동 (return 전에 사용자가 볼 수 있도록)
-            if (btn) { btn.textContent = 'Google 페이지로 이동 중...'; btn.style.opacity = '0.5'; }
-            await signInWithRedirect(auth, provider);
-            // 이 줄 이후는 실행되지 않음 (페이지 이동)
-        } else {
-            // ── Popup 방식 (로컬 환경) ──────────────────────────────
-            await signInWithPopup(auth, provider);
-            closeModal();
-        }
+        // ── Popup 방식 우선 (모든 환경) ────────────────────────────
+        // Firebase Authorized Domains에 등록된 경우 팝업이 정상 동작함
+        await signInWithPopup(auth, provider);
+        closeModal();
+
     } catch (err) {
         console.error('로그인 실패:', err.code, err.message);
 
         const msgMap = {
             'auth/popup-blocked':
-                '팝업이 차단되었습니다.\n페이지 이동 방식으로 재시도합니다...',
+                '팝업이 차단되었습니다.\n브라우저에서 팝업을 허용하거나\n페이지 이동 방식으로 재시도합니다...',
             'auth/popup-closed-by-user':
                 '로그인 창이 닫혔습니다. 다시 시도해주세요.',
             'auth/unauthorized-domain':
@@ -276,21 +265,23 @@ async function handleGoogleLogin() {
                 '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
             'auth/internal-error':
                 '내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+            'auth/cancelled-popup-request':
+                '이전 로그인 요청이 취소되었습니다. 다시 시도해주세요.',
         };
 
         const isPopupBlock = err.code === 'auth/popup-blocked';
         const msg = msgMap[err.code] ?? `오류 코드: ${err.code ?? 'unknown'}\n잠시 후 다시 시도해주세요.`;
         showAuthError(errEl, msg, isPopupBlock);
 
-        // 팝업 차단이면 redirect로 자동 재시도
+        // 팝업이 완전히 차단된 경우에만 redirect 폴백
         if (isPopupBlock) {
+            if (btn) { btn.textContent = 'Google 페이지로 이동 중...'; btn.style.opacity = '0.5'; }
             setTimeout(async () => {
                 try { await signInWithRedirect(auth, provider); } catch(e) {}
             }, 1500);
             return; // finally에서 버튼 복원 안 함
         }
     } finally {
-        // redirect 중이거나 팝업차단 재시도 중일 때는 버튼 유지
         if (btn && !btn.textContent.includes('이동')) {
             btn.disabled = false;
             btn.style.opacity = '1';
@@ -364,16 +355,14 @@ async function initAuth() {
     if (loginBtn)  loginBtn.onclick  = openModal;
     if (logoutBtn) logoutBtn.onclick = handleLogout;
 
-    // ── redirect 로그인 결과 처리 ─────────────────────────────
-    // GitHub Pages에서 signInWithRedirect 후 돌아왔을 때 결과를 수신
+    // ── redirect 폴백 결과 처리 (팝업 차단으로 redirect 사용 시) ───
     try {
         const result = await getRedirectResult(auth);
         if (result?.user) {
             console.log('✅ redirect 로그인 성공:', result.user.displayName);
-            closeModal();   // 모달이 남아있을 경우 닫기
+            closeModal();
         }
     } catch (e) {
-        // redirect 결과 오류는 조용히 처리 (페이지 최초 로드 시 항상 호출됨)
         if (e.code && e.code !== 'auth/no-auth-event') {
             console.warn('getRedirectResult 오류:', e.code, e.message);
         }
