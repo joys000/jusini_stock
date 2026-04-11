@@ -249,6 +249,12 @@ async function handleGoogleLogin() {
 
     } catch (err) {
         console.error('로그인 실패:', err.code, err.message);
+        console.error('에러 상세:', JSON.stringify({
+            code: err.code,
+            message: err.message,
+            serverResponse: err.customData?.serverResponse ?? null,
+            email: err.customData?.email ?? null
+        }));
 
         const msgMap = {
             'auth/popup-blocked':
