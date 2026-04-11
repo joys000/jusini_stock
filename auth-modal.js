@@ -4,9 +4,24 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
     getAuth, GoogleAuthProvider,
-    signInWithPopup, signInWithRedirect, getRedirectResult,
+    signInWithCredential, signInWithRedirect, getRedirectResult,
     signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+// Google OAuth Client ID (OAuth 2.0 Web Client)
+const GOOGLE_CLIENT_ID = '935820034253-1u6uuaju2u6pndob9ab910vng5sjcb99.apps.googleusercontent.com';
+
+// GIS(Google Identity Services) 라이브러리 동적 로드
+function loadGIS() {
+    return new Promise((resolve, reject) => {
+        if (window.google?.accounts?.oauth2) { resolve(); return; }
+        const s = document.createElement('script');
+        s.src = 'https://accounts.google.com/gsi/client';
+        s.onload = resolve;
+        s.onerror = () => reject(new Error('GIS 로드 실패'));
+        document.head.appendChild(s);
+    });
+}
 
 const firebaseConfig = {
     apiKey: "AIzaSyALn9C2PHgMd95J41cNpceCojbp-c5Sfo0",
@@ -231,9 +246,9 @@ function showAuthError(errEl, msg, isWarn = false) {
 }
 
 async function handleGoogleLogin() {
-    const { auth, provider } = getFirebase();
-    const btn    = document.getElementById('auth-google-btn');
-    const errEl  = document.getElementById('auth-error');
+    const { auth } = getFirebase();
+    const btn   = document.getElementById('auth-google-btn');
+    const errEl = document.getElementById('auth-error');
     const remember = document.getElementById('auth-remember')?.checked ?? true;
 
     if (btn)   { btn.disabled = true; btn.style.opacity = '0.7'; btn.textContent = '처리 중...'; }
@@ -242,25 +257,41 @@ async function handleGoogleLogin() {
     try {
         saveLoginPrefs(remember);
 
-        // ── Popup 방식 우선 (모든 환경) ────────────────────────────
-        // Firebase Authorized Domains에 등록된 경우 팝업이 정상 동작함
-        await signInWithPopup(auth, provider);
+        // ── GIS(Google Identity Services) 방식 ──────────────────────
+        // Firebase signInWithPopup 대신 GIS로 직접 토큰 받아서 credential 생성
+        // → firebaseapp.com relay 없이 인증 → GitHub Pages 크로스오리진 문제 해결
+        await loadGIS();
+
+        const accessToken = await new Promise((resolve, reject) => {
+            try {
+                const client = google.accounts.oauth2.initTokenClient({
+                    client_id: GOOGLE_CLIENT_ID,
+                    scope: 'openid email profile',
+                    callback: (resp) => {
+                        if (resp.error) {
+                            reject(new Error(resp.error));
+                        } else {
+                            resolve(resp.access_token);
+                        }
+                    },
+                    error_callback: (e) => reject(new Error(e?.type ?? 'gis_error')),
+                });
+                client.requestAccessToken({ prompt: 'select_account' });
+            } catch (e) {
+                reject(e);
+            }
+        });
+
+        const credential = GoogleAuthProvider.credential(null, accessToken);
+        await signInWithCredential(auth, credential);
         closeModal();
 
     } catch (err) {
-        console.error('로그인 실패:', err.code, err.message);
-        console.error('에러 상세:', JSON.stringify({
-            code: err.code,
-            message: err.message,
-            serverResponse: err.customData?.serverResponse ?? null,
-            email: err.customData?.email ?? null
-        }));
+        console.error('로그인 실패:', err.code ?? err.message);
 
         const msgMap = {
-            'auth/popup-blocked':
-                '팝업이 차단되었습니다.\n브라우저에서 팝업을 허용하거나\n페이지 이동 방식으로 재시도합니다...',
-            'auth/popup-closed-by-user':
-                '로그인 창이 닫혔습니다. 다시 시도해주세요.',
+            'auth/invalid-credential':
+                '인증 정보가 올바르지 않습니다. 다시 시도해주세요.',
             'auth/unauthorized-domain':
                 `도메인 미인증 오류\nFirebase Console → Authentication → Authorized Domains\n"${location.hostname}" 추가 필요`,
             'auth/operation-not-allowed':
@@ -269,26 +300,20 @@ async function handleGoogleLogin() {
                 '네트워크 오류입니다. 인터넷 연결을 확인하세요.',
             'auth/too-many-requests':
                 '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
-            'auth/internal-error':
-                '내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-            'auth/cancelled-popup-request':
-                '이전 로그인 요청이 취소되었습니다. 다시 시도해주세요.',
+            'auth/user-disabled':
+                '해당 계정은 비활성화되었습니다.',
+            'popup_closed_by_user':
+                '로그인 창이 닫혔습니다. 다시 시도해주세요.',
+            'access_denied':
+                '구글 계정 접근이 거부되었습니다. 다시 시도해주세요.',
         };
 
-        const isPopupBlock = err.code === 'auth/popup-blocked';
-        const msg = msgMap[err.code] ?? `오류 코드: ${err.code ?? 'unknown'}\n잠시 후 다시 시도해주세요.`;
-        showAuthError(errEl, msg, isPopupBlock);
+        const key = err.code ?? err.message;
+        const msg = msgMap[key] ?? `오류: ${key ?? 'unknown'}\n잠시 후 다시 시도해주세요.`;
+        showAuthError(errEl, msg);
 
-        // 팝업이 완전히 차단된 경우에만 redirect 폴백
-        if (isPopupBlock) {
-            if (btn) { btn.textContent = 'Google 페이지로 이동 중...'; btn.style.opacity = '0.5'; }
-            setTimeout(async () => {
-                try { await signInWithRedirect(auth, provider); } catch(e) {}
-            }, 1500);
-            return; // finally에서 버튼 복원 안 함
-        }
     } finally {
-        if (btn && !btn.textContent.includes('이동')) {
+        if (btn) {
             btn.disabled = false;
             btn.style.opacity = '1';
             btn.innerHTML = GOOGLE_BTN_INNER;
