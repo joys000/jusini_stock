@@ -571,23 +571,27 @@ async function selectUSStock(symbol, name) {
     }
 }
 
-// ── Yahoo Finance price fetch ──
+// ── Yahoo Finance price fetch — v8 chart API 사용 (v7은 인증 필요로 폐기됨) ──
 async function fetchYFPrice(symbol) {
-    try {
-        const url = encodeURIComponent(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}`);
-        const res = await fetch(CORS_PROXY + url, { headers: { 'Accept': 'application/json' } });
-        const data = await res.json();
-        const q = data?.quoteResponse?.result?.[0];
-        return q ? q.regularMarketPrice : null;
-    } catch(e) {
-        // Fallback: try without proxy (sometimes works)
+    const encoded = encodeURIComponent(symbol);
+    const candidates = [
+        `${YF_PROXY_URL}/v8/finance/chart/${encoded}?range=1d&interval=1d`,
+        `https://query1.finance.yahoo.com/v8/finance/chart/${encoded}?range=1d&interval=1d`,
+        `${CORS_PROXY}${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=1d&interval=1d`)}`,
+    ];
+    for (const url of candidates) {
         try {
-            const res2 = await fetch(`https://query2.finance.yahoo.com/v7/finance/quote?symbols=${symbol}`);
-            const data2 = await res2.json();
-            const q2 = data2?.quoteResponse?.result?.[0];
-            return q2 ? q2.regularMarketPrice : null;
-        } catch(e2) { return null; }
+            const ctrl = new AbortController();
+            const tid  = setTimeout(() => ctrl.abort(), 7000);
+            const res  = await fetch(url, { signal: ctrl.signal, headers: { 'Accept': 'application/json' } });
+            clearTimeout(tid);
+            if (!res.ok) continue;
+            const json = await res.json();
+            const meta = json?.chart?.result?.[0]?.meta;
+            if (meta?.regularMarketPrice != null) return meta.regularMarketPrice;
+        } catch(e) { continue; }
     }
+    return null;
 }
 
 // ── Buy stock ──
