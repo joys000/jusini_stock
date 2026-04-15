@@ -390,7 +390,7 @@ async function initAuth() {
     try {
         const result = await getRedirectResult(auth);
         if (result?.user) {
-            console.log('✅ redirect 로그인 성공:', result.user.displayName);
+            console.log('redirect login success:', result.user.displayName);
             closeModal();
         }
     } catch (e) {

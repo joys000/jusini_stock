@@ -1,375 +1,141 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1935946936708495" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>문의하기 - 주린이 계산기</title>
-    
+    <meta name="description" content="주린이 계산기 문의 — Discord 커뮤니티 또는 이메일로 연락주세요.">
+    <title>문의하기 | 주린이 계산기</title>
+
+    <link rel="icon" href="logo.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="logo.svg">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="문의하기 | 주린이 계산기">
+    <meta property="og:description" content="Discord 또는 이메일로 문의해주세요.">
+    <meta property="og:image" content="https://jurinicalc.com/logo.svg">
+    <meta property="og:url" content="https://jurinicalc.com/contact.html">
+    <meta name="twitter:card" content="summary">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="common.css">
     <style>
         :root {
-            --primary: #FFD600;
-            --success: #00D9A3;
-            --neutral: #2D3436;
-            --neutral-light: #F8F9FA;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --primary: #FF5C00; --primary-hover: #FF7A30;
+            --bg: #000; --card: #111; --border: #1e1e1e;
+            --text: #fff; --secondary: #888; --muted: #666;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'DM Sans', sans-serif;
-            color: var(--neutral);
-            background: linear-gradient(135deg, #FFF9E6 0%, #FFFFFF 100%);
-            line-height: 1.8;
-        }
-        
-        header {
-            background: white;
-            box-shadow: var(--shadow);
-            padding: 1.5rem 0;
-        }
-        
-        nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--neutral);
-            text-decoration: none;
-        }
-        
-        .back-btn {
-            background: var(--neutral-light);
-            color: var(--neutral);
-            padding: 0.75rem 1.5rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .back-btn:hover {
-            background: var(--primary);
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 3rem auto;
-            padding: 0 2rem;
-        }
-        
-        .page-title {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
-        .page-title h1 {
-            font-family: 'Fredoka', cursive;
-            font-size: 3rem;
-            color: var(--neutral);
-            margin-bottom: 0.5rem;
-        }
-        
-        .page-title p {
-            color: #636E72;
-            font-size: 1.1rem;
-        }
-        
-        .contact-grid {
-            display: grid;
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-        
-        .contact-card {
-            background: white;
-            border-radius: 24px;
-            padding: 2.5rem;
-            box-shadow: var(--shadow);
-        }
-        
-        .contact-card h2 {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.75rem;
-            margin-bottom: 1.5rem;
-            color: var(--neutral);
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--neutral);
-        }
-        
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #E8E8E8;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.3s ease;
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(255, 214, 0, 0.1);
-        }
-        
-        .form-group textarea {
-            min-height: 150px;
-            resize: vertical;
-        }
-        
-        .submit-btn {
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary), #FFC400);
-            color: var(--neutral);
-            border: none;
-            padding: 1.25rem;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'DM Sans', sans-serif;
-        }
-        
-        .submit-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 214, 0, 0.3);
-        }
-        
-        .info-box {
-            background: linear-gradient(135deg, #E8F5E9, #DCFCE7);
-            border-left: 4px solid var(--success);
-            padding: 2rem;
-            border-radius: 16px;
-        }
-        
-        .info-box h3 {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--neutral);
-        }
-        
-        .info-box ul {
-            margin-left: 1.5rem;
-        }
-        
-        .info-box li {
-            margin-bottom: 0.75rem;
-            color: #636E72;
-        }
-        
-        .faq-section {
-            background: white;
-            border-radius: 24px;
-            padding: 2.5rem;
-            box-shadow: var(--shadow);
-        }
-        
-        .faq-section h2 {
-            font-family: 'Fredoka', cursive;
-            font-size: 2rem;
-            margin-bottom: 2rem;
-            color: var(--neutral);
-        }
-        
-        .faq-item {
-            margin-bottom: 2rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid #E8E8E8;
-        }
-        
-        .faq-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-        
-        .faq-question {
-            font-family: 'Fredoka', cursive;
-            font-size: 1.25rem;
-            color: var(--neutral);
-            margin-bottom: 0.75rem;
-        }
-        
-        .faq-answer {
-            color: #636E72;
-            line-height: 1.8;
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+
+        header { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: rgba(0,0,0,0.88); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0.85rem 0; }
+        nav { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 0.55rem; text-decoration: none; color: var(--text); font-weight: 800; font-size: 0.95rem; letter-spacing: 0.04em; text-transform: uppercase; }
+        .logo-img { width: 30px; height: 30px; border-radius: 7px; }
+        .back-btn { background: transparent; border: 1px solid var(--border); color: var(--secondary); padding: 0.42rem 1rem; border-radius: 50px; text-decoration: none; font-size: 0.82rem; font-weight: 600; transition: all 0.2s; }
+        .back-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+        main { max-width: 800px; margin: 0 auto; padding: 6rem 2rem 4rem; }
+        .page-title { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 0.75rem; text-align: center; }
+        .page-sub { color: var(--secondary); font-size: 1rem; text-align: center; margin-bottom: 3rem; }
+
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 3rem; }
+        .contact-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; text-decoration: none; color: inherit; transition: all 0.25s; display: flex; flex-direction: column; gap: 0.75rem; }
+        .contact-card:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .contact-card .icon { font-size: 2rem; }
+        .contact-card h2 { font-size: 1.2rem; font-weight: 800; }
+        .contact-card p { color: var(--secondary); font-size: 0.9rem; line-height: 1.5; }
+        .contact-card .action { margin-top: auto; padding-top: 0.5rem; color: var(--primary); font-weight: 700; font-size: 0.9rem; }
+
+        .faq-section { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; }
+        .faq-section h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem; }
+        .faq-item { padding: 1rem 0; border-bottom: 1px solid var(--border); }
+        .faq-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .faq-q { font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem; }
+        .faq-a { color: var(--secondary); font-size: 0.92rem; line-height: 1.7; }
+
+        footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: #555; font-size: 0.82rem; margin-top: 4rem; }
+
+        @media (max-width: 640px) {
+            .contact-grid { grid-template-columns: 1fr; }
+            .page-title { font-size: 1.8rem; }
+            main { padding: 5rem 1rem 2rem; }
         }
     </style>
 </head>
 <body>
     <header>
         <nav>
-            <a href="index.html" class="logo">📊 주린이 계산기</a>
+            <a href="index.html" class="logo">
+                <img class="logo-img" src="logo.svg" alt="주린이 계산기 로고">
+                <span>주린이 계산기</span>
+            </a>
             <a href="index.html" class="back-btn">← 홈으로</a>
         </nav>
     </header>
 
-    <div class="container">
-        <div class="page-title">
-            <h1>문의하기</h1>
-            <p>궁금한 점이나 개선 사항을 알려주세요</p>
-        </div>
+    <main>
+        <h1 class="page-title">문의하기</h1>
+        <p class="page-sub">궁금한 점, 버그 제보, 기능 제안 모두 환영합니다.</p>
 
         <div class="contact-grid">
-            <div class="contact-card">
-                <h2>📧 문의 양식</h2>
-                <form id="contact-form">
-                    <div class="form-group">
-                        <label>문의 유형</label>
-                        <select id="inquiry-type" required>
-                            <option value="">선택해주세요</option>
-                            <option value="service">서비스 이용 문의</option>
-                            <option value="bug">버그 신고</option>
-                            <option value="feature">기능 제안</option>
-                            <option value="partnership">제휴 문의</option>
-                            <option value="etc">기타 문의</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>이메일 (선택)</label>
-                        <input type="email" id="email" placeholder="답변을 받으실 이메일 주소">
-                    </div>
-
-                    <div class="form-group">
-                        <label>제목</label>
-                        <input type="text" id="subject" placeholder="문의 제목을 입력하세요" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>문의 내용</label>
-                        <textarea id="message" placeholder="자세한 문의 내용을 입력해주세요" required></textarea>
-                    </div>
-
-                    <button type="submit" class="submit-btn">
-                        📤 문의하기
-                    </button>
-                </form>
-            </div>
-
-            <div class="info-box">
-                <h3>💡 문의 전 확인사항</h3>
-                <ul>
-                    <li>아래 자주 묻는 질문(FAQ)에서 먼저 답변을 찾아보세요</li>
-                    <li>버그 신고 시 사용 중인 브라우저와 운영체제를 함께 알려주세요</li>
-                    <li>기능 제안은 구체적으로 작성해주시면 검토에 도움이 됩니다</li>
-                    <li>영업일 기준 2-3일 내에 답변드립니다</li>
-                </ul>
-            </div>
+            <a class="contact-card" href="mailto:momlego5510@gmail.com?subject=%5B%EC%A3%BC%EB%A6%B0%EC%9D%B4%20%EA%B3%84%EC%82%B0%EA%B8%B0%5D%20%EB%AC%B8%EC%9D%98">
+                <span class="icon">📧</span>
+                <h2>이메일</h2>
+                <p>가장 확실한 방법. 영업일 기준 2-3일 내 답변드립니다.</p>
+                <span class="action">momlego5510@gmail.com →</span>
+            </a>
+            <a class="contact-card" href="https://discord.gg/" target="_blank" rel="noopener noreferrer">
+                <span class="icon">💬</span>
+                <h2>Discord 커뮤니티</h2>
+                <p>다른 주린이들과 함께 실시간으로 이야기 나눠보세요.</p>
+                <span class="action">커뮤니티 참여하기 →</span>
+            </a>
         </div>
 
-        <div class="faq-section">
-            <h2>자주 묻는 질문 (FAQ)</h2>
+        <section class="faq-section" aria-label="문의 양식" style="margin-bottom:1.5rem;">
+            <h2>직접 문의하기</h2>
+            <form action="mailto:support@jurinicalc.com" method="POST" enctype="text/plain" style="display:flex;flex-direction:column;gap:1rem;margin-top:1.25rem;">
+                <input type="text" name="name" placeholder="이름" aria-label="이름" required style="padding:0.75rem 1rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.95rem;">
+                <input type="email" name="email" placeholder="이메일" aria-label="이메일" required style="padding:0.75rem 1rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.95rem;">
+                <textarea name="message" placeholder="문의 내용" aria-label="문의 내용" rows="5" required style="padding:0.75rem 1rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.95rem;resize:vertical;"></textarea>
+                <button type="submit" style="padding:0.75rem 1.5rem;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:background 0.2s;">보내기</button>
+            </form>
+            <p style="color:var(--secondary);font-size:0.85rem;margin-top:1rem;">또는 Discord/이메일로 직접 문의해주세요</p>
+        </section>
 
+        <section class="faq-section" aria-label="자주 묻는 질문">
+            <h2>자주 묻는 질문</h2>
             <div class="faq-item">
-                <div class="faq-question">Q. 회원가입이 필요한가요?</div>
-                <div class="faq-answer">
-                    아니요, 주린이 계산기는 회원가입 없이 모든 기능을 무료로 이용할 수 있습니다. 
-                    회원가입을 요구하는 사이트는 주린이 계산기가 아니니 주의하시기 바랍니다.
-                </div>
+                <div class="faq-q">Q. 회원가입이 필요한가요?</div>
+                <div class="faq-a">아니요. 모든 기능을 회원가입 없이 무료로 이용할 수 있습니다. (포트폴리오 저장만 선택적 로그인)</div>
             </div>
-
             <div class="faq-item">
-                <div class="faq-question">Q. 입력한 데이터는 어디에 저장되나요?</div>
-                <div class="faq-answer">
-                    입력한 데이터는 서버로 전송되지 않고, 사용자의 브라우저에서만 처리됩니다. 
-                    페이지를 새로고침하거나 닫으면 모든 데이터가 삭제되므로 안심하고 사용하세요.
-                </div>
+                <div class="faq-q">Q. 입력한 데이터는 어디에 저장되나요?</div>
+                <div class="faq-a">계산 데이터는 브라우저에서만 처리되며 서버로 전송되지 않습니다. 포트폴리오는 로그인 시 Supabase에 안전하게 저장됩니다.</div>
             </div>
-
             <div class="faq-item">
-                <div class="faq-question">Q. 계산 결과를 저장하거나 공유할 수 있나요?</div>
-                <div class="faq-answer">
-                    현재는 화면 캡처를 통해 저장하거나 공유할 수 있습니다. 
-                    향후 엑셀 다운로드 및 공유 기능을 추가할 예정입니다.
-                </div>
+                <div class="faq-q">Q. 모바일에서도 사용할 수 있나요?</div>
+                <div class="faq-a">네, 모든 기기에서 사용 가능하며 PWA로 홈 화면에 설치할 수도 있습니다.</div>
             </div>
-
             <div class="faq-item">
-                <div class="faq-question">Q. 계산 결과가 정확하지 않은 것 같아요</div>
-                <div class="faq-answer">
-                    본 서비스는 참고용 계산 도구이며, 실제 수익과 다를 수 있습니다. 
-                    오류를 발견하셨다면 위 문의 양식을 통해 자세한 내용을 알려주세요.
-                </div>
+                <div class="faq-q">Q. 무료인가요?</div>
+                <div class="faq-a">네, 완전 무료입니다. 최소한의 광고로 운영됩니다.</div>
             </div>
+        </section>
+    </main>
 
-            <div class="faq-item">
-                <div class="faq-question">Q. 모바일에서도 사용할 수 있나요?</div>
-                <div class="faq-answer">
-                    네, 주린이 계산기는 모바일, 태블릿, PC 등 모든 기기에서 사용할 수 있도록 최적화되어 있습니다.
-                </div>
-            </div>
+    <footer>
+        <p>© 2024-2026 주린이 계산기. 본 페이지는 정보 제공 목적이며 투자 조언이 아닙니다.</p>
+    </footer>
 
-            <div class="faq-item">
-                <div class="faq-question">Q. 새로운 기능을 제안하고 싶어요</div>
-                <div class="faq-answer">
-                    감사합니다! 위 문의 양식에서 '기능 제안'을 선택하고 자세한 내용을 보내주세요. 
-                    모든 제안은 검토 후 서비스 개선에 반영하도록 노력하겠습니다.
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">Q. 주린이 계산기는 무료인가요?</div>
-                <div class="faq-answer">
-                    네, 완전히 무료입니다. 모든 기능을 제한 없이 무료로 사용할 수 있으며, 
-                    광고 수익으로 운영되고 있습니다.
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <script src="config.js"></script>
     <script>
-        document.getElementById('contact-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const inquiryType = document.getElementById('inquiry-type').value;
-            const email = document.getElementById('email').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
-
-            if (!inquiryType || !subject || !message) {
-                alert('필수 항목을 모두 입력해주세요!');
-                return;
-            }
-
-            // 실제 환경에서는 이메일 전송 API를 사용합니다
-            alert('문의가 접수되었습니다!\n\n영업일 기준 2-3일 내에 답변드리겠습니다.\n감사합니다.');
-            
-            // 폼 초기화
-            document.getElementById('contact-form').reset();
-        });
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(()=>{});
+        }
     </script>
 </body>
 </html>

@@ -1,0 +1,21 @@
+{
+  "name": "주린이 계산기",
+  "short_name": "주린이",
+  "description": "주식 초보자를 위한 무료 계산기 모음 — 배당금, 평단가, 모의투자까지",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#000000",
+  "theme_color": "#FF5C00",
+  "lang": "ko",
+  "categories": ["finance", "education", "utilities"],
+  "icons": [
+    {
+      "src": "logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

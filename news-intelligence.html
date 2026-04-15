@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1935946936708495" crossorigin="anonymous"></script>
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    <!-- TODO: CSP에 'unsafe-inline' 사용 중 — 인라인 스크립트를 외부 .js 파일로 분리하면 nonce 기반 CSP로 강화 가능 -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagservices.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.onrender.com; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; object-src 'none'; base-uri 'self';">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="내부자 매수(고래) 포착 데이터와 글로벌 경제 뉴스를 한 곳에서 — 실시간 인텔리전스 대시보드">
+    <meta name="keywords" content="내부자 매수, 고래 추적, 경제 뉴스, 주식 뉴스, Form 4">
+    <title>인텔리전스 — 고래 추적 & 글로벌 뉴스 | 주린이 계산기</title>
+
+    <link rel="icon" href="logo.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="logo.svg">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="인텔리전스 — 고래 추적 & 글로벌 뉴스 | 주린이 계산기">
+    <meta property="og:description" content="내부자 매수 포착과 경제 뉴스를 한 곳에서 확인하세요.">
+    <meta property="og:image" content="https://jurinicalc.com/logo.svg">
+    <meta property="og:url" content="https://jurinicalc.com/news-intelligence.html">
+    <meta name="twitter:card" content="summary">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="common.css">
+    <style>
+        :root {
+            --primary: #FF5C00; --primary-hover: #FF7A30;
+            --success: #00D9A3; --danger: #FF6B6B; --gold: #FFD700;
+            --bg: #000; --card: #111; --border: #1e1e1e;
+            --text: #fff; --secondary: #888; --muted: #666;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+
+        header { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: rgba(0,0,0,0.88); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0.85rem 0; }
+        nav { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 0.55rem; text-decoration: none; color: var(--text); font-weight: 800; font-size: 0.95rem; letter-spacing: 0.04em; text-transform: uppercase; }
+        .logo-img { width: 30px; height: 30px; border-radius: 7px; }
+        .back-btn { background: transparent; border: 1px solid var(--border); color: var(--secondary); padding: 0.42rem 1rem; border-radius: 50px; text-decoration: none; font-size: 0.82rem; font-weight: 600; transition: all 0.2s; }
+        .back-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+        main { max-width: 1200px; margin: 0 auto; padding: 6rem 2rem 4rem; }
+
+        .page-header { margin-bottom: 3rem; }
+        .page-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary); margin-bottom: 0.75rem; }
+        .page-title { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 0.75rem; }
+        .page-sub { color: var(--secondary); font-size: 1rem; max-width: 640px; }
+
+        .tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+        .tab-btn { background: transparent; border: none; color: var(--secondary); padding: 0.9rem 1.4rem; font-size: 0.95rem; font-weight: 700; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; font-family: inherit; transition: all 0.2s; }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-btn:hover { color: var(--text); }
+
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; transition: all 0.25s; cursor: pointer; display: flex; flex-direction: column; }
+        .card:hover { border-color: rgba(255,92,0,0.3); transform: translateY(-3px); }
+        .card.whale { border-color: rgba(255,215,0,0.25); background: linear-gradient(145deg, var(--card), rgba(255,215,0,0.03)); }
+
+        .tag { align-self: flex-start; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.7rem; border-radius: 50px; margin-bottom: 0.875rem; background: #1a1a1a; color: var(--secondary); }
+        .tag.whale-tag { background: rgba(255,215,0,0.12); color: var(--gold); }
+
+        .card h3 { font-size: 1rem; line-height: 1.45; margin-bottom: 0.7rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-meta { font-size: 0.78rem; color: var(--secondary); margin-top: auto; padding-top: 0.875rem; display: flex; justify-content: space-between; }
+
+        .loading { text-align: center; padding: 4rem 2rem; color: var(--secondary); }
+        .loading-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--primary); animation: pulse 1.2s ease-in-out infinite; margin-right: 0.5rem; }
+        @keyframes pulse { 0%,100% {opacity: 1;} 50% {opacity: 0.3;} }
+
+        footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: #555; font-size: 0.82rem; margin-top: 4rem; }
+
+        @media (max-width: 1024px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 640px) {
+            .grid { grid-template-columns: 1fr; }
+            .page-title { font-size: 1.8rem; }
+            main { padding: 5rem 1rem 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                <img class="logo-img" src="logo.svg" alt="주린이 계산기 로고">
+                <span>주린이 계산기</span>
+            </a>
+            <a href="index.html" class="back-btn">← 홈으로</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="page-header">
+            <div class="page-label">Intelligence Dashboard</div>
+            <h1 class="page-title">📡 실시간 인텔리전스</h1>
+            <p class="page-sub">내부자 매수(고래) 포착과 글로벌 경제 뉴스를 한 곳에서 확인하세요. 데이터는 1분마다 자동 갱신됩니다.</p>
+        </div>
+
+        <div class="tabs" role="tablist">
+            <button class="tab-btn active" data-tab="all" role="tab">🌐 전체</button>
+            <button class="tab-btn" data-tab="whale" role="tab">🐋 고래 추적</button>
+            <button class="tab-btn" data-tab="news" role="tab">📰 경제 뉴스</button>
+        </div>
+
+        <div class="loading" id="loading">
+            <span class="loading-dot"></span>
+            <span>서버 연결 중… 최초 로딩은 최대 30초가 소요될 수 있습니다.</span>
+        </div>
+
+        <div class="grid" id="intel-grid" style="display:none;"></div>
+    </main>
+
+    <footer>
+        <p>© 2024-2026 주린이 계산기. 본 페이지는 정보 제공 목적이며 투자 조언이 아닙니다.</p>
+    </footer>
+
+    <script src="config.js"></script>
+    <script>
+        function escHtml(s) {
+            return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+        }
+
+        let allItems = [];
+        let currentTab = 'all';
+
+        function parseTime(v) {
+            if (!v) return 0;
+            if (!isNaN(v) && v !== '') {
+                const n = Number(v);
+                return n < 1e11 ? n * 1000 : n;
+            }
+            const d = new Date(v);
+            return isNaN(d.getTime()) ? 0 : d.getTime();
+        }
+
+        function formatTime(ms) {
+            if (!ms) return '방금 전';
+            const d = new Date(ms);
+            return `${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+        }
+
+        function render() {
+            const grid = document.getElementById('intel-grid');
+            const filtered = currentTab === 'all'
+                ? allItems
+                : allItems.filter(i => currentTab === 'whale' ? i.type === 'WHALE' : i.type === 'NEWS');
+
+            if (!filtered.length) {
+                grid.innerHTML = `<div class="card" style="grid-column:1/-1;text-align:center;color:var(--secondary);">표시할 데이터가 없습니다.</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(item => {
+                const time = formatTime(parseTime(item.pubDate || item.published_at || item.timestamp || item.datetime || item.date));
+                const link = item.link || (item.symbol ? `https://finviz.com/quote.ashx?t=${encodeURIComponent(item.symbol)}` : '#');
+                if (item.type === 'WHALE') {
+                    return `
+                        <a class="card whale" href="${escHtml(link)}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit;">
+                            <span class="tag whale-tag">🐋 내부자 매수 포착</span>
+                            <h3>${escHtml(item.title || '')}</h3>
+                            <div class="card-meta"><span>${escHtml(item.source || '')}</span><span>⏰ ${time}</span></div>
+                        </a>`;
+                }
+                return `
+                    <a class="card" href="${escHtml(link)}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit;">
+                        <span class="tag">${item.source === '해외경제' ? '🌐' : '📰'} ${escHtml(item.source || '뉴스')}</span>
+                        <h3>${escHtml(item.title || '')}</h3>
+                        <div class="card-meta"><span>📌 주요 뉴스</span><span>⏰ ${time}</span></div>
+                    </a>`;
+            }).join('');
+        }
+
+        async function loadIntel() {
+            const loading = document.getElementById('loading');
+            const grid = document.getElementById('intel-grid');
+            try {
+                const ctrl = new AbortController();
+                const t = setTimeout(() => ctrl.abort(), 35000);
+                const res = await fetch(`${window.JURINI_CONFIG.RENDER_SERVER}/get_intel`, { signal: ctrl.signal });
+                clearTimeout(t);
+                const json = await res.json();
+                if (json.status === 'success' && Array.isArray(json.data)) {
+                    allItems = json.data.sort((a,b) =>
+                        parseTime(b.pubDate||b.published_at||b.timestamp||b.datetime||b.date) -
+                        parseTime(a.pubDate||a.published_at||a.timestamp||a.datetime||a.date)
+                    );
+                    loading.style.display = 'none';
+                    grid.style.display = 'grid';
+                    render();
+                } else {
+                    loading.innerHTML = '⚠️ 데이터를 불러올 수 없습니다.';
+                }
+            } catch (e) {
+                loading.innerHTML = '⚠️ 서버 응답 없음. <button onclick="loadIntel()" style="background:none;border:none;color:var(--primary);cursor:pointer;font-weight:700;">다시 시도</button>';
+            }
+        }
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentTab = btn.dataset.tab;
+                render();
+            });
+        });
+
+        loadIntel();
+        setInterval(loadIntel, 60000);
+
+        // Service Worker 등록
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(()=>{});
+        }
+    </script>
+</body>
+</html>

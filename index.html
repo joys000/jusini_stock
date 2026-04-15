@@ -6,6 +6,7 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    <!-- TODO: CSP에 'unsafe-inline' 사용 중 — 인라인 스크립트를 외부 .js 파일로 분리하면 nonce 기반 CSP로 강화 가능 -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagservices.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.gstatic.com https://cdn.sheetjs.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.workers.dev https://*.onrender.com https://corsproxy.io https://query2.finance.yahoo.com https://finance.naver.com https://pagead2.googlesyndication.com https://*.googleapis.com https://*.firebaseapp.com https://*.firebaseio.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://accounts.google.com https://oauth2.googleapis.com; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://jurinicalc.firebaseapp.com https://accounts.google.com; object-src 'none'; base-uri 'self';">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,9 +14,24 @@
     <meta name="keywords" content="주식 계산기, 배당금 계산, 평단가 계산, 주식 용어, 주린이, 투자 도구">
     <title>주린이 계산기 — 주식, 이번엔 감 말고 숫자로 시작하세요</title>
 
+    <link rel="icon" href="logo.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="logo.svg">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FF5C00">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="주린이 계산기 — 주식, 이번엔 감 말고 숫자로 시작하세요">
+    <meta property="og:description" content="배당금·평단가·모의투자까지. 주린이가 실전 전에 꼭 써봐야 할 도구 7가지.">
+    <!-- TODO: 1200x630 소셜 미리보기 이미지(og-image.png) 생성 필요 — 현재 logo.svg 사용 중 -->
+    <meta property="og:image" content="https://jurinicalc.com/logo.svg">
+    <meta property="og:url" content="https://jurinicalc.com/">
+    <meta name="twitter:card" content="summary">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="common.css">
 
     <style>
         /* ============================================================
@@ -894,7 +910,7 @@
         }
         .download-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
             margin-top: 2.5rem;
         }
@@ -1194,7 +1210,7 @@
             padding-top: 2rem;
             border-top: 1px solid #111;
             text-align: center;
-            color: #333;
+            color: #555;
             font-size: 0.82rem;
         }
 
@@ -1212,10 +1228,31 @@
             .features-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
+        .hamburger-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+        }
         @media (max-width: 768px) {
+            .hamburger-btn { display: block; }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-card);
+                flex-direction: column;
+                padding: 16px;
+                border-bottom: 1px solid var(--border);
+            }
+            .nav-links.nav-open { display: flex; }
             .hero h1 { font-size: 2.4rem; }
             .section-title { font-size: 1.9rem; }
-            .nav-links { display: none; }
             .tools-grid { grid-template-columns: 1fr; }
             .problem-grid { grid-template-columns: 1fr; }
             .testimonials-grid { grid-template-columns: 1fr; }
@@ -1234,6 +1271,7 @@
             flex-shrink: 0;
         }
         </style>
+    <script src="config.js"></script>
 </head>
 <body>
 
@@ -1251,6 +1289,8 @@
                 <li><a href="#intelligence">뉴스</a></li>
                 <li><a href="https://discord.gg/a3rB4u6QXF" target="_blank" rel="noopener noreferrer">문의</a></li>
             </ul>
+
+            <button class="hamburger-btn" aria-label="메뉴 열기">☰</button>
 
             <div class="nav-actions">
                 <div id="auth-ui" style="display:flex;align-items:center;gap:0.75rem;">
@@ -1279,10 +1319,10 @@
     <!-- ── HERO ───────────────────────────────────── -->
     <section class="hero">
         <div class="hero-left">
-            <div id="grad-banner" class="grad-welcome-banner" onclick="location.href='beginner-guide.html'">
+            <a id="grad-banner" class="grad-welcome-banner" href="beginner-guide.html" style="text-decoration:none;color:inherit;display:block;">
                 <span class="grad-icon">🎓</span>
                 <span id="grad-text">주식 초보라면? 사관학교에서 기초 훈련부터 시작하세요!</span>
-            </div>
+            </a>
 
             <div class="hero-badge">
                 <span class="hero-badge-dot"></span>
@@ -1354,7 +1394,7 @@
 
     <!-- ── PROBLEM ─────────────────────────────────── -->
     <div class="section-wrap" style="padding-top:2rem;">
-        <div class="section-label">2. Problem</div>
+        <div class="section-label">FEATURES</div>
         <h2 class="section-title">이런 경험 있으신가요?</h2>
         <div class="problem-intro">
             주식을 시작하고 싶은데, 막상 앞에 서면 아무것도 모르겠는 그 느낌.<br>
@@ -1392,12 +1432,12 @@
 
     <!-- ── SERVICES / TOOLS ────────────────────────── -->
     <section class="tools-section" id="tools">
-        <div class="section-label">3. Services</div>
+        <div class="section-label">TOOLS</div>
         <h2 class="section-title">주린이 계산기가 해결합니다</h2>
         <p class="section-subtitle">한 곳에서 모두 해결하세요. 계좌도, 회원가입도 필요 없습니다.</p>
 
         <div class="tools-grid">
-            <div class="tool-card success" onclick="location.href='dividend-calculator.html'">
+            <a href="dividend-calculator.html" class="tool-card success" style="text-decoration:none;color:inherit;">
                 <div class="tool-icon">💰</div>
                 <h3>배당금 자동 계산기</h3>
                 <p>장기 투자자를 위한 배당금 계산과 재투자 시뮬레이션</p>
@@ -1407,9 +1447,9 @@
                     <li>세금 자동 계산 (15.4% 포함)</li>
                 </ul>
                 <button class="tool-btn">배당금 계산하기 →</button>
-            </div>
+            </a>
 
-            <div class="tool-card" id="academy-card" style="border: 1px solid rgba(255,92,0,0.35);" onclick="location.href='beginner-guide.html'">
+            <a href="beginner-guide.html" class="tool-card" id="academy-card" style="border: 1px solid rgba(255,92,0,0.35);text-decoration:none;color:inherit;">
                 <div id="academy-badge" class="completed-badge">🎓 수료 완료</div>
                 <div class="tool-icon">🏫</div>
                 <h3>주식 사관학교 (트레이닝)</h3>
@@ -1420,9 +1460,9 @@
                     <li>전 단계 클리어 시 자산가 배지 수여</li>
                 </ul>
                 <button id="academy-btn" class="tool-btn" style="background:rgba(255,92,0,0.18);border-color:rgba(255,92,0,0.4);">입학하기 (추천) →</button>
-            </div>
+            </a>
 
-            <div class="tool-card success" onclick="location.href='chart-simulator.html'">
+            <a href="chart-simulator.html" class="tool-card success" style="text-decoration:none;color:inherit;">
                 <div class="tool-icon">🎮</div>
                 <h3>차트 신내림 시뮬레이터</h3>
                 <p>배운 지식을 실전 과거 데이터로 테스트하는 가상 투자 게임</p>
@@ -1432,9 +1472,9 @@
                     <li>나만의 가상 자산 불리기</li>
                 </ul>
                 <button class="tool-btn" style="background:rgba(0,217,163,0.1);color:var(--success);border-color:rgba(0,217,163,0.3);">작전 개시 →</button>
-            </div>
+            </a>
 
-            <div class="tool-card" style="border: 1px solid rgba(0,217,163,0.25);" onclick="location.href='mock-invest.html'">
+            <a href="mock-invest.html" class="tool-card" style="border: 1px solid rgba(0,217,163,0.25);text-decoration:none;color:inherit;">
                 <div class="tool-icon">💹</div>
                 <h3>실시간 모의투자 (New)</h3>
                 <p>실제 미국 주식 시세로 즐기는 가상의 포트폴리오 트레이딩</p>
@@ -1444,9 +1484,9 @@
                     <li>가상 시드머니 투자 연습</li>
                 </ul>
                 <button class="tool-btn" style="background:rgba(0,217,163,0.1);color:var(--success);border-color:rgba(0,217,163,0.3);">거래소 입장 →</button>
-            </div>
+            </a>
 
-            <div class="tool-card" onclick="location.href='stock-dictionary.html'">
+            <a href="stock-dictionary.html" class="tool-card" style="text-decoration:none;color:inherit;">
                 <div class="tool-icon">📚</div>
                 <h3>주식 용어 사전 + 퀴즈</h3>
                 <p>초보자도 쉽게 이해하는 주식 용어와 간단 학습 퀴즈</p>
@@ -1456,9 +1496,9 @@
                     <li>레벨별 간단 퀴즈 포함</li>
                 </ul>
                 <button class="tool-btn">단어 공부하기 →</button>
-            </div>
+            </a>
 
-            <div class="tool-card danger" onclick="location.href='average-calculator.html'">
+            <a href="average-calculator.html" class="tool-card danger" style="text-decoration:none;color:inherit;">
                 <div class="tool-icon">📊</div>
                 <h3>매수 평단가 계산기</h3>
                 <p>물타기/불타기 시뮬레이션으로 전략적 매수 계획 수립</p>
@@ -1468,7 +1508,7 @@
                     <li>탈출 목표가 시각적 차트 제공</li>
                 </ul>
                 <button class="tool-btn">평단가 계산하기 →</button>
-            </div>
+            </a>
         </div>
     </section>
 
@@ -1513,7 +1553,7 @@
 
     <!-- ── TESTIMONIALS ─────────────────────────────── -->
     <div class="section-wrap">
-        <div class="section-label">4. Testimonials</div>
+        <div class="section-label">REVIEWS</div>
         <h2 class="section-title">먼저 써본 분들의 이야기</h2>
 
         <div class="testimonials-grid">
@@ -1540,7 +1580,7 @@
     <!-- ── FINAL CTA ────────────────────────────────── -->
     <section class="cta-section">
         <div class="cta-wrap">
-            <div class="section-label">5. 최종 CTA</div>
+            <div class="section-label">START</div>
             <h2 class="section-title">지금 바로 시작할 수 있습니다</h2>
             <p>주식 계좌도 필요 없고, 회원가입도 필요 없습니다.</p>
             <p><strong>지금 이 페이지를 열어두고, 첫 번째 계산을 해보세요.</strong></p>
@@ -1553,7 +1593,7 @@
             </div>
 
             <a href="#tools" class="btn-primary" style="margin:0 auto;">무료로 지금 시작하기 →</a>
-            <p class="cta-note">100% 무료 · 회원가입 불필요 · 광고 없음</p>
+            <p class="cta-note">100% 무료 · 회원가입 불필요 · 최소 광고로 운영</p>
         </div>
     </section>
 
@@ -1562,7 +1602,7 @@
     <section class="download-section" id="download">
         <div class="section-label">앱 다운로드</div>
         <h2 class="section-title">더 강력한 버전으로 만나보세요</h2>
-        <p class="section-subtitle">웹 버전은 지금 바로 무료 사용 가능, 데스크탑 앱은 출시 예정입니다.</p>
+        <p class="section-subtitle">웹 버전은 지금 바로 무료 사용 가능, 데스크탑 · 안드로이드 앱은 출시 예정입니다.</p>
         <div class="download-grid">
             <div class="download-card">
                 <div class="dl-badge live"><span class="dl-badge-dot"></span>운영 중</div>
@@ -1591,6 +1631,24 @@
                     <li>알림 · 포트폴리오 자동 추적</li>
                     <li>고급 차트 분석 도구</li>
                     <li>Windows / macOS 지원</li>
+                </ul>
+                <button class="dl-btn disabled" disabled>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15H11v-6h2zm0-8H11V7h2z"/></svg>
+                    준비 중입니다
+                </button>
+                <p class="dl-version">출시 알림 신청: <a href="https://discord.gg/a3rB4u6QXF" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;">Discord →</a></p>
+            </div>
+
+            <div class="download-card soon">
+                <div class="dl-badge soon"><span class="dl-badge-dot"></span>출시 예정</div>
+                <div class="dl-icon">📱</div>
+                <div class="dl-title">주린이 계산기 Android</div>
+                <p class="dl-desc">언제 어디서나 주머니 속 투자 도우미. 푸시 알림과 위젯으로 실시간 포트폴리오를 관리하세요.</p>
+                <ul class="dl-features">
+                    <li>실시간 푸시 알림 (배당일, 목표가)</li>
+                    <li>홈화면 위젯 · 포트폴리오 추적</li>
+                    <li>주식 사관학교 · 용어사전</li>
+                    <li>Google 계정 연동 · 클라우드 동기화</li>
                 </ul>
                 <button class="dl-btn disabled" disabled>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15H11v-6h2zm0-8H11V7h2z"/></svg>
@@ -1700,9 +1758,10 @@
                 .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
         }
 
-        const RENDER_SERVER_URL = "https://dividend-server.onrender.com";
-        const PROXY_URL    = "https://workerjs.momlego5510.workers.dev/api";
-        const YF_PROXY_URL = "https://workerjs.momlego5510.workers.dev/yf";   // Yahoo Finance 전용
+        // 서버 URL은 config.js에서 중앙 관리
+        const RENDER_SERVER_URL = window.RENDER_SERVER_URL || "https://dividend-server.onrender.com";
+        const PROXY_URL    = window.PROXY_URL || "https://workerjs.momlego5510.workers.dev/api";
+        const YF_PROXY_URL = window.YF_PROXY_URL || "https://workerjs.momlego5510.workers.dev/yf";
 
         let searchTimer = null;
         let currentSelectedSymbol = null;
@@ -1838,9 +1897,9 @@
                     });
 
                     const moreCard = (text) => `
-                        <div class="news-card" style="opacity:0.5;display:flex;justify-content:center;align-items:center;" onclick="location.href='news-intelligence.html'">
+                        <a href="news-intelligence.html" class="news-card" style="opacity:0.5;display:flex;justify-content:center;align-items:center;text-decoration:none;color:inherit;">
                             <h3 style="text-align:center;">전체 ${text}<br>보러가기 →</h3>
-                        </div>`;
+                        </a>`;
 
                     whaleContainer.innerHTML = whaleHtml ? (whaleHtml + moreCard('고래 정보')) : `<div class="news-card" style="display:flex;justify-content:center;align-items:center;"><h3 style="text-align:center;color:var(--text-secondary);">최신 데이터가 없습니다.</h3></div>`;
                     newsContainer.innerHTML = newsHtml ? (newsHtml + moreCard('경제 뉴스')) : `<div class="news-card" style="display:flex;justify-content:center;align-items:center;"><h3 style="text-align:center;color:var(--text-secondary);">최신 뉴스가 없습니다.</h3></div>`;
@@ -1850,8 +1909,8 @@
                 // 타임아웃 시 재시도 안내
                 const whaleNotice = document.getElementById('whale-wakeup-notice');
                 const newsNotice  = document.getElementById('news-wakeup-notice');
-                if (whaleNotice) whaleNotice.innerHTML = '<span class="wakeup-dot" style="background:#FF6B6B"></span><span>서버 응답 없음. <a href="javascript:updateIntelligenceCards()" style="color:var(--primary);">다시 시도</a></span>';
-                if (newsNotice)  newsNotice.innerHTML  = '<span class="wakeup-dot" style="background:#FF6B6B"></span><span>서버 응답 없음. <a href="javascript:updateIntelligenceCards()" style="color:var(--primary);">다시 시도</a></span>';
+                if (whaleNotice) whaleNotice.innerHTML = '<span class="wakeup-dot" style="background:#FF6B6B"></span><span>서버 응답 없음. <a href="#" onclick="event.preventDefault();updateIntelligenceCards();" style="color:var(--primary);">다시 시도</a></span>';
+                if (newsNotice)  newsNotice.innerHTML  = '<span class="wakeup-dot" style="background:#FF6B6B"></span><span>서버 응답 없음. <a href="#" onclick="event.preventDefault();updateIntelligenceCards();" style="color:var(--primary);">다시 시도</a></span>';
                 const emptyCard = `<div class="news-card" style="display:flex;justify-content:center;align-items:center;flex-direction:column;gap:0.5rem;"><h3 style="text-align:center;color:var(--text-secondary);">잠시 후 다시 시도해주세요</h3><p style="text-align:center;color:#555;font-size:0.8rem;">서버가 깨어나는 중입니다 (최대 30초)</p></div>`;
                 const wc = document.getElementById('whale-container');
                 const nc = document.getElementById('news-container');
@@ -2129,8 +2188,28 @@
         }
     </script>
 
+    <!-- config.js는 <head>에서 로드됨 -->
+
     <!-- Firebase 인증: auth-modal.js 통합 모듈 -->
     <script type="module" src="auth-modal.js"></script>
+
+    <!-- 접근성: onclick div → 키보드 지원 -->
+    <script>
+        document.querySelectorAll('[onclick*="location.href"]').forEach(el => {
+            if (el.tagName === 'A') return;
+            el.setAttribute('role', 'link');
+            el.setAttribute('tabindex', '0');
+            el.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+            });
+        });
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+        }
+        document.querySelector('.hamburger-btn')?.addEventListener('click', () => {
+            document.querySelector('.nav-links')?.classList.toggle('nav-open');
+        });
+    </script>
 
 </body>
 </html>

@@ -1,0 +1,202 @@
+/* ============================================================
+   COMMON.CSS — 주린이 계산기 Design System (Dark Edition)
+   Shared variables, resets, and base styles for ALL pages.
+   Primary: #FF5C00 | BG: #000 | Card: #111
+   ============================================================ */
+
+/* ── CSS VARIABLES ──────────────────────────────────── */
+:root {
+    --primary: #FF5C00;
+    --primary-hover: #FF7A30;
+    --primary-glow: rgba(255, 92, 0, 0.25);
+    --success: #00D9A3;
+    --danger: #FF6B6B;
+    --gold: #FFD700;
+
+    --bg: #000000;
+    --bg-secondary: #080808;
+    --bg-card: #111111;
+    --bg-card-hover: #161616;
+    --bg-input: #0a0a0a;
+
+    --border: #1e1e1e;
+    --border-muted: #161616;
+    --border-hover: rgba(255, 92, 0, 0.35);
+
+    --text-primary: #ffffff;
+    --text-secondary: #888888;
+    --text-muted: #666666; /* Item 19: improved contrast (was #444) */
+
+    /* Legacy compat for unchanged JS-driven styles */
+    --primary-dark: #FF7A30;
+    --neutral-light: #1a1a1a;
+    --border-color: #1e1e1e;
+    --card-bg: #111111;
+    --shadow: 0 4px 24px rgba(0,0,0,0.6);
+    --shadow-hover: 0 12px 40px rgba(0,0,0,0.8);
+    --neutral: #ffffff;
+}
+
+/* ── RESET ──────────────────────────────────────────── */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+}
+
+body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text-primary);
+    background: var(--bg);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+body::before { display: none; }
+
+/* ── SCROLLBAR ──────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+/* ── HEADER ─────────────────────────────────────────── */
+header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 200;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0.9rem 0;
+}
+
+nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.logo-icon {
+    background: var(--primary);
+    width: 30px; height: 30px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+}
+
+.nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--text-primary); }
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+#auth-ui { display: flex; align-items: center; gap: 0.75rem; }
+
+/* Hide theme toggle — always dark */
+.theme-toggle { display: none !important; }
+
+/* ── FOOTER ─────────────────────────────────────────── */
+footer {
+    background: #000;
+    border-top: 1px solid var(--border);
+    color: white;
+    padding: 4rem 2rem 2rem;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 3rem;
+    margin-bottom: 3rem;
+}
+
+.footer-section h4 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+/* Item 19: improved contrast (was #444) */
+.footer-section > p { color: #666; font-size: 0.875rem; line-height: 1.75; }
+
+.footer-links { list-style: none; }
+
+/* Item 19: improved contrast (was #444) */
+.footer-links a {
+    color: #666;
+    text-decoration: none;
+    display: block;
+    padding: 0.3rem 0;
+    font-size: 0.875rem;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--primary); }
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 2rem;
+    border-top: 1px solid #111;
+    text-align: center;
+    color: #555;
+    font-size: 0.82rem;
+}
+
+/* ── iOS INPUT ZOOM FIX (Item 17) ───────────────────── */
+input[type="number"], input[type="text"], input[type="email"], textarea, select {
+    font-size: 1rem; /* minimum 16px to prevent iOS auto-zoom */
+}

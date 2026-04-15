@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://joys000.github.io/jusini_stock/sitemap.xml

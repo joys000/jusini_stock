@@ -6,11 +6,26 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    <!-- TODO: CSP에 'unsafe-inline' 사용 중 — 인라인 스크립트를 외부 .js 파일로 분리하면 nonce 기반 CSP로 강화 가능 -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagservices.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.gstatic.com https://cdn.sheetjs.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.workers.dev https://*.onrender.com https://corsproxy.io https://query2.finance.yahoo.com https://finance.naver.com https://pagead2.googlesyndication.com; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; object-src 'none'; base-uri 'self';">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>실전 모의투자 | 주린이 계산기</title>
+    <link rel="icon" href="logo.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="logo.svg">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FF5C00">
+    <meta name="description" content="모의투자 - 실제 시세 기반 가상 주식 매매 연습">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="모의투자 | 주린이 계산기">
+    <meta property="og:description" content="모의투자 - 실제 시세 기반 가상 주식 매매 연습">
+    <meta property="og:image" content="https://jurinicalc.com/logo.svg">
+    <meta property="og:url" content="https://jurinicalc.com/mock-invest.html">
+    <meta name="twitter:card" content="summary">
+
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="common.css">
     <style>
         :root {
             --primary: #FF5C00; --primary-hover: #FF7A30;
@@ -248,14 +263,14 @@
                     <button class="mkt-btn" id="mkt-us" onclick="setMarket('us')">🇺🇸 미국 주식</button>
                 </div>
                 <div class="search-wrap">
-                    <input type="text" id="search-input" placeholder="종목명 또는 티커 입력 (예: 삼성전자, TSLA)" autocomplete="off">
+                    <input type="text" id="search-input" placeholder="종목명 또는 티커 입력 (예: 삼성전자, TSLA)" autocomplete="off" aria-label="종목명 또는 티커 입력 (예: 삼성전자, TSLA)">
                     <div id="search-results" class="search-results"></div>
                 </div>
                 <div class="trade-row">
                     <div class="selected-stock-display" id="selected-info">
                         <span style="color:var(--muted);">선택된 종목 없음</span>
                     </div>
-                    <input type="number" id="buy-qty" class="qty-input" placeholder="수량">
+                    <input type="number" id="buy-qty" class="qty-input" placeholder="수량" aria-label="매수 수량">
                     <button class="btn-buy" onclick="buyStock()">매수</button>
                 </div>
                 <div class="trade-msg" id="trade-msg"></div>
@@ -328,19 +343,22 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+<script src="config.js"></script>
 <script type="module" src="auth-modal.js"></script>
 
 <script>
+// TODO: portfolio.js 연동 — 로그인 시 loadPortfolio(), 매수/매도 시 upsertHolding() 호출 필요
+
 // ── XSS 방지 살균 함수
 function escHtml(str) {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;')
         .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-// Finnhub API는 Cloudflare Worker 프록시를 통해 호출 (API 키 서버측 보관)
-const PROXY_URL    = "https://workerjs.momlego5510.workers.dev/api";
-const YF_PROXY_URL = "https://workerjs.momlego5510.workers.dev/yf";
+// 서버 URL은 config.js에서 중앙 관리
+const PROXY_URL    = window.PROXY_URL || "https://workerjs.momlego5510.workers.dev/api";
+const YF_PROXY_URL = window.YF_PROXY_URL || "https://workerjs.momlego5510.workers.dev/yf";
 const CORS_PROXY = 'https://corsproxy.io/?url=';
 const EX_RATE = 1350;
 
@@ -727,7 +745,7 @@ function updateUI() {
                 <div class="holding-right">
                     <div class="holding-value">₩${val.toLocaleString()}</div>
                     <div class="sell-controls">
-                        <input type="number" id="sell-${sym}" class="sell-input" placeholder="수량">
+                        <input type="number" id="sell-${sym}" class="sell-input" placeholder="수량" aria-label="매도 수량">
                         <button class="btn-sell" onclick="sellStock('${sym}')">매도</button>
                         <button class="btn-sell-all" onclick="sellStock('${sym}', true)">전량</button>
                     </div>
@@ -865,5 +883,6 @@ window.startGame = startGame;
 init();
 </script>
 
+    <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}</script>
 </body>
 </html>
